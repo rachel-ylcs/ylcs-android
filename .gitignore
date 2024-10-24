@@ -19,3 +19,4 @@ gradle/
 */build/
 */release/
 */src/test/
+*/src/androidTest/
