@@ -11,59 +11,99 @@ android {
         applicationId = "com.yinlin.rachel"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 214
+        versionName = "2.1.4"
+
+        ndk {
+            abiFilters += arrayOf("arm64-v8a")
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
+    }
+
+    signingConfigs {
+        register("release") {
+            keyAlias = "rachel"
+            keyPassword = "rachel1211"
+            storeFile = file("key.jks")
+            storePassword = "rachel1211"
         }
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+
+    viewBinding {
+        enable = true
     }
 }
 
 dependencies {
+    implementation(fileTree(mapOf(
+        "dir" to "libs",
+        "include" to listOf("*.aar", "*.jar"),
+    )))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.exifinterface:exifinterface:1.3.6")
+    implementation("androidx.media3:media3-exoplayer:1.3.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
+    implementation("androidx.media3:media3-ui:1.3.1")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    implementation("com.haibin:calendarview:3.7.1")
+
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.android.material:material:1.10.0")
+
+    implementation("com.github.AbdAlrahmanShammout:UltimateBreadcrumbsView:1.0.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
+    implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
+
+    implementation("com.github.forJrking:KLuban:1.1.0")
+    implementation("com.github.jenly1314:zxing-lite:3.2.0")
+    implementation("com.github.xuexiangjys:XUI:1.2.1")
+
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation("io.github.h07000223:flycoTabLayout:3.0.0")
+    implementation("io.github.lucksiege:pictureselector:v3.11.2")
+    implementation("io.github.lucksiege:ucrop:v3.11.2")
+    implementation("io.github.sangcomz:StickyTimeLine:1.1.0")
+    implementation("io.github.scwang90:refresh-layout-kernel:2.1.0")
+    implementation("io.github.scwang90:refresh-header-classics:2.1.0")
+    implementation("io.github.youth5201314:banner:2.2.3")
+
+    implementation("com.tencent:mmkv:1.3.9")
+    implementation("com.tencent.tav:libpag:4.4.8-harfbuzz")
+
+    testImplementation("junit:junit:4.13.2")
 }

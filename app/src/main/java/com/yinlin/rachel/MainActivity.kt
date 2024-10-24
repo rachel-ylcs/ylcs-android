@@ -1,47 +1,47 @@
 package com.yinlin.rachel
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.yinlin.rachel.ui.theme.YlcsandroidTheme
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.yinlin.rachel.databinding.ActivityMainBinding
+import com.yinlin.rachel.model.RachelActivity
+import com.yinlin.rachel.model.RachelPages
+import com.yinlin.rachel.model.RachelTab
 
-class MainActivity : ComponentActivity() {
+class MainActivity : RachelActivity() {
+    private lateinit var v: ActivityMainBinding
+    private lateinit var pages: RachelPages
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         enableEdgeToEdge()
-        setContent {
-            YlcsandroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+
+        v = ActivityMainBinding.inflate(layoutInflater)
+        val view = v.root
+        setContentView(view)
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
         }
+
+        pages = RachelPages(this, v.btv, arrayOf(
+            RachelTab.msg, RachelTab.res, RachelTab.music, RachelTab.discovery, RachelTab.me
+        ), RachelTab.msg, R.id.frame)
+
+        runOnUiThread { pages.processIntent(intent) }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.apply { pages.processIntent(this) }
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    YlcsandroidTheme {
-        Greeting("Android")
+    @SuppressLint("MissingSuperCall") @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (pages.goBack()) pages.pop()
     }
 }

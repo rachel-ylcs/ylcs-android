@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    tools:context=".fragment.FragmentImagePreview" >
+    <com.youth.banner.Banner
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:banner_indicator_selected_color="@color/steel_blue"
+        app:banner_indicator_normal_color="@color/light_white"
+        app:banner_indicator_selected_width="10dp"
+        app:banner_indicator_normal_width="8dp"
+        app:banner_indicator_space="10dp"
+        app:banner_indicator_marginBottom="20dp"
+        app:banner_indicator_gravity="center"
+        app:banner_auto_loop="false" />
+    <LinearLayout
+        android:id="@+id/image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+        <TextView
+            android:id="@+id/download_image"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="下载"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+        <TextView
+            android:id="@+id/download_source"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="下载原图"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+        <TextView
+            android:id="@+id/download_all"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="下载全部"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/video_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone" >
+        <TextView
+            android:id="@+id/download_video_image"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="下载封面"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+        <TextView
+            android:id="@+id/download_video"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="下载视频"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+        <TextView
+            android:id="@+id/play_video"
+            style="@style/RachelText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:textAlignment="center"
+            android:text="播放视频"
+            android:textColor="@color/white"
+            android:textSize="@dimen/base" />
+    </LinearLayout>
+</LinearLayout>
