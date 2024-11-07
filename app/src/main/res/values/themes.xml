@@ -1,5 +1,25 @@
 <resources>
-    <style name="Theme.Rachel" parent="XUITheme.Phone">
+    <style name="Theme.RachelButton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">15dp</item>
+    </style>
+    <style name="Theme.Rachel" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:textSize">@dimen/sm</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/xwwk</item>
+        <item name="android:autoSizeMinTextSize">4sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="colorPrimary">@color/steel_blue</item>
+        <item name="colorPrimaryDark">@color/steel_blue_pressed</item>
+        <item name="colorSecondary">@color/purple</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/light_gray</item>
+        <item name="colorAccent">@color/steel_blue</item>
+        <item name="materialButtonStyle">@style/Theme.RachelButton</item>
     </style>
 </resources>

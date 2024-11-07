@@ -13,7 +13,7 @@ import com.yinlin.rachel.model.RachelTab
 
 class MainActivity : RachelActivity() {
     private lateinit var v: ActivityMainBinding
-    private lateinit var pages: RachelPages
+     private lateinit var pages: RachelPages
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
@@ -29,7 +29,7 @@ class MainActivity : RachelActivity() {
         }
 
         pages = RachelPages(this, v.btv, arrayOf(
-            RachelTab.msg, RachelTab.res, RachelTab.music, RachelTab.discovery, RachelTab.me
+            RachelTab.msg, RachelTab.discovery, RachelTab.music, RachelTab.world, RachelTab.me
         ), RachelTab.msg, R.id.frame)
 
         runOnUiThread { pages.processIntent(intent) }

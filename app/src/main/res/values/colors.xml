@@ -85,6 +85,11 @@
 
     <color name="title_dark">#D0000000</color>
 
+    <color name="tip_success">#3EA643</color>
+    <color name="tip_warning">#F6BE15</color>
+    <color name="tip_error">#F15C58</color>
+    <color name="tip_info">#7B8EFA</color>
+
     <color name="music_lyrics_main">#4682B4</color>
     <color name="music_lyrics_second">#D3D3D3</color>
     <color name="music_lyrics_fade">#60F6F6F6</color>

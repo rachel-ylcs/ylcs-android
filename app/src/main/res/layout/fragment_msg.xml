@@ -18,33 +18,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-        <com.flyco.tablayout.SegmentTabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="5dp"
-            app:tl_tab_space_equal="true"
-            app:tl_textsize="@dimen/lg"
-            app:tl_textBold="BOTH"
-            app:tl_textUnselectColor="@color/steel_blue"
-            app:tl_textSelectColor="@color/white"
-            app:tl_indicator_corner_radius="10dp"
-            app:tl_indicator_color="@color/steel_blue"
-            app:tl_indicator_anim_enable="true"
-            app:tl_indicator_bounce_enable="false" />
-        <com.xuexiang.xui.widget.statelayout.StatefulLayout
-            android:id="@+id/state"
+            app:tabMode="scrollable"
+            app:tabGravity="fill"
+            app:tabTextAppearance="@color/black"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@color/steel_blue" />
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            app:stf_inAnimation="@anim/ps_anim_fade_in"
-            app:stf_outAnimation="@anim/ps_anim_fade_out" >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none" />
-        </com.xuexiang.xui.widget.statelayout.StatefulLayout>
+            android:layout_weight="1" />
     </LinearLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>

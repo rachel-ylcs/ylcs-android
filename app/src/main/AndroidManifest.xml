@@ -17,6 +17,7 @@
         android:icon="@mipmap/icon"
         android:roundIcon="@mipmap/icon"
         android:label="@string/app_name"
+        android:theme="@style/Theme.Rachel"
         android:hardwareAccelerated="true"
         tools:targetApi="34" >
         <activity

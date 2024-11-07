@@ -4,28 +4,20 @@ import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Typeface
-import android.view.Gravity
 import com.tencent.mmkv.MMKV
-import com.xuexiang.xui.XUI
-import com.xuexiang.xui.widget.toast.XToast
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.Locale
 
 
 class RachelApplication : Application() {
     companion object {
-        const val DEFAULT_FONT_PATH = "fonts/XWWK.ttf"
-
-        fun initBaseContext(context: Context) {
-            val resources = context.resources
-            resources.configuration?.apply {
-                fontScale = 1f
-                densityDpi = 480
-                @Suppress("DEPRECATION")
-                resources.updateConfiguration(this, resources.displayMetrics)
-            }
-        }
+        fun initBaseContext(context: Context): Context =
+            context.createConfigurationContext(context.resources.configuration.apply {
+            fontScale = 1f
+            densityDpi = 480
+            setLocale(Locale.SIMPLIFIED_CHINESE)
+        })
     }
 
     class CrashHandler(val context: Context) : Thread.UncaughtExceptionHandler {
@@ -37,31 +29,12 @@ class RachelApplication : Application() {
             val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             clipboardManager.setPrimaryClip(ClipData.newPlainText("label", sw.toString()))
         }
-
-        fun println(obj: Any) = pw.println(obj)
     }
-
-    val crashHandler = CrashHandler(this)
-
-    lateinit var fontNormal: Typeface
-    lateinit var fontBold: Typeface
-    lateinit var fontItalic: Typeface
-    lateinit var fontBoldItalic: Typeface
 
     override fun onCreate() {
         super.onCreate()
-        Thread.setDefaultUncaughtExceptionHandler(crashHandler)
-
-        // 初始化XUI
-        XUI.init(this)
-        XUI.initFontStyle(DEFAULT_FONT_PATH)
-        XToast.Config.get().setTextSize(12).setGravity(Gravity.CENTER)
-
-        // 初始化字体
-        fontNormal = XUI.getDefaultTypeface()!!
-        fontBold = Typeface.create(fontNormal, Typeface.BOLD)
-        fontItalic = Typeface.create(fontNormal, Typeface.ITALIC)
-        fontBoldItalic = Typeface.create(fontNormal, Typeface.BOLD_ITALIC)
+        // 崩溃记录
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(this))
 
         // 初始化目录
         basePath = filesDir.path
@@ -74,4 +47,6 @@ class RachelApplication : Application() {
 
         // 补丁
     }
+
+    override fun attachBaseContext(base: Context) = super.attachBaseContext(initBaseContext(base))
 }
