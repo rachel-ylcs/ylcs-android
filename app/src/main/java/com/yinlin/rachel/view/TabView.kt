@@ -12,14 +12,15 @@ import com.yinlin.rachel.textColor
 
 class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : TabLayout(context, attrs, defStyleAttr), TabLayout.OnTabSelectedListener {
-    fun interface OnSelectedListener {
-        fun onSelected(title: String, position: Int)
-    }
 
-    private var textSize: Float = context.resources.getDimension(R.dimen.base)
-    private var listener: OnSelectedListener? = null
+    private val textSize: Float
+    var listener: (Int, String) -> Unit = { _, _ -> }
 
     init {
+        val attr = context.obtainStyledAttributes(attrs, R.styleable.TabView)
+        textSize = attr.getDimensionPixelSize(R.styleable.TabView_tabSize, context.resources.getDimension(R.dimen.base).toInt()).toFloat()
+        attr.recycle()
+
         addOnTabSelectedListener(this)
         tabMode = MODE_SCROLLABLE
         tabGravity = GRAVITY_FILL
@@ -30,7 +31,7 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     override fun onTabSelected(tab: Tab) {
         val view = tab.customView as TextView
         view.textColor = context.getColor(R.color.steel_blue)
-        listener?.onSelected(view.text.toString(), tab.position)
+        listener(tab.position, view.text.toString())
     }
 
     override fun onTabUnselected(tab: Tab) {
@@ -41,10 +42,6 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     override fun onTabReselected(tab: Tab) { }
 
     val isEmpty: Boolean get() = tabCount == 0
-
-    fun init(textSize: Float) {
-        this.textSize = textSize
-    }
 
     fun addTabEx(title: String) {
         val view = TextView(context)
@@ -71,9 +68,5 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     fun scrollToTabEx(position: Int) {
         post { setScrollPosition(position, 0f, true, true) }
-    }
-
-    fun setOnSelectedListenerEx(listener: OnSelectedListener) {
-        this.listener = listener
     }
 }

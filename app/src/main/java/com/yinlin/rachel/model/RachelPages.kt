@@ -45,14 +45,15 @@ class RachelPages(
         // 初始化底部导航栏
         btv.apply {
             setItems(items, home.index)
-            setOnSelectedListenerEx {
+            listener = {
                 if (isMain) {
                     val transaction = manager.beginTransaction().hide(currentFragment)
-                    var nextFragment = fragments[current]
+                    val index = it.index
+                    var nextFragment = fragments[index]
                     if (nextFragment == null) {
-                        nextFragment = items[current].prototype.getConstructor(RachelPages::class.java)
+                        nextFragment = it.prototype.getConstructor(RachelPages::class.java)
                             .newInstance(this@RachelPages) as RachelFragment<*>
-                        fragments[current] = nextFragment
+                        fragments[index] = nextFragment
                         transaction.add(mainFrame, nextFragment)
                     }
                     else transaction.show(nextFragment)

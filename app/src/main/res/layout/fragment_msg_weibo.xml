@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.scwang.smart.refresh.layout.SmartRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
+    android:layout_height="match_parent"
+    tools:context=".fragment.FragmentMsgWeibo" >
+    <com.yinlin.rachel.view.PAGRefreshHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="1" />
-</LinearLayout>
+        app:assetName="pag/refresh_header_rachel.pag" />
+    <com.scwang.smart.refresh.footer.ClassicsFooter
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/red" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1" />
+    </LinearLayout>
+</com.scwang.smart.refresh.layout.SmartRefreshLayout>

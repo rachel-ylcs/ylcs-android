@@ -24,11 +24,7 @@ class BottomTabView @JvmOverloads constructor(context: Context, attrs: Attribute
         }
     }
 
-    fun interface OnSelectedListener {
-        fun onSelected(tab: RachelTab)
-    }
-
-    private var listener: OnSelectedListener? = null
+    var listener: (RachelTab) -> Unit = {}
 
     init {
         addOnTabSelectedListener(this)
@@ -47,7 +43,7 @@ class BottomTabView @JvmOverloads constructor(context: Context, attrs: Attribute
         val wrapper = tab.tag as TabWrapper
         wrapper.icon.setImageResource(wrapper.item.iconActive)
         wrapper.text.textColor = context.getColor(R.color.purple)
-        listener?.onSelected(wrapper.item)
+        listener(wrapper.item)
     }
 
     override fun onTabUnselected(tab: Tab) {
@@ -66,9 +62,5 @@ class BottomTabView @JvmOverloads constructor(context: Context, attrs: Attribute
             addTab(newTab().setCustomView(view).setTag(TabWrapper(view, item)))
         }
         selectTab(getTabAt(current))
-    }
-
-    fun setOnSelectedListenerEx(listener: OnSelectedListener) {
-        this.listener = listener
     }
 }

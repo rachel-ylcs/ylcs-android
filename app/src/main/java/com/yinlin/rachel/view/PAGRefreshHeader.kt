@@ -9,6 +9,7 @@ import com.scwang.smart.refresh.layout.api.RefreshKernel
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.scwang.smart.refresh.layout.constant.RefreshState
 import com.scwang.smart.refresh.layout.constant.SpinnerStyle
+import com.yinlin.rachel.R
 import org.libpag.PAGFile
 import org.libpag.PAGScaleMode
 import org.libpag.PAGView
@@ -20,7 +21,11 @@ class PAGRefreshHeader @JvmOverloads constructor(context: Context, attrs: Attrib
         setRepeatCount(-1)
         setScaleMode(PAGScaleMode.Zoom)
         setCacheEnabled(true)
-        composition = PAGFile.Load(context.resources.assets, "pag/refresh_header_rachel.pag")
+
+        val attr = context.obtainStyledAttributes(attrs, R.styleable.PAGRefreshHeader)
+        val assetName = attr.getString(R.styleable.PAGRefreshHeader_assetName)
+        assetName?.let { composition = PAGFile.Load(context.resources.assets, it) }
+        attr.recycle()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

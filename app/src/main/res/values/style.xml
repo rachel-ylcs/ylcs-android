@@ -14,6 +14,10 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/transparent</item>
     </style>
+    <style name="RachelTabText" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">@dimen/base</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
     <style name="RachelText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

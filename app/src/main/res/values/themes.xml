@@ -14,6 +14,7 @@
         <item name="android:fontFamily">@font/xwwk</item>
         <item name="android:autoSizeMinTextSize">4sp</item>
         <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="fontFamily">@font/xwwk</item>
         <item name="colorPrimary">@color/steel_blue</item>
         <item name="colorPrimaryDark">@color/steel_blue_pressed</item>
         <item name="colorSecondary">@color/purple</item>

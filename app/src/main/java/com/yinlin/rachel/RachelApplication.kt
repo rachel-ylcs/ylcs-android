@@ -1,9 +1,9 @@
 package com.yinlin.rachel
 
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
+import android.content.ContentValues
 import android.content.Context
+import android.provider.MediaStore
 import com.tencent.mmkv.MMKV
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -26,8 +26,12 @@ class RachelApplication : Application() {
 
         override fun uncaughtException(t: Thread, e: Throwable) {
             e.printStackTrace(pw)
-            val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            clipboardManager.setPrimaryClip(ClipData.newPlainText("label", sw.toString()))
+            context.contentResolver.apply {
+                val uri = insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, "rachel-crash.txt")
+                })!!
+                openOutputStream(uri).use { it?.write(sw.toString().toByteArray()) }
+            }
         }
     }
 

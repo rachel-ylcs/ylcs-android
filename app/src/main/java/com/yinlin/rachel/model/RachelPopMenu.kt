@@ -50,7 +50,6 @@ object RachelPopMenu {
         val list = card.findViewById<RecyclerView>(R.id.list)
         val popupWindow = PopupWindow(card, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         list.layoutManager = LinearLayoutManager(context)
-        list.setHasFixedSize(true)
         list.adapter = Adapter(items, popupWindow)
         list.addItemDecoration(MaterialDividerItemDecoration(context, LinearLayoutManager.VERTICAL).apply {
             this.isLastItemDecorated = false

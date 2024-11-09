@@ -6,4 +6,8 @@ import com.yinlin.rachel.model.RachelPages
 
 class FragmentMsgWeibo(pages: RachelPages) : RachelFragmentPage<FragmentMsgWeiboBinding>(pages) {
     override fun bindingClass() = FragmentMsgWeiboBinding::class.java
+
+    override fun init() {
+
+    }
 }

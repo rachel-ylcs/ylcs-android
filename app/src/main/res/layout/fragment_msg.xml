@@ -1,36 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.scwang.smart.refresh.layout.SmartRefreshLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/micro_gray"
     tools:context=".fragment.FragmentMsg" >
-    <com.yinlin.rachel.view.PAGRefreshHeader
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <com.scwang.smart.refresh.footer.ClassicsFooter
+        android:layout_height="wrap_content"
+        app:tabMode="scrollable"
+        app:tabGravity="center"
+        app:tabTextAppearance="@style/RachelTabText"
+        app:tabIndicatorFullWidth="false"
+        app:tabSelectedTextColor="@color/steel_blue" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="scrollable"
-            app:tabGravity="fill"
-            app:tabTextAppearance="@color/black"
-            app:tabIndicatorFullWidth="false"
-            app:tabSelectedTextColor="@color/steel_blue" />
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
-</com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

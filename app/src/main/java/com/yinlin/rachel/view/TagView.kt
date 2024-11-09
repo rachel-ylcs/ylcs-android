@@ -15,11 +15,21 @@ import kotlin.math.max
 class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : ViewGroup(context, attrs, defStyleAttr) {
     private val mTextViewList = mutableListOf<TextView>()
-    private var mTextColor: Int = context.getColor(R.color.black)
-    private var mHorizontalPadding: Int = 10.toDP(context)
-    private var mVerticalPadding: Int = 6.toDP(context)
-    private var mTagMargin: Int = 8.toDP(context)
-    private var mListener: OnTagClickListener? = null
+    private val mTextColor: Int
+    private val mHorizontalPadding: Int
+    private val mVerticalPadding: Int
+    private val mTagMargin: Int
+
+    var listener: (Int, String) -> Unit = { _, _ -> }
+
+    init {
+        val attr = context.obtainStyledAttributes(attrs, R.styleable.TagView)
+        mTextColor = attr.getColor(R.styleable.TagView_textColor, context.getColor(R.color.black))
+        mHorizontalPadding = attr.getDimensionPixelSize(R.styleable.TagView_horizontalPadding, 10.toDP(context))
+        mVerticalPadding = attr.getDimensionPixelSize(R.styleable.TagView_verticalPadding, 6.toDP(context))
+        mTagMargin = attr.getDimensionPixelSize(R.styleable.TagView_tagMargin, 8.toDP(context))
+        attr.recycle()
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -70,7 +80,7 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             gravity = Gravity.CENTER
             setPadding(mHorizontalPadding, mVerticalPadding, mHorizontalPadding, mVerticalPadding)
             setBackgroundResource(R.drawable.bg_tag)
-            rachelClick { mListener?.onTagClick(mTextViewList.indexOf(this), text.toString()) }
+            rachelClick { listener(mTextViewList.indexOf(this), text.toString()) }
         }
         mTextViewList.add(textView)
         addView(textView)
@@ -94,13 +104,5 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             removeViewAt(index)
             requestLayout()
         }
-    }
-
-    fun interface OnTagClickListener {
-        fun onTagClick(index: Int, text: String)
-    }
-
-    fun setOnTagClickListener(listener: OnTagClickListener) {
-        mListener = listener
     }
 }

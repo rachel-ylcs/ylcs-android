@@ -1,3 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="AvatarView" >
+        <attr name="borderWidth" format="dimension" />
+        <attr name="borderColor" format="color" />
+        <attr name="bgColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="NineGridView" >
+        <attr name="gap" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="PAGRefreshHeader" >
+        <attr name="assetName" format="string" />
+    </declare-styleable>
+    <declare-styleable name="TabView" >
+        <attr name="tabSize" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="TagView" >
+        <attr name="textColor" format="color" />
+        <attr name="horizontalPadding" format="dimension" />
+        <attr name="verticalPadding" format="dimension" />
+        <attr name="tagMargin" format="dimension" />
+    </declare-styleable>
 </resources>

@@ -30,7 +30,7 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
             val iv = ImageView(context)
             val holder = ViewHolder(iv)
             iv.scaleType = ImageView.ScaleType.CENTER_CROP
-            iv.setPadding(ngv.padding, ngv.padding, ngv.padding, ngv.padding)
+            iv.setPadding(ngv.gap, ngv.gap, ngv.gap, ngv.gap)
             iv.rachelClick { ngv.listener(items[holder.bindingAdapterPosition]) }
             return holder
         }
@@ -51,13 +51,15 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     private var column: Int = 1
+    private val mAdapter = Adapter(context, this)
 
-    var padding: Int = 2.toDP(context)
+    var gap: Int
+    var listener: (String) -> Unit = {}
 
     var images: List<String>
-        get() = (adapter as Adapter).items
+        get() = mAdapter.items
         set(value) {
-            (adapter as Adapter).apply {
+            mAdapter.apply {
                 items.clearAddAll(value)
                 column = when (value.size) {
                     in 0..1 -> 1
@@ -68,10 +70,12 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
             }
         }
 
-    var listener: (String) -> Unit = {}
-
     init {
+        val attr = context.obtainStyledAttributes(attrs, R.styleable.NineGridView)
+        gap = attr.getDimensionPixelSize(R.styleable.NineGridView_gap, 2.toDP(context))
+        attr.recycle()
+
         layoutManager = Manager(context, column)
-        adapter = Adapter(context, this)
+        adapter = mAdapter
     }
 }

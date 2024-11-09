@@ -84,14 +84,13 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
+    implementation("com.github.CarGuo.RickText:textUtilsLib-kotlin:v2.1.5")
 
     implementation("com.github.forJrking:KLuban:1.1.0")
     implementation("com.github.gturedi:stateful-layout:1.2.1")
     implementation("com.github.jenly1314:zxing-lite:3.2.0")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     implementation("io.github.h07000223:flycoTabLayout:3.0.0")
     implementation("io.github.lucksiege:pictureselector:v3.11.2")
