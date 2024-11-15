@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.appcompat.widget.AppCompatImageView
 import com.yinlin.rachel.R
+import com.yinlin.rachel.model.RachelAttr
 import kotlin.math.min
 
 class AvatarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -43,11 +44,11 @@ class AvatarView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var mColorFilter: ColorFilter? = null
 
     init {
-        val attr = context.obtainStyledAttributes(attrs, R.styleable.AvatarView)
-        mBorderWidth = attr.getDimensionPixelSize(R.styleable.AvatarView_borderWidth, 0)
-        mBorderColor = attr.getColor(R.styleable.AvatarView_borderColor, context.getColor(R.color.light_gray))
-        mCircleBackgroundColor = attr.getColor(R.styleable.AvatarView_bgColor, context.getColor(R.color.white))
-        attr.recycle()
+        RachelAttr(context, attrs, R.styleable.AvatarView).use {
+            mBorderWidth = it.dp(R.styleable.AvatarView_BorderWidth, 0)
+            mBorderColor = it.color(R.styleable.AvatarView_BorderColor, R.color.light_gray)
+            mCircleBackgroundColor = it.color(R.styleable.AvatarView_BackgroundColor, R.color.white)
+        }
 
         scaleType = ScaleType.CENTER_CROP
         outlineProvider = object : ViewOutlineProvider() {

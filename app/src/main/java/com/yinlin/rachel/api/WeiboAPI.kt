@@ -2,6 +2,7 @@ package com.yinlin.rachel.api
 
 import com.google.gson.JsonObject
 import com.yinlin.rachel.Net
+import com.yinlin.rachel.asIntOrNull
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboComment
 import com.yinlin.rachel.data.weibo.WeiboCommentList
@@ -62,9 +63,10 @@ object WeiboAPI {
         }
         // 提取内容
         val text = blogs["text"].asString
-        // 提取评论数点赞数
+        // 提取数据
         val commentNum = blogs["comments_count"].asInt
         val likeNum = blogs["attitudes_count"].asInt
+        val repostNum = blogs["reposts_count"].asInt
         if (blogs.has("retweeted_status")) {
             blogs = blogs["retweeted_status"].asJsonObject // 转发微博
         }
@@ -86,7 +88,7 @@ object WeiboAPI {
                 pictures += RachelPreview(videoPicUrl, videoPicUrl, videoUrl)
             }
         }
-        return Weibo(blogId, WeiboUser(userId, userName, avatar, location), formattedTime, text, commentNum, likeNum, pictures)
+        return Weibo(blogId, WeiboUser(userId, userName, avatar, location), formattedTime, text, commentNum, likeNum, repostNum, pictures)
     }
 
     fun getWeiboUserInfo(uid: String): WeiboUserInfo? =  try {
@@ -131,7 +133,7 @@ object WeiboAPI {
         }
     }
 
-    private fun extractComment(card: JsonObject, type: WeiboComment.Type): WeiboComment {
+    private fun extractComment(card: JsonObject): WeiboComment {
         // 提取名称和头像
         val user = card.getAsJsonObject("user")
         val userId = user["id"].asString
@@ -149,7 +151,7 @@ object WeiboAPI {
         val location = if (card.has("source")) card["source"].asString.removePrefix("来自") else "IP未知"
         // 提取内容
         val text = card["text"].asString
-        return WeiboComment(type, WeiboUser(userId, userName, avatar, location), formattedTime, text)
+        return WeiboComment(WeiboUser(userId, userName, avatar, location), formattedTime, text)
     }
 
     fun getDetails(id: String, array: WeiboCommentList) {
@@ -159,17 +161,19 @@ object WeiboAPI {
             val cards = json.getAsJsonObject("data").getAsJsonArray("data")
             for (item in cards) {
                 val card = item.asJsonObject
-                val comment = extractComment(card, WeiboComment.Type.Comment)
+                val comment = extractComment(card)
                 // 带图片
                 if (card.has("pic")) {
                     comment.pic = card.getAsJsonObject("pic").getAsJsonObject("large")["url"].asString
                 }
-                array += comment
                 // 楼中楼
                 val comments = card["comments"]
                 if (comments.isJsonArray) {
-                    for (subCard in comments.asJsonArray) array += extractComment(subCard.asJsonObject, WeiboComment.Type.SubComment)
+                    val subComments = mutableListOf<WeiboComment>()
+                    for (subCard in comments.asJsonArray) subComments += extractComment(subCard.asJsonObject)
+                    comment.subComments = subComments
                 }
+                array += comment
             }
         }
         catch (ignored: Exception) { }

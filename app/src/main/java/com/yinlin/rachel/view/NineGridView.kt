@@ -11,7 +11,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.R
 import com.yinlin.rachel.clearAddAll
 import com.yinlin.rachel.load
+import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.toDP
 
@@ -22,7 +24,7 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
     class Adapter(
         private val context: Context,
         private val ngv: NineGridView,
-        val items: MutableList<String> = mutableListOf()
+        val items: MutableList<RachelPreview> = mutableListOf()
     ) : RecyclerView.Adapter<ViewHolder>() {
         private val rilNet: RachelImageLoader = RachelImageLoader(context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
@@ -31,7 +33,10 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
             val holder = ViewHolder(iv)
             iv.scaleType = ImageView.ScaleType.CENTER_CROP
             iv.setPadding(ngv.gap, ngv.gap, ngv.gap, ngv.gap)
-            iv.rachelClick { ngv.listener(items[holder.bindingAdapterPosition]) }
+            iv.rachelClick {
+                val position = holder.bindingAdapterPosition
+                ngv.listener(position, items[position])
+            }
             return holder
         }
 
@@ -41,7 +46,7 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
             (holder.itemView as ImageView).apply {
                 val width = ngv.measuredWidth / ngv.column
                 layoutParams = ViewGroup.LayoutParams(width, width)
-                load(rilNet, items[position])
+                load(rilNet, items[position].mImageUrl)
             }
         }
     }
@@ -54,9 +59,9 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private val mAdapter = Adapter(context, this)
 
     var gap: Int
-    var listener: (String) -> Unit = {}
+    var listener: (Int, RachelPreview) -> Unit = { _, _, -> }
 
-    var images: List<String>
+    var images: List<RachelPreview>
         get() = mAdapter.items
         set(value) {
             mAdapter.apply {
@@ -71,11 +76,13 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
 
     init {
-        val attr = context.obtainStyledAttributes(attrs, R.styleable.NineGridView)
-        gap = attr.getDimensionPixelSize(R.styleable.NineGridView_gap, 2.toDP(context))
-        attr.recycle()
+        RachelAttr(context, attrs, R.styleable.NineGridView).use {
+            gap = it.dp(R.styleable.NineGridView_Gap, 2)
+        }
 
         layoutManager = Manager(context, column)
+        setItemViewCacheSize(0)
+        recycledViewPool.setMaxRecycledViews(0, 9)
         adapter = mAdapter
     }
 }

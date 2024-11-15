@@ -9,6 +9,7 @@ data class Weibo(
     var text: String, // 内容
     val commentNum: Int, // 评论数
     val likeNum: Int, // 点赞数
+    val repostNum: Int, // 转发数
     val pictures: List<RachelPreview>, // 图片集
 )
 

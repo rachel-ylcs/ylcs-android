@@ -7,33 +7,33 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import com.yinlin.rachel.R
+import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
-import com.yinlin.rachel.toDP
 import kotlin.math.max
 
 class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : ViewGroup(context, attrs, defStyleAttr) {
     private val mTextViewList = mutableListOf<TextView>()
     private val mTextColor: Int
-    private val mHorizontalPadding: Int
-    private val mVerticalPadding: Int
-    private val mTagMargin: Int
+    private val mItemPaddingX: Int
+    private val mItemPaddingY: Int
+    private val mGap: Int
 
     var listener: (Int, String) -> Unit = { _, _ -> }
 
     init {
-        val attr = context.obtainStyledAttributes(attrs, R.styleable.TagView)
-        mTextColor = attr.getColor(R.styleable.TagView_textColor, context.getColor(R.color.black))
-        mHorizontalPadding = attr.getDimensionPixelSize(R.styleable.TagView_horizontalPadding, 10.toDP(context))
-        mVerticalPadding = attr.getDimensionPixelSize(R.styleable.TagView_verticalPadding, 6.toDP(context))
-        mTagMargin = attr.getDimensionPixelSize(R.styleable.TagView_tagMargin, 8.toDP(context))
-        attr.recycle()
+        RachelAttr(context, attrs, R.styleable.TagView).use {
+            mTextColor = it.color(R.styleable.TagView_android_textColor, R.color.black)
+            mItemPaddingX = it.dp(R.styleable.TagView_ItemPaddingX, 10)
+            mItemPaddingY = it.dp(R.styleable.TagView_ItemPaddingY, 6)
+            mGap = it.dp(R.styleable.TagView_Gap, 8)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
         val unspecifiedMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         var widthSum = 0
         var totalHeight = 0
@@ -42,13 +42,13 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             view.measure(unspecifiedMeasureSpec, unspecifiedMeasureSpec)
             if (view.measuredWidth + widthSum > widthSize) {
                 widthSum = 0
-                totalHeight += heightMax + mTagMargin
+                totalHeight += heightMax + mGap
                 heightMax = 0
             }
-            widthSum += view.measuredWidth + mTagMargin
+            widthSum += view.measuredWidth + mGap
             heightMax = max(heightMax, view.measuredHeight)
         }
-        totalHeight += heightMax
+        totalHeight += heightMax + paddingTop + paddingBottom
         val totalHeightMeasureSpec = MeasureSpec.makeMeasureSpec(totalHeight, MeasureSpec.EXACTLY)
         setMeasuredDimension(widthMeasureSpec, totalHeightMeasureSpec)
     }
@@ -57,18 +57,18 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
         val width = right - left
         var widthSum = 0
         var heightMax = 0
-        var currentTop = 0
-        var currentLeft = 0
+        var currentTop = paddingTop
+        var currentLeft = paddingLeft
         for (view in mTextViewList) {
             if (view.measuredWidth + widthSum > width) {
                 widthSum = 0
-                currentLeft = 0
-                currentTop += heightMax + mTagMargin
+                currentLeft = paddingLeft
+                currentTop += heightMax + mGap
                 heightMax = 0
             }
             view.layout(currentLeft, currentTop, currentLeft + view.measuredWidth, currentTop + view.measuredHeight)
-            currentLeft += view.measuredWidth + mTagMargin
-            widthSum += view.measuredWidth + mTagMargin
+            currentLeft += view.measuredWidth + mGap
+            widthSum += view.measuredWidth + mGap
             heightMax = max(heightMax, view.measuredHeight)
         }
     }
@@ -78,7 +78,7 @@ class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             text = tag
             textColor = mTextColor
             gravity = Gravity.CENTER
-            setPadding(mHorizontalPadding, mVerticalPadding, mHorizontalPadding, mVerticalPadding)
+            setPadding(mItemPaddingX, mItemPaddingY, mItemPaddingX, mItemPaddingY)
             setBackgroundResource(R.drawable.bg_tag)
             rachelClick { listener(mTextViewList.indexOf(this), text.toString()) }
         }

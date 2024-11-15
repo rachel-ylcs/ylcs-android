@@ -84,7 +84,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
-    implementation("com.github.CarGuo.RickText:textUtilsLib-kotlin:v2.1.5")
 
     implementation("com.github.forJrking:KLuban:1.1.0")
     implementation("com.github.gturedi:stateful-layout:1.2.1")
@@ -92,7 +91,6 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-    implementation("io.github.h07000223:flycoTabLayout:3.0.0")
     implementation("io.github.lucksiege:pictureselector:v3.11.2")
     implementation("io.github.lucksiege:ucrop:v3.11.2")
     implementation("io.github.sangcomz:StickyTimeLine:1.1.0")
@@ -101,7 +99,7 @@ dependencies {
     implementation("io.github.youth5201314:banner:2.2.3")
 
     implementation("com.tencent:mmkv:1.3.9")
-    implementation("com.tencent.tav:libpag:4.4.8-harfbuzz")
+    implementation("com.tencent.tav:libpag:4.4.12-harfbuzz")
 
     testImplementation("junit:junit:4.13.2")
 }

@@ -6,14 +6,12 @@
     android:orientation="vertical" >
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/RachelText"
         android:layout_marginStart="5dp"
         android:textSize="@dimen/base"
         android:textStyle="bold" />
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

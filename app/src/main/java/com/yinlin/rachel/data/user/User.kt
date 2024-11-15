@@ -3,12 +3,10 @@ package com.yinlin.rachel.data.user
 import com.yinlin.rachel.api.API
 
 data class User(
-    // UID
+    // ID
     val uid: Int,
     // 昵称
     val name: String,
-    // 密码
-    var pwd: String,
     // 邀请人
     val inviterName: String?,
     // 权限
@@ -24,34 +22,13 @@ data class User(
         const val RENAME_COIN_COST = 5
 
         object Constraint {
-            private const val MIN_USER_NAME_LENGTH = 2
+            const val MIN_USER_NAME_LENGTH = 2
             const val MAX_USER_NAME_LENGTH = 16
-            private const val MIN_PWD_LENGTH = 6
-            private const val MAX_PWD_LENGTH = 18
+            const val MIN_PWD_LENGTH = 6
+            const val MAX_PWD_LENGTH = 18
 
             fun name(vararg args: String) = args.all { it.length in MIN_USER_NAME_LENGTH..MAX_USER_NAME_LENGTH }
             fun password(vararg args: String) = args.all { it.length in MIN_PWD_LENGTH..MAX_PWD_LENGTH }
-        }
-
-        object Label {
-            // 头衔名称
-            private val Default = arrayOf("BUG",
-                "风露婆娑", "剑心琴魄", "梦外篝火", "烈火胜情爱", "青山撞入怀",
-                "雨久苔如海", "明雪澄岚", "春风韵尾", "银河万顷", "山川蝴蝶",
-                "薄暮忽晚", "沧流彼岸", "清荷玉盏", "颜如舜华", "逃奔风月",
-                "自在盈缺", "青鸟遁烟", "天生妙罗帷", "梦醒般惊蜕", "韶华的结尾",
-            )
-
-            private val DefaultGroup = arrayOf(1,
-                1, 1, 1, 2, 2,
-                2, 3, 3, 3, 3,
-                4, 4, 4, 5, 5,
-                5, 5, 6, 6, 6,
-            )
-
-            fun labelGroup(level: Int): Pair<String, String> = "level${DefaultGroup[level]}" to Default[level]
-
-            fun labelSpecial(label: String) = "special"
         }
 
         object Level {

@@ -1,6 +1,7 @@
 package com.yinlin.rachel
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
@@ -18,8 +19,9 @@ import androidx.annotation.RawRes
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.haibin.calendarview.Calendar
+import com.yinlin.rachel.Tip.*
+import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.model.RachelOnClickListener
 import java.io.File
@@ -55,36 +57,47 @@ fun View.interceptScroll() {
 
 /*---------    Tip    --------*/
 
+enum class Tip {
+    INFO, SUCCESS, WARNING, ERROR
+}
+
 @SuppressLint("InflateParams")
-private fun View.tip(text: String, @ColorRes color: Int) {
-    val bar = Snackbar.make(this, "", 1500)
+fun Activity.tip(type: Tip, text: String) {
+    val color = when (type) {
+        INFO -> R.color.tip_info
+        SUCCESS -> R.color.tip_success
+        WARNING -> R.color.tip_warning
+        ERROR -> R.color.tip_error
+    }
+    val decorView = this.window.decorView
+    val bar = Snackbar.make(decorView, "", 1500)
     val layout = bar.view as ViewGroup
     layout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).visible = false
-    val view = LayoutInflater.from(context).inflate(R.layout.dialog_tip, null)
+    val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, null)
     view.findViewById<TextView>(R.id.text).text = text
-    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(context.getColor(color))
+    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.getColor(color))
     layout.setPadding(0, 0, 0, 0)
     layout.backgroundColor = 0
     layout.addView(view)
     bar.show()
 }
 
-fun View.tipSuccess(text: String) = tip(text, R.color.tip_success)
-fun View.tipWarning(text: String) = tip(text, R.color.tip_warning)
-fun View.tipError(text: String) = tip(text, R.color.tip_error)
-fun View.tipInfo(text: String) = tip(text, R.color.tip_info)
-
-/*---------    TextInputEditText    --------*/
-
-var TextInputEditText.content: String
-    get() = text?.toString() ?: ""
-    set(value) { setText(value) }
+fun RachelFragment<*>.tip(type: Tip, text: String) = this.pages.activity.tip(type, text)
 
 /*---------    TextView    --------*/
 
+var TextView.textSizePx: Float
+    get() = textSize
+    set(value) { setTextSize(TypedValue.COMPLEX_UNIT_PX, value) }
+
 var TextView.textColor: Int @ColorInt
-get() = currentTextColor
+    get() = currentTextColor
     set(value) { setTextColor(value) }
+
+var TextView.selectorColor: Int @ColorRes
+    get() = 0
+    set(value) { setTextColor(context.getColorStateList(value)) }
+
 var TextView.strikethrough: Boolean
     get() = paintFlags and Paint.STRIKE_THRU_TEXT_FLAG == Paint.STRIKE_THRU_TEXT_FLAG
     set(value) {
@@ -95,6 +108,7 @@ var TextView.strikethrough: Boolean
 /*---------    Paint    --------*/
 
 val Paint.textHeight: Float get() = this.fontMetrics.descent - this.fontMetrics.ascent
+val Paint.baseLine: Float get() = -(this.fontMetrics.descent + this.fontMetrics.ascent) / 2f
 
 /*---------    ImageView    --------*/
 

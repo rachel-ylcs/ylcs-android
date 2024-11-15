@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/micro_gray"
-    tools:context=".fragment.FragmentMsg" >
-    <com.google.android.material.tabs.TabLayout
+    tools:context=".fragment.FragmentMsg">
+    <com.yinlin.rachel.view.PageTabView
         android:id="@+id/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="scrollable"
-        app:tabGravity="center"
-        app:tabTextAppearance="@style/RachelTabText"
-        app:tabIndicatorFullWidth="false"
-        app:tabSelectedTextColor="@color/steel_blue" />
+        android:textSize="@dimen/base" />
+    <com.yinlin.rachel.view.LineView
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_width="match_parent"

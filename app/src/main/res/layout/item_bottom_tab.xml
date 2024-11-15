@@ -2,24 +2,19 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="0dp"
     tools:viewBindingIgnore="true" >
     <ImageView
         android:id="@+id/icon"
         android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="3dp" />
+        android:layout_height="24dp" />
     <TextView
         android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="3dp"
+        style="@style/RachelText"
         android:textStyle="bold"
-        android:textAlignment="center"
         android:textSize="@dimen/xs"
-        android:textColor="@color/steel_blue" />
+        android:textColor="@color/selector_bottom_tab" />
 </LinearLayout>

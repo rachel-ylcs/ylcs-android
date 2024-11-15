@@ -3,22 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.FragmentMsgChaohua" >
+    tools:context=".page.PageWeibo" >
     <com.yinlin.rachel.view.PAGRefreshHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:assetName="pag/refresh_header_rachel.pag" />
-    <com.scwang.smart.refresh.footer.ClassicsFooter
+        app:AssetName="pag/refresh_header_rachel.pag" />
+    <com.gturedi.views.StatefulLayout
+        android:id="@+id/state"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        <TextView
+        android:layout_height="match_parent"
+        app:stfInAnimation="@anim/ps_anim_fade_in"
+        app:stfOutAnimation="@anim/ps_anim_fade_out" >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2" />
-    </LinearLayout>
+            android:layout_height="match_parent" />
+    </com.gturedi.views.StatefulLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>

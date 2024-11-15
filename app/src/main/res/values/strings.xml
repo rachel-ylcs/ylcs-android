@@ -1,4 +1,11 @@
 <resources>
+    <string name="stfErrorMessage">错误, 请重试</string>
+    <string name="stfOfflineMessage">世界上最遥远的距离是没有网络</string>
+    <string name="stfLocationOffMessage">未开启定位服务</string>
+    <string name="stfEmptyMessage">感觉空空的....</string>
+    <string name="stfLoadingMessage">加载中....</string>
+    <string name="stfButtonText">重试</string>
+
     <string name="app_name">银临茶舍</string>
     <string name="rachel_name">银临Rachel</string>
     <string name="home_nav_msg">资讯</string>
@@ -13,7 +20,7 @@
     <string name="locked">未解锁</string>
     <string name="unlocked">已解锁</string>
 
-    <string name="default_id">未登录</string>
+    <string name="default_name">未登录</string>
     <string name="default_signature">泸沽烟水里的过客…</string>
 
     <string name="ok">确定</string>

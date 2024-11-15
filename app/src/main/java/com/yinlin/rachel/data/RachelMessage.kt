@@ -21,7 +21,8 @@ enum class RachelMessage {
 
 
     // FragmentMe
-    ME_UPDATE_USER_INFO, // User
+    ME_UPDATE_USER_INFO, // User?
+    ME_REQUEST_USER_INFO,
     ME_ADD_ACTIVITY, // Calendar, ShowActivity
 
     // FragmentDiscovery

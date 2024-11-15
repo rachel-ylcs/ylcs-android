@@ -15,7 +15,6 @@ import android.widget.LinearLayout
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.card.MaterialCardView
 import com.yinlin.rachel.R
-import com.yinlin.rachel.content
 import com.yinlin.rachel.databinding.DialogChoiceBinding
 import com.yinlin.rachel.databinding.DialogConfirmBinding
 import com.yinlin.rachel.databinding.DialogInfoBinding
@@ -25,6 +24,7 @@ import com.yinlin.rachel.databinding.DialogProgressBinding
 import com.yinlin.rachel.load
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.toDP
+import com.yinlin.rachel.view.InputView
 
 abstract class RachelDialog<T : ViewBinding> (
     private val context: Context,
@@ -97,33 +97,17 @@ abstract class RachelDialog<T : ViewBinding> (
             }.show()
         }
 
-        fun input(context: Context, title: String = "输入", content: String, maxLength: Int = 0, maxLine: Int = 1, type: Int = InputType.TYPE_CLASS_TEXT, callback: (String) -> Unit) {
+        fun input(context: Context, content: String, maxLength: Int = 0, maxLine: Int = 1, inputType: Int = InputType.TYPE_CLASS_TEXT, callback: (String) -> Unit) {
             object : RachelDialog<DialogInputBinding>(context, DialogInputBinding::class.java, false) {
                 override fun init(v: DialogInputBinding) {
-                    v.title.text = title
-                    if (maxLength > 0) {
-                        v.inputLayout.isCounterEnabled = true
-                        v.inputLayout.counterMaxLength = maxLength
-                        v.input.addTextChangedListener(object : TextWatcher {
-                            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) { }
-                            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { }
-                            override fun afterTextChanged(s: Editable) {
-                                val str = s.toString()
-                                v.ok.isEnabled = maxLength <= 0 || (str.isNotEmpty() && str.length <= maxLength)
-                            }
-                        })
-                    }
-                    v.input.apply {
-                        hint = content
-                        inputType = type
-                        val actualMaxLine = maxLine.coerceAtMost(10)
-                        isSingleLine = actualMaxLine == 1
-                        maxLines = actualMaxLine
-                        setLines(actualMaxLine)
-                    }
+                    v.input.hint = content
+                    v.input.inputType = inputType
+                    v.input.maxLength = maxLength
+                    v.input.maxLines = maxLine.coerceAtMost(10)
+                    if (maxLength > 0) v.input.overflowListener = InputView.OverFlowListener { v.ok.isEnabled = !it }
                     v.ok.rachelClick {
                         dismiss()
-                        callback(v.input.content)
+                        callback(v.input.text)
                     }
                     v.cancel.rachelClick { dismiss() }
                 }

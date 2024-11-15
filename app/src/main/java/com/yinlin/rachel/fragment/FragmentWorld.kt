@@ -6,4 +6,8 @@ import com.yinlin.rachel.model.RachelPages
 
 class FragmentWorld(pages: RachelPages) : RachelFragment<FragmentWorldBinding>(pages)  {
     override fun bindingClass() = FragmentWorldBinding::class.java
+
+    override fun init() {
+
+    }
 }

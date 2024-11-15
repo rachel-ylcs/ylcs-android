@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.FragmentLogin" >
+    <com.yinlin.rachel.view.AspectRatioImageView
+        android:id="@+id/icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/title"
+        app:layout_constraintTop_toTopOf="@id/title"
+        app:layout_constraintBottom_toBottomOf="@id/title"
+        android:layout_marginHorizontal="20dp"
+        android:src="@mipmap/icon" />
+    <com.yinlin.rachel.view.AspectRatioImageView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:Ratio="0.535"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/title" />
+    <com.yinlin.rachel.view.ExpandLayout
+        android:id="@+id/login_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginHorizontal="30dp"
+        app:Expanded="true" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/login_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="16"
+                android:hint="请输入ID" />
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/login_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLength="18"
+                android:hint="请输入密码"
+                app:passwordToggleEnabled="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="end" >
+                <TextView
+                    android:id="@+id/label_register"
+                    style="@style/RachelText"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="没有账号?"
+                    android:textColor="@color/hyperlinks" />
+                <TextView
+                    android:id="@+id/label_nopwd"
+                    style="@style/RachelText"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="忘记密码"
+                    android:textColor="@color/hyperlinks" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/button_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="登录" />
+        </LinearLayout>
+    </com.yinlin.rachel.view.ExpandLayout>
+    <com.yinlin.rachel.view.ExpandLayout
+        android:id="@+id/register_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginHorizontal="30dp"
+        app:Expanded="false" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/register_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="16"
+                android:hint="请输入ID" />
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/register_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLength="18"
+                android:hint="请输入密码"
+                app:passwordToggleEnabled="true" />
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/register_confirm_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLength="18"
+                android:hint="请再确认一次密码"
+                app:passwordToggleEnabled="true" />
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/register_inviter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="16"
+                android:hint="请输入邀请人ID" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="end" >
+                <TextView
+                    android:id="@+id/register_label_back_login"
+                    style="@style/RachelText"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="返回登录"
+                    android:textColor="@color/hyperlinks" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/button_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/selector_button_second"
+                android:text="注册" />
+        </LinearLayout>
+    </com.yinlin.rachel.view.ExpandLayout>
+    <com.yinlin.rachel.view.ExpandLayout
+        android:id="@+id/forgot_password_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginHorizontal="30dp"
+        app:Expanded="false" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/forgot_password_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="16"
+                android:hint="请输入ID" />
+            <com.yinlin.rachel.view.InputView
+                android:id="@+id/forgot_password_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLength="18"
+                android:hint="请输入新密码"
+                app:passwordToggleEnabled="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="end">
+                <TextView
+                    android:id="@+id/forgot_password_label_back_login"
+                    style="@style/RachelText"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="返回登录"
+                    android:textColor="@color/hyperlinks" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/button_forgot_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/selector_button_second"
+                android:text="提交申请" />
+        </LinearLayout>
+    </com.yinlin.rachel.view.ExpandLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

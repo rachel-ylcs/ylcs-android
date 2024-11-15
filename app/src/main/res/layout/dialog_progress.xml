@@ -6,8 +6,7 @@
     android:orientation="vertical" >
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/RachelText"
         android:layout_marginStart="5dp"
         android:textSize="@dimen/base"
         android:textStyle="bold" />
@@ -21,19 +20,15 @@
         android:max="100" />
     <TextView
         android:id="@+id/tv_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/RachelText"
         android:layout_marginHorizontal="15dp"
         android:layout_marginBottom="5dp"
         android:layout_gravity="end"
         android:text="0%" />
     <Button
         android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/DialogButton"
         android:layout_gravity="end"
         android:textColor="@color/light_salmon"
-        android:textStyle="bold"
-        android:background="@color/transparent"
         android:text="@string/cancel" />
 </LinearLayout>

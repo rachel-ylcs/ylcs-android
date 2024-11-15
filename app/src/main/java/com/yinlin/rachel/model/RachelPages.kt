@@ -63,9 +63,6 @@ class RachelPages(
                 }
             }
         }
-
-        // TODO
-        // Config.user?.apply { requestUserInfo(this) }
     }
 
     fun checkBottomLayoutStatus() {
@@ -187,17 +184,4 @@ class RachelPages(
     // 取当前版本
     val appVersion: Long get() = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode
     fun appVersionName(version: Long): String = "${version / 100}.${version / 10 % 10}.${version % 10}"
-
-    // 请求用户信息 TODO
-//    @NewThread
-//    fun requestUserInfo(user: User) {
-//        activity.lifecycleScope.launch {
-//            val newUser = withContext(Dispatchers.IO) { API.UserAPI.getInfo(user) }
-//            if (newUser == null) XToastUtils.error("网络异常")
-//            else {
-//                Config.user = newUser
-//                sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, newUser)
-//            }
-//        }
-//    }
 }

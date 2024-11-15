@@ -1,13 +1,11 @@
 package com.yinlin.rachel.data.weibo
 
 data class WeiboComment (
-    var type: Type, // 评论类型
     val user: WeiboUser, // 用户
     var time: String, // 时间
     var text: String, // 内容
-    var pic: String = "", // 图片
-) {
-    enum class Type { Comment, SubComment }
-}
+    var pic: String? = null, // 图片
+    var subComments: WeiboCommentList? = null // 楼中楼
+)
 
 typealias WeiboCommentList = MutableList<WeiboComment>
