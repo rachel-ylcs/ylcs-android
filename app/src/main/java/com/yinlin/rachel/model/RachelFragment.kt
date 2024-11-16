@@ -61,6 +61,7 @@ abstract class RachelFragment<Binding : ViewBinding>(val pages: RachelPages) : F
         super.onDestroy()
     }
 
+    val isAttached: Boolean get() = _binding != null
     fun post(r: Runnable) = pages.handler.post(r)
     fun postDelay(delay: Long, r: Runnable) = pages.handler.postDelayed(r, delay)
     fun removePost(r: Runnable) = pages.handler.removeCallbacks(r)

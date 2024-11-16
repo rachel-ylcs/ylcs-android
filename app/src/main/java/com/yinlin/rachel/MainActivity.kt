@@ -48,10 +48,11 @@ class MainActivity : RachelActivity() {
                     val result1 = withContext(Dispatchers.IO) { API.UserAPI.updateToken(token) }
                     when (result1.code) {
                         API.Code.SUCCESS -> {
-                            Config.token = result1["token"].asString
-                            val result2 = withContext(Dispatchers.IO) { API.UserAPI.getInfo(token) }
+                            val newToken = result1.data.token
+                            Config.token = newToken
+                            val result2 = withContext(Dispatchers.IO) { API.UserAPI.getInfo(newToken) }
                             if (result2.success) {
-                                val user: User = result2.fetch()
+                                val user = result2.data
                                 Config.user = user
                                 pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
                             }

@@ -22,7 +22,6 @@
         app:banner_indicator_gravity="center"
         app:banner_auto_loop="false" />
     <LinearLayout
-        android:id="@+id/image_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

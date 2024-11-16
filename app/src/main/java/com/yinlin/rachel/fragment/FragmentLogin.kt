@@ -45,7 +45,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         v.loginPwd.text = ""
         v.registerContainer.collapse(false)
         v.forgotPasswordContainer.collapse(false)
-        v.loginContainer.expand(true)
+        v.loginContainer.isExpand = true
     }
 
     private fun showRegister() {
@@ -55,7 +55,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         v.registerInviter.text = ""
         v.loginContainer.collapse(false)
         v.forgotPasswordContainer.collapse(false)
-        v.registerContainer.expand(true)
+        v.registerContainer.isExpand = true
     }
 
     private fun showForgotPassword() {
@@ -63,7 +63,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         v.forgotPasswordPwd.text = ""
         v.loginContainer.collapse(false)
         v.registerContainer.collapse(false)
-        v.forgotPasswordContainer.expand(true)
+        v.forgotPasswordContainer.isExpand = true
     }
 
     @NewThread
@@ -75,11 +75,11 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
                 val loading = RachelDialog.loading(pages.context)
                 val result1 = withContext(Dispatchers.IO) { API.UserAPI.login(name, pwd.md5) }
                 if (result1.success) {
-                    val token = result1["token"].asString
+                    val token = result1.data.token
                     Config.token = token
                     val result2 = withContext(Dispatchers.IO) { API.UserAPI.getInfo(token) }
                     if (result2.success) {
-                        val user: User = result2.fetch()
+                        val user = result2.data
                         Config.user = user
                         pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
                     }

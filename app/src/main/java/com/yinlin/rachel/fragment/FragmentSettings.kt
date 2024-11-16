@@ -9,9 +9,12 @@ import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.data.music.PlaylistMap
+import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.data.weibo.names
 import com.yinlin.rachel.databinding.FragmentSettingsBinding
+import com.yinlin.rachel.dialog.BottomDialogCrashLog
 import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
@@ -29,6 +32,8 @@ import kotlinx.coroutines.withContext
 class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBinding>(pages) {
     private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
+    private val bottomDialogCrashLog = BottomDialogCrashLog(this)
+
     override fun bindingClass() = FragmentSettingsBinding::class.java
 
     override fun init() {
@@ -37,6 +42,31 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
         // 更换头像
         v.avatar.rachelClick {
             if (Config.isLogin) RachelPictureSelector.single(pages.context, 256, 256, true) { updateAvatar(it) }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
+        // 更换昵称
+        v.name.rachelClick {
+            val user = Config.loginUser
+            if (user != null) {
+                if (user.coin < User.RENAME_COIN_COST) tip(Tip.WARNING, "你的银币不够哦~")
+                else RachelDialog.input(pages.context, "请输入新ID(改名卡: 5银币)", User.Companion.Constraint.MAX_USER_NAME_LENGTH) {
+                    if (User.Companion.Constraint.name(it)) updateName(it)
+                    else tip(Tip.WARNING, "ID不合规则")
+                }
+            }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
+        // 更新个性签名
+        v.signature.rachelClick {
+            if (Config.isLogin) RachelDialog.input(pages.context, "请输入个性签名", 64) { updateSignature(it) }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
+        // 更新背景墙
+        v.wall.rachelClick {
+            if (Config.isLogin) RachelPictureSelector.single(pages.context, 910, 512, false) { updateWall(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
@@ -58,6 +88,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
                 else addWeiboUser(it)
             }
         }
+
         // 删除微博用户
         v.weiboList.listener = { index, text ->
             RachelDialog.confirm(pages.context, content="是否删除此微博用户") {
@@ -70,9 +101,45 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         /*    ----    听歌设置    ----    */
 
+        // 歌单云备份
+        v.buttonUploadPlaylist.rachelClick {
+            val user = Config.loginUser
+            if (user != null) {
+                if (user.hasPrivilegeBackup) RachelDialog.confirm(pages.context, content="是否将本地所有歌单覆盖云端") { uploadPlaylist() }
+                else tip(Tip.WARNING, "你没有权限")
+            }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
+        // 歌单云还原
+        v.buttonDownloadPlaylist.rachelClick {
+            val user = Config.loginUser
+            if (user != null) {
+                if (user.hasPrivilegeBackup) RachelDialog.confirm(pages.context, content="是否从云端覆盖所有本地歌单") { downloadPlaylist() }
+                else tip(Tip.WARNING, "你没有权限")
+            }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
         /*    ----    通用设置    ----    */
 
+        v.crashLog.rachelClick { bottomDialogCrashLog.update().show() }
+
+        v.version.text = pages.appVersionName(pages.appVersion)
+        v.checkUpdate.rachelClick { pages.navigate(FragmentUpdate(pages)) }
+
+        v.about.rachelClick { pages.navigate(FragmentAbout(pages)) }
+
+        v.feedback.rachelClick {
+            if (Config.isLogin) RachelDialog.input(pages.context, "请给出您宝贵的建议! 被采纳后将赠送银币!", 256, 10) { sendFeedback(it) }
+            else tip(Tip.WARNING, "请先登录")
+        }
+
         updateInfo()
+    }
+
+    override fun quit() {
+        bottomDialogCrashLog.release()
     }
 
     override fun back(): Boolean = true
@@ -167,6 +234,75 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
                 pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
             else tip(Tip.ERROR, result.msg)
+        }
+    }
+
+    @NewThread
+    private fun updateSignature(signature: String) {
+        lifecycleScope.launch {
+            val loading = RachelDialog.loading(pages.context)
+            val result = withContext(Dispatchers.IO) { API.UserAPI.updateSignature(Config.token, signature) }
+            loading.dismiss()
+            if (result.success) {
+                tip(Tip.SUCCESS, result.msg)
+                v.signature.text = signature
+                pages.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
+            }
+            else tip(Tip.ERROR, result.msg)
+        }
+    }
+
+    @NewThread
+    private fun updateWall(wall: String) {
+        lifecycleScope.launch {
+            val loading = RachelDialog.loading(pages.context)
+            val result = withContext(Dispatchers.IO) { API.UserAPI.updateWall(Config.token, wall) }
+            loading.dismiss()
+            if (result.success) {
+                tip(Tip.SUCCESS, result.msg)
+                val user = Config.user!!
+                Config.cache_key_wall_meta.update()
+                v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
+                pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
+            }
+            else tip(Tip.ERROR, result.msg)
+        }
+    }
+
+    @NewThread
+    private fun uploadPlaylist() {
+        lifecycleScope.launch {
+            val loading = RachelDialog.loading(pages.context)
+            val result = withContext(Dispatchers.IO) { API.UserAPI.uploadPlaylist(Config.token, Config.playlist) }
+            loading.dismiss()
+            tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
+        }
+    }
+
+    @NewThread
+    private fun downloadPlaylist() {
+        lifecycleScope.launch {
+            val loading = RachelDialog.loading(pages.context)
+            val result = withContext(Dispatchers.IO) { API.UserAPI.downloadPlaylist(Config.token) }
+            loading.dismiss()
+            if (result.success) {
+                val playlist = result.data
+                pages.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
+                Config.playlist = playlist
+                pages.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST)
+                tip(Tip.SUCCESS, result.msg)
+            }
+            else tip(Tip.ERROR, result.msg)
+        }
+    }
+
+    @NewThread
+    private fun sendFeedback(content: String) {
+        lifecycleScope.launch {
+            val loading = RachelDialog.loading(pages.context)
+            val result = withContext(Dispatchers.IO) { API.UserAPI.sendFeedback(Config.token, content) }
+            loading.dismiss()
+            tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
         }
     }
 }

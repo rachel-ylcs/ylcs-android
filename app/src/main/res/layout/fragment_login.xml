@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="@id/title"
         app:layout_constraintBottom_toBottomOf="@id/title"
         android:layout_marginHorizontal="20dp"
-        android:src="@mipmap/icon" />
+        android:src="@drawable/icon" />
     <com.yinlin.rachel.view.AspectRatioImageView
         android:id="@+id/title"
         android:layout_width="0dp"

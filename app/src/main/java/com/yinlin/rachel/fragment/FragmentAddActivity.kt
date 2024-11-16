@@ -1,0 +1,98 @@
+package com.yinlin.rachel.fragment
+
+import android.annotation.SuppressLint
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import com.haibin.calendarview.Calendar
+import com.yinlin.rachel.Tip
+import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.data.activity.ShowActivity
+import com.yinlin.rachel.databinding.FragmentAddActivityBinding
+import com.yinlin.rachel.date
+import com.yinlin.rachel.model.RachelDialog
+import com.yinlin.rachel.model.RachelFragment
+import com.yinlin.rachel.model.RachelPages
+import com.yinlin.rachel.model.RachelPreview
+import com.yinlin.rachel.model.RachelTab
+import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tip
+import com.yinlin.rachel.view.ImageSelectView
+
+class FragmentAddActivity(pages: RachelPages, private val calendar: Calendar) : RachelFragment<FragmentAddActivityBinding>(pages) {
+    private val schemeAPPWebView = WebView(pages.context)
+
+    override fun bindingClass() = FragmentAddActivityBinding::class.java
+
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun init() {
+        v.pics.listener = object : ImageSelectView.Listener {
+            override fun onOverflow(maxNum: Int) {
+                tip(Tip.WARNING, "最多只能添加${maxNum}张图片")
+            }
+
+            override fun onImageClicked(position: Int, images: List<RachelPreview>) {
+                pages.navigate(FragmentImagePreview(pages, images, position))
+            }
+        }
+
+        v.fetchShowstart.rachelClick {
+            val showstart = v.showstart.text
+            if (showstart.isEmpty()) tip(Tip.WARNING, "还没有输入秀动ID")
+            else if (showstart.startsWith("mlink")) tip(Tip.WARNING, "已获取到秀动链接")
+            else schemeAPPWebView.loadUrl("https://wap.showstart.com/pages/activity/detail/detail?activityId=${showstart}")
+        }
+
+        schemeAPPWebView.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+        }
+
+        schemeAPPWebView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                if (view.progress == 100) {
+                    if (url.contains("showstart")) {
+                        val script = "document.getElementById('openApp').click();"
+                        view.evaluateJavascript(script, null)
+                    }
+                }
+            }
+
+            override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+                super.onReceivedError(view, request, error)
+                if (request.url.scheme == "mlink") {
+                    v.showstart.text = request.url.toString()
+                    tip(Tip.SUCCESS, "提取秀动链接成功")
+                }
+            }
+        }
+
+        v.ok.rachelClick {
+            val title = v.title.text
+            val content = v.content.text
+            if (title.isEmpty() || content.isEmpty()) tip(Tip.WARNING, "活动名称或内容不能为空")
+            else {
+                pages.sendMessage(RachelTab.me, RachelMessage.ME_ADD_ACTIVITY, calendar,
+                    ShowActivity(calendar.date, title, content, v.pics.images,
+                        v.showstart.text.ifEmpty { null }, v.damai.text.ifEmpty { null },
+                        v.maoyan.text.ifEmpty { null })
+                )
+                pages.pop()
+            }
+        }
+    }
+
+    override fun quit() {
+        schemeAPPWebView.destroy()
+    }
+
+    override fun back(): Boolean {
+        if (v.title.text.isNotEmpty() || v.content.text.isNotEmpty() || v.pics.images.isNotEmpty()) {
+            RachelDialog.confirm(pages.context, "添加活动", "您确定要放弃已经填写的内容吗") { pages.pop() }
+            return false
+        }
+        return true
+    }
+}

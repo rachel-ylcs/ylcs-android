@@ -158,6 +158,12 @@
             android:textSize="@dimen/base"
             android:text="通用设置" />
         <com.yinlin.rachel.view.SettingsItem
+            android:id="@+id/crash_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="崩溃日志"
+            android:elevation="3dp" />
+        <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/check_update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

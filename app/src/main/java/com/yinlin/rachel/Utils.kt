@@ -96,7 +96,7 @@ fun File.readText() : String = read().toString(StandardCharsets.UTF_8)
 
 fun File.write(data: ByteArray) {
     try {
-        FileOutputStream(this).use { it.write(data) }
+        FileOutputStream(this, false).use { it.write(data) }
     }
     catch (ignored: Exception) { }
 }

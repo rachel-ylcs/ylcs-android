@@ -26,7 +26,8 @@ object RachelPopMenu {
             val context = parent.context
             val tv = TextView(context)
             val params = MarginLayoutParams(MarginLayoutParams.MATCH_PARENT, MarginLayoutParams.WRAP_CONTENT)
-            params.setMargins(5.toDP(context))
+            val margin = 5.toDP(context)
+            params.setMargins(margin * 2, margin, margin * 2, margin)
             tv.layoutParams = params
             val holder = ViewHolder(tv)
             tv.setOnClickListener {
@@ -59,6 +60,6 @@ object RachelPopMenu {
         popupWindow.animationStyle = android.R.style.Animation_Dialog
         val location = IntArray(2)
         view.getLocationOnScreen(location)
-        popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, location[0], location[1] + view.height + 5)
+        popupWindow.showAsDropDown(view)
     }
 }

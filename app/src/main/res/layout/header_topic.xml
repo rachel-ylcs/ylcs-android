@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RachelCard"
+    app:cardCornerRadius="0dp"
+    tools:context=".fragment.FragmentTopic" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <com.yinlin.rachel.view.AvatarView
+            android:id="@+id/avatar"
+            style="@style/RachelCircleImage"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/name"
+            app:layout_constraintBottom_toBottomOf="@id/time" />
+        <TextView
+            android:id="@+id/name"
+            style="@style/RachelText.X0"
+            app:layout_constraintLeft_toRightOf="@id/avatar"
+            app:layout_constraintRight_toLeftOf="@id/user_label"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginHorizontal="10dp"
+            android:textColor="@color/steel_blue"
+            android:textStyle="bold" />
+        <com.yinlin.rachel.view.UserLabelView
+            android:id="@+id/user_label"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintDimensionRatio="21:8"
+            app:layout_constraintRight_toLeftOf="@id/more"
+            app:layout_constraintTop_toTopOf="@id/name"
+            app:layout_constraintBottom_toBottomOf="@id/time" />
+        <ImageView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/svg_more_gray" />
+        <TextView
+            android:id="@+id/time"
+            style="@style/RachelText.X0.Overflow"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintLeft_toLeftOf="@id/name"
+            app:layout_constraintRight_toRightOf="@id/name"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/xs" />
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_avatar_time_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="time, more" />
+        <TextView
+            android:id="@+id/title"
+            style="@style/RachelText.MultiLine"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier_avatar_time_more"
+            android:layout_marginVertical="5dp"
+            android:textSize="@dimen/base"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/content"
+            style="@style/RachelText.MultiLine"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            android:layout_marginVertical="5dp" />
+        <com.yinlin.rachel.view.NineGridView
+            android:id="@+id/pics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="5dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

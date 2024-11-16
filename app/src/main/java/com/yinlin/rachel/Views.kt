@@ -7,10 +7,13 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -78,6 +81,10 @@ fun Activity.tip(type: Tip, text: String) {
     view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.getColor(color))
     layout.setPadding(0, 0, 0, 0)
     layout.backgroundColor = 0
+    layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
+        setMargins(20.toDP(this@tip), 0, 20.toDP(this@tip), 100.toDP(this@tip))
+        gravity = Gravity.BOTTOM
+    }
     layout.addView(view)
     bar.show()
 }

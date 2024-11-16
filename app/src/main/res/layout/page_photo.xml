@@ -15,9 +15,8 @@
         android:id="@+id/state"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:stfInAnimation="@anim/ps_anim_fade_in"
-        app:stfOutAnimation="@anim/ps_anim_fade_out" >
+        app:stfInAnimation="@anim/anim_fade_in"
+        app:stfOutAnimation="@anim/anim_fade_out" >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

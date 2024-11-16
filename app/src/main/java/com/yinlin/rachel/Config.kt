@@ -72,6 +72,7 @@ object Config {
         get() = user_meta.get()
         set(value) { user_meta.set(value) }
     val isLogin: Boolean get() = !token_meta.isDefault() && user != null
+    val loginUser: User? get() = if (!token_meta.isDefault()) user else null
 
     // 歌单
     private val playlist_meta = JsonMeta<PlaylistMap>("playlist", "{}",

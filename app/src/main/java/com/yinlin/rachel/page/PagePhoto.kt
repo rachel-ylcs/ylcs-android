@@ -10,9 +10,11 @@ import com.yinlin.rachel.data.res.ResFolder
 import com.yinlin.rachel.databinding.ItemPhotoBinding
 import com.yinlin.rachel.databinding.PagePhotoBinding
 import com.yinlin.rachel.fragment.FragmentMsg
+import com.yinlin.rachel.fragment.FragmentPhotoPreview
 import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
@@ -41,8 +43,8 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
         override fun onItemClicked(v: ItemPhotoBinding, item: ResFile, position: Int) {
             if (item is ResFolder) page.v.tab.addItem(item.name)
             else {
-                // TODO:
-                // if (item.thumbUrl != null) pages.navigate(FragmentResPreview(pages, RachelPreview(item.thumbUrl!!, item.sourceUrl!!)))
+                val pages = page.fragment.pages
+                if (item.thumbUrl != null) pages.navigate(FragmentPhotoPreview(pages, RachelPreview(item.thumbUrl!!, item.sourceUrl!!)))
             }
         }
     }

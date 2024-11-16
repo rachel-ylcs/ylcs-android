@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/RachelCard"
     android:layout_width="wrap_content"
-    app:strokeWidth="1dp"
-    app:cardCornerRadius="0dp"
-    app:contentPadding="0dp"
-    tools:viewBindingIgnore="true" >
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="10dp"
+    android:paddingTop="2dp" >
+    <com.google.android.material.card.MaterialCardView
+        style="@style/RachelCard"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="5dp" />
-</com.google.android.material.card.MaterialCardView>
+        app:strokeWidth="1dp"
+        app:cardCornerRadius="0dp"
+        app:contentPadding="0dp"
+        tools:viewBindingIgnore="true" >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp" />
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

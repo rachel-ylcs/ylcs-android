@@ -28,7 +28,6 @@
                 android:src="@color/dark"
                 app:Ratio="1.777778" />
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/profile_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -68,8 +67,7 @@
                     android:layout_marginHorizontal="10dp" />
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier_name_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/Barrier"
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="avatar, name, label" />
                 <TextView
@@ -150,7 +148,6 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/account_container"
                 style="@style/RachelCard"
                 android:layout_marginBottom="10dp"
                 app:cardCornerRadius="0dp"
@@ -208,7 +205,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/calendar_container"
                 style="@style/RachelCard"
                 android:minHeight="300dp"
                 android:layout_marginBottom="10dp"

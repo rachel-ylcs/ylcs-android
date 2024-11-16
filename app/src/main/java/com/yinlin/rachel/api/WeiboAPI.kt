@@ -2,7 +2,6 @@ package com.yinlin.rachel.api
 
 import com.google.gson.JsonObject
 import com.yinlin.rachel.Net
-import com.yinlin.rachel.asIntOrNull
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboComment
 import com.yinlin.rachel.data.weibo.WeiboCommentList
@@ -18,8 +17,6 @@ import java.util.Locale
 
 
 object WeiboAPI {
-    const val BASEURL = "https://m.weibo.cn"
-
     fun extractContainerId(uid: String): Array<String>? = try {
         val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
         val json = Net.get(url).asJsonObject
@@ -164,7 +161,8 @@ object WeiboAPI {
                 val comment = extractComment(card)
                 // 带图片
                 if (card.has("pic")) {
-                    comment.pic = card.getAsJsonObject("pic").getAsJsonObject("large")["url"].asString
+                    val pic = card.getAsJsonObject("pic")
+                    comment.pic = RachelPreview(pic["url"].asString, pic.getAsJsonObject("large")["url"].asString)
                 }
                 // 楼中楼
                 val comments = card["comments"]

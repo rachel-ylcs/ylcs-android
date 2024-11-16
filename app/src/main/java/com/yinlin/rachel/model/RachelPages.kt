@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.fragment.FragmentProfile
 import com.yinlin.rachel.view.BottomTabView
 import com.yinlin.rachel.visible
 import kotlin.reflect.KClass
@@ -97,23 +98,29 @@ class RachelPages(
         if (fragmentCount > 0) {
             if (fragmentCount > 1) {
                 val fragment = fragmentStack[fragmentCount - 2]
-                if (cls.isInstance(fragment)) fragment.message(msg, *args)
+                if (cls.isInstance(fragment)) {
+                    if (fragment.isAttached) fragment.message(msg, *args)
+                }
             }
             pop()
         }
     }
 
-    fun sendMessage(item: RachelTab, msg: RachelMessage, vararg args: Any?) = fragments[item.index]?.message(msg, *args)
+    fun sendMessage(item: RachelTab, msg: RachelMessage, vararg args: Any?) {
+        fragments[item.index]?.let { if (it.isAttached) it.message(msg, *args) }
+    }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> sendMessageForResult(item: RachelTab, msg: RachelMessage, vararg args: Any?): T? = fragments[item.index]?.messageForResult(msg, *args) as T?
+    fun <T> sendMessageForResult(item: RachelTab, msg: RachelMessage, vararg args: Any?): T? {
+        return fragments[item.index]?.let { if (it.isAttached) it.messageForResult(msg, *args) as T? else null }
+    }
 
     fun <T : RachelFragment<*>> sendBottomMessage(cls: KClass<T>, msg: RachelMessage, vararg args: Any?) {
         val fragmentCount = fragmentStack.size
         if (fragmentCount > 0) {
             if (fragmentCount > 1) {
                 val fragment = fragmentStack[fragmentCount - 2]
-                if (cls.isInstance(fragment)) fragment.message(msg, *args)
+                if (cls.isInstance(fragment) && fragment.isAttached) fragment.message(msg, *args)
             }
         }
     }
@@ -124,7 +131,9 @@ class RachelPages(
         if (fragmentCount > 0) {
             if (fragmentCount > 1) {
                 val fragment = fragmentStack[fragmentCount - 2]
-                if (cls.isInstance(fragment)) return fragment.messageForResult(msg, *args) as R?
+                if (cls.isInstance(fragment)) {
+                    if (fragment.isAttached) return fragment.messageForResult(msg, *args) as R?
+                }
             }
         }
         return null
@@ -138,11 +147,11 @@ class RachelPages(
     }
 
     private fun processSchemeRachel(uri: Uri, args: HashMap<String, String>) {
-//        when (uri.path) {
-//            "/openProfile" -> {
-//                args["uid"]?.toIntOrNull()?.apply { navigate(FragmentProfile(this@RachelPages, this)) }
-//            }
-//        }
+        when (uri.path) {
+            "/openProfile" -> {
+                args["uid"]?.toIntOrNull()?.apply { navigate(FragmentProfile(this@RachelPages, this)) }
+            }
+        }
     }
 
     private fun processActionView(uri: Uri) {

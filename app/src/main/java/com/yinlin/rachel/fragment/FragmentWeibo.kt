@@ -78,7 +78,7 @@ class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragme
             v.text.setOnClickATagListener { _, _, _ -> true }
             v.pic.rachelClick {
                 val item = this[holder.positionEx]
-                item.pic?.let {  pages.navigate(FragmentImagePreview(pages, RachelPreview(it))) }
+                item.pic?.let {  pages.navigate(FragmentImagePreview(pages, it)) }
             }
             v.list.apply {
                 layoutManager = LinearLayoutManager(pages.context)
@@ -94,7 +94,7 @@ class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragme
             v.time.text = item.time
             v.location.text = item.user.location
             v.text.setHtml(item.text, HtmlHttpImageGetter(v.text))
-            item.pic?.let { v.pic.load(rilNet, it) }
+            item.pic?.let { v.pic.load(rilNet, it.mImageUrl) }
             v.pic.visible = item.pic != null
             item.subComments?.let {
                 val subAdapter = v.list.adapter as SubCommentAdapter

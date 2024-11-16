@@ -43,6 +43,8 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     val isEmpty: Boolean get() = tabCount == 0
 
+    val current: Int get() = selectedTabPosition
+
     fun addTabEx(title: String) {
         val view = TextView(context)
         view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
