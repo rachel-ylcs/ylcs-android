@@ -11,8 +11,8 @@ android {
         applicationId = "com.yinlin.rachel"
         minSdk = 29
         targetSdk = 34
-        versionCode = 215
-        versionName = "2.1.5"
+        versionCode = 216
+        versionName = "2.1.6"
 
         ndk {
             abiFilters += arrayOf("arm64-v8a")
@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.exifinterface:exifinterface:1.3.6")
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
+    implementation("androidx.media3:media3-session:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 

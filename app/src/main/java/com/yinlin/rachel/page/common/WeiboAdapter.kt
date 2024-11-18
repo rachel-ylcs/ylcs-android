@@ -1,6 +1,7 @@
 package com.yinlin.rachel.page.common
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.databinding.ItemWeiboBinding
@@ -11,23 +12,22 @@ import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.model.RachelOnClickListener
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.rachelClick
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
-class WeiboAdapter(private val pages: RachelPages) : RachelAdapter<ItemWeiboBinding, Weibo>() {
-    private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
+class WeiboAdapter(private val main: MainActivity) : RachelAdapter<ItemWeiboBinding, Weibo>() {
+    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
     override fun bindingClass() = ItemWeiboBinding::class.java
 
     override fun init(holder: RachelViewHolder<ItemWeiboBinding>, v: ItemWeiboBinding) {
         v.avatar.rachelClick {
-            pages.navigate(FragmentWeiboUser(pages, this[holder.bindingAdapterPosition].user.userId))
+            main.navigate(FragmentWeiboUser(main, this[holder.bindingAdapterPosition].user.userId))
         }
         v.text.setOnClickATagListener { _, _, _ -> true }
-        v.pics.listener = { position, _ -> pages.navigate(FragmentImagePreview(pages, v.pics.images, position)) }
+        v.pics.listener = { position, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, position)) }
         val detailsListener = RachelOnClickListener {
-            pages.navigate(FragmentWeibo(pages, this[holder.bindingAdapterPosition]))
+            main.navigate(FragmentWeibo(main, this[holder.bindingAdapterPosition]))
         }
         v.weiboCard.rachelClick(detailsListener)
     }

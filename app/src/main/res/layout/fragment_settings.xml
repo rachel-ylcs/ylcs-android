@@ -131,6 +131,18 @@
         <com.yinlin.rachel.view.SettingsItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="禁止音频焦点"
+            android:elevation="3dp"
+            app:HasArrow="false" >
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_music_focus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+        </com.yinlin.rachel.view.SettingsItem>
+        <com.yinlin.rachel.view.SettingsItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="歌单云备份"
             android:elevation="3dp"
             app:HasArrow="false" >

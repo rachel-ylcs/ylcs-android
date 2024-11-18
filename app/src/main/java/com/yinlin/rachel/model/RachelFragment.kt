@@ -6,14 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.tip
 
-abstract class RachelFragment<Binding : ViewBinding>(val pages: RachelPages) : Fragment() {
+abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : Fragment() {
     private var _binding: Binding? = null
     val v: Binding get() = _binding!!
 
+    private var isFirstStart = true
+
     protected abstract fun bindingClass(): Class<Binding>
     protected open fun init() { }
+    protected open fun start() { }
     protected open fun update() { }
     protected open fun hidden() { }
     protected open fun quit() { }
@@ -34,35 +40,46 @@ abstract class RachelFragment<Binding : ViewBinding>(val pages: RachelPages) : F
         init()
     }
 
-    override fun onStart() {
-        super.onStart()
-        pages.checkBottomLayoutStatus()
-        if (pages.isForeground(this)) update()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (pages.isForeground(this)) hidden()
-    }
-
     final override fun onHiddenChanged(isHidden: Boolean) {
         super.onHiddenChanged(isHidden)
         if (isHidden) hidden()
-        else update()
+        else {
+            if (isFirstStart) {
+                isFirstStart = false
+                start()
+            }
+            else update()
+        }
     }
 
     final override fun onDestroyView() {
         quit()
         super.onDestroyView()
+        _binding = null
+        isFirstStart = true
     }
 
-    final override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
+    final override fun onStart() {
+        super.onStart()
+        main.updateTabStatus()
+    }
+
+    fun onActivityStart() {
+        if (isFirstStart) {
+            isFirstStart = false
+            start()
+        }
+        else update()
+    }
+
+    fun onActivityStop() {
+        hidden()
     }
 
     val isAttached: Boolean get() = _binding != null
-    fun post(r: Runnable) = pages.handler.post(r)
-    fun postDelay(delay: Long, r: Runnable) = pages.handler.postDelayed(r, delay)
-    fun removePost(r: Runnable) = pages.handler.removeCallbacks(r)
+    fun post(r: Runnable) = main.handler.post(r)
+    fun postDelay(delay: Long, r: Runnable) = main.handler.postDelayed(r, delay)
+    fun removePost(r: Runnable) = main.handler.removeCallbacks(r)
+
+    fun tip(type: Tip, text: String, anchorView: View? = null) = main.tip(type, text, anchorView)
 }

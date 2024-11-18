@@ -16,17 +16,17 @@ import com.yinlin.rachel.toDP
 
 class BottomDialogUserCard(fragment: FragmentMe) : RachelBottomDialog<BottomDialogUserCardBinding, FragmentMe>(
     fragment, 0.9f, BottomDialogUserCardBinding::class.java) {
-    private val pages = fragment.pages
+    private val main = fragment.main
 
-    private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
+    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
     fun update(user: User): BottomDialogUserCard {
         v.id.text = user.name
         v.avatar.load(rilNet, user.avatarPath, Config.cache_key_avatar)
         v.qrcode.setImageBitmap(CodeUtils.createQRCode(
             "rachel://yinlin/openProfile?uid=${user.uid}",
-            200.toDP(pages.context),
-            AppCompatResources.getDrawable(pages.context, R.mipmap.icon)!!.toBitmap())
+            200.toDP(main),
+            AppCompatResources.getDrawable(main, R.mipmap.icon)!!.toBitmap())
         )
         return this
     }

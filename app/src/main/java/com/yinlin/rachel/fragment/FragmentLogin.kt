@@ -2,6 +2,7 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
@@ -11,7 +12,6 @@ import com.yinlin.rachel.databinding.FragmentLoginBinding
 import com.yinlin.rachel.md5
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(pages) {
+class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(main) {
     override fun bindingClass() = FragmentLoginBinding::class.java
 
     override fun init() {
@@ -72,7 +72,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         val pwd = v.loginPwd.text
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
             lifecycleScope.launch {
-                val loading = RachelDialog.loading(pages.context)
+                val loading = main.loading
                 val result1 = withContext(Dispatchers.IO) { API.UserAPI.login(name, pwd.md5) }
                 if (result1.success) {
                     val token = result1.data.token
@@ -81,9 +81,9 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
                     if (result2.success) {
                         val user = result2.data
                         Config.user = user
-                        pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
+                        main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
                     }
-                    pages.pop()
+                    main.pop()
                 }
                 else tip(Tip.ERROR, result1.msg)
                 loading.dismiss()
@@ -101,7 +101,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         if (User.Companion.Constraint.name(name, inviterName) && User.Companion.Constraint.password(pwd, confirmPwd)) {
             if (pwd == confirmPwd) {
                 lifecycleScope.launch {
-                    val loading = RachelDialog.loading(pages.context)
+                    val loading = main.loading
                     val result = withContext(Dispatchers.IO) { API.UserAPI.register(name, pwd.md5, inviterName) }
                     loading.dismiss()
                     if (result.success) {
@@ -122,7 +122,7 @@ class FragmentLogin(pages: RachelPages) : RachelFragment<FragmentLoginBinding>(p
         val pwd = v.forgotPasswordPwd.text
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
             lifecycleScope.launch {
-                val loading = RachelDialog.loading(pages.context)
+                val loading = main.loading
                 val result = withContext(Dispatchers.IO) { API.UserAPI.forgotPassword(name, pwd.md5) }
                 loading.dismiss()
                 if (result.success) {

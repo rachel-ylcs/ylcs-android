@@ -2,11 +2,11 @@ package com.yinlin.rachel.fragment
 
 import android.annotation.SuppressLint
 import android.webkit.WebViewClient
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.databinding.FragmentWebpageBinding
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 
-class FragmentWebpage(pages: RachelPages, private val url: String) : RachelFragment<FragmentWebpageBinding>(pages) {
+class FragmentWebpage(main: MainActivity, private val url: String) : RachelFragment<FragmentWebpageBinding>(main) {
     override fun bindingClass() = FragmentWebpageBinding::class.java
 
     @SuppressLint("SetJavaScriptEnabled")

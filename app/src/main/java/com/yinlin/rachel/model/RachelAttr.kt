@@ -3,6 +3,7 @@ package com.yinlin.rachel.model
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import androidx.annotation.AnyRes
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -52,6 +53,8 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
         if (resId != -1) ref(resId)
         else color(attr?.getColor(id, 0) ?: 0)
     }
+
+    fun ref(@StyleableRes id: Int, @AnyRes default: Int) = attr?.getResourceId(id, default) ?: default
 
     override fun close() {
         attr?.recycle()

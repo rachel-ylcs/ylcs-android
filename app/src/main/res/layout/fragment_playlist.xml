@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/micro_gray"
+    tools:context=".fragment.FragmentPlaylist" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center" >
+        <TextView
+            style="@style/RachelText"
+            android:text="歌单"
+            android:textColor="@color/steel_blue"
+            android:textSize="@dimen/xl"
+            android:textStyle="bold" />
+        <com.yinlin.rachel.view.ButtonGroup
+            android:id="@+id/group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center|end"
+            android:layout_marginStart="10dp"
+            app:ButtonGroupIcon1="@drawable/svg_add_blue"
+            app:ButtonGroupIcon2="@drawable/svg_play_blue"
+            app:ButtonGroupIcon3="@drawable/svg_edit_blue"
+            app:ButtonGroupIcon4="@drawable/svg_delete_blue" />
+    </LinearLayout>
+    <com.yinlin.rachel.view.TabView
+        android:id="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMinWidth="0dp" />
+    <com.yinlin.rachel.view.LineView
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+    <com.gturedi.views.StatefulLayout
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:stfInAnimation="@anim/anim_fade_in"
+        app:stfOutAnimation="@anim/anim_fade_out" >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.gturedi.views.StatefulLayout>
+</LinearLayout>

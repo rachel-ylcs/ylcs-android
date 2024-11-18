@@ -1,8 +1,5 @@
 package com.yinlin.rachel
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
@@ -166,21 +163,3 @@ fun <K, V> MutableMap<K, V>.clearAddAll(element: Map<out K, V>) {
     clear()
     putAll(element)
 }
-
-/*---------    Third-Party Intent    --------*/
-
-fun gotoAPP(context: Context, name: String, uri: String) {
-    try {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uri)))
-    }
-    catch (ignored: Exception) { }
-}
-
-fun gotoQQ(context: Context, id: String) = gotoAPP(context, "QQ",
-    "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${id}&card_type=person&source=qrcode")
-
-fun gotoQQGroup(context: Context, id: String) = gotoAPP(context, "QQ",
-    "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${id}&card_type=group&source=qrcode")
-
-fun gotoTaobaoShop(context: Context, shopId: String) = gotoAPP(context, "淘宝",
-    "taobao://shop.m.taobao.com/shop/shop_index.htm?shop_id=${shopId}")

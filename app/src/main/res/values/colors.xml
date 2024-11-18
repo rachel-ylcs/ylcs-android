@@ -69,6 +69,7 @@
     <color name="indigo">#4B0082</color>
     <color name="steel_blue">#4682B4</color>
     <color name="steel_blue_pressed">#3374A9</color>
+    <color name="steel_blue_alpha">#804682B4</color>
     <color name="turquoise">#40E0D0</color>
     <color name="sea_green">#2E8B57</color>
     <color name="aqua">#00FFFF</color>

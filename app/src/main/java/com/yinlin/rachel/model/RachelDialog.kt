@@ -3,9 +3,7 @@ package com.yinlin.rachel.model
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup

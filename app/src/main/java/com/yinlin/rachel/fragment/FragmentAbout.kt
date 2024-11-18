@@ -1,10 +1,10 @@
 package com.yinlin.rachel.fragment
 
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.databinding.FragmentAboutBinding
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 
-class FragmentAbout(pages: RachelPages) : RachelFragment<FragmentAboutBinding>(pages) {
+class FragmentAbout(main: MainActivity) : RachelFragment<FragmentAboutBinding>(main) {
     override fun bindingClass() = FragmentAboutBinding::class.java
 
     override fun back() = true

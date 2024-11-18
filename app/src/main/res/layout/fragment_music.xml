@@ -1,6 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".fragment.FragmentMusic" >
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:clipChildren="false" >
+        <com.yinlin.rachel.view.ButtonGroup
+            android:id="@+id/header_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/dark"
+            android:color="@color/white"
+            android:padding="5dp"
+            app:ButtonGroupText="曲库,歌单,歌词,工坊"
+            app:ButtonGroupIcon1="@drawable/svg_tool_library"
+            app:ButtonGroupIcon2="@drawable/svg_tool_playlist"
+            app:ButtonGroupIcon3="@drawable/svg_tool_lyrics_engine"
+            app:ButtonGroupIcon4="@drawable/svg_tool_workshop" />
+        <com.yinlin.rachel.view.LyricsView
+            android:id="@+id/lyrics"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginVertical="10dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_round_dark"
+            android:clipToPadding="false" >
+            <com.yinlin.rachel.view.CDView
+                android:id="@+id/record"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/title"
+                app:layout_constraintBottom_toBottomOf="@id/singer"
+                android:layout_marginHorizontal="15dp" />
+            <TextView
+                android:id="@+id/title"
+                style="@style/RachelText.X0"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/record"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/steel_blue"
+                android:textSize="@dimen/lg"
+                android:textStyle="bold"
+                android:text="无音源" />
+            <TextView
+                android:id="@+id/singer"
+                style="@style/RachelText.X0"
+                app:layout_constraintLeft_toLeftOf="@id/title"
+                app:layout_constraintRight_toRightOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/light_gray"
+                android:text="未知歌手" />
+            <com.yinlin.rachel.view.HotpotProgressView
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/singer"
+                android:layout_marginTop="5dp"
+                android:layout_marginHorizontal="10dp" />
+            <com.yinlin.rachel.view.ButtonGroup
+                android:id="@+id/control_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                app:ButtonGroupItemGravity="AVERAGE"
+                app:ButtonGroupIcon1="@drawable/svg_music_order"
+                app:ButtonGroupIcon2="@drawable/svg_music_previous"
+                app:ButtonGroupIcon3="@drawable/svg_music_pause"
+                app:ButtonGroupIcon4="@drawable/svg_music_next"
+                app:ButtonGroupIcon5="@drawable/svg_music_list" />
+            <com.yinlin.rachel.view.ButtonGroup
+                android:id="@+id/tool_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/control_container"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="horizontal"
+                android:layout_marginVertical="10dp"
+                app:ButtonGroupItemGravity="AVERAGE"
+                app:ButtonGroupIcon1="@drawable/svg_an_off"
+                app:ButtonGroupIcon2="@drawable/svg_mv_off"
+                app:ButtonGroupIcon3="@drawable/svg_lyrics"
+                app:ButtonGroupIcon4="@drawable/svg_comment"
+                app:ButtonGroupIcon5="@drawable/svg_share"
+                app:ButtonGroupIcon6="@drawable/svg_info" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</FrameLayout>

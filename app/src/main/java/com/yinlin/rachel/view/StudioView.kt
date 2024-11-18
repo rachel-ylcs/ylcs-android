@@ -6,8 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.yinlin.rachel.R
-import com.yinlin.rachel.gotoQQ
-import com.yinlin.rachel.gotoQQGroup
+import com.yinlin.rachel.model.RachelAppIntent
 
 class StudioView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : AppCompatImageView(context, attrs, defStyleAttr) {
@@ -62,8 +61,8 @@ class StudioView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val y = (event.y * ratio).toInt()
             for (item in items) {
                 if (isActive(x, y, item)) {
-                    if (item.qq) gotoQQ(context, item.id)
-                    else gotoQQGroup(context, item.id)
+                    val intent = if (item.qq) RachelAppIntent.QQ(item.id) else RachelAppIntent.QQGroup(item.id)
+                    intent.start(context)
                     break
                 }
             }

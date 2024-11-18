@@ -42,16 +42,42 @@
     <declare-styleable name="BreadCrumbView" >
         <attr name="Home" />
     </declare-styleable>
+    <declare-styleable name="ButtonGroup" >
+        <attr name="ButtonGroupTextPosition" format="enum" >
+            <enum name="BOTTOM" value="1" />
+            <enum name="TOP" value="2" />
+        </attr>
+        <attr name="ButtonGroupItemGravity" format="enum" >
+            <enum name="WRAP" value="1" />
+            <enum name="AVERAGE" value="2" />
+        </attr>
+        <attr name="ButtonGroupItemGap" format="dimension" />
+        <attr name="android:textSize" />
+        <attr name="android:color" />
+        <attr name="Bold" />
+        <attr name="Gap" />
+        <attr name="ButtonGroupIcon1" format="reference" />
+        <attr name="ButtonGroupIcon2" format="reference" />
+        <attr name="ButtonGroupIcon3" format="reference" />
+        <attr name="ButtonGroupIcon4" format="reference" />
+        <attr name="ButtonGroupIcon5" format="reference" />
+        <attr name="ButtonGroupIcon6" format="reference" />
+        <attr name="ButtonGroupIcon7" format="reference" />
+        <attr name="ButtonGroupIcon8" format="reference" />
+        <attr name="ButtonGroupIcon9" format="reference" />
+        <attr name="ButtonGroupIcon10" format="reference" />
+        <attr name="ButtonGroupText" format="string" />
+    </declare-styleable>
     <declare-styleable name="DiagonalLabelView" >
         <attr name="android:text" />
         <attr name="android:color" />
         <attr name="BackgroundColor" />
         <attr name="Bold" />
         <attr name="DiagonalOrientation" format="enum" >
-            <enum name="LEFT_TOP" value="1"/>
-            <enum name="RIGHT_TOP" value="2"/>
-            <enum name="LEFT_BOTTOM" value="3"/>
-            <enum name="RIGHT_BOTTOM" value="4"/>
+            <enum name="LEFT_TOP" value="1" />
+            <enum name="RIGHT_TOP" value="2" />
+            <enum name="LEFT_BOTTOM" value="3" />
+            <enum name="RIGHT_BOTTOM" value="4" />
         </attr>
     </declare-styleable>
     <declare-styleable name="ExpandLayout" >

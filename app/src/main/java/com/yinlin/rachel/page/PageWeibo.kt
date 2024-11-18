@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, FragmentMsg>(fragment) {
-    private val adapter = WeiboAdapter(fragment.pages)
+    private val adapter = WeiboAdapter(fragment.main)
 
     override fun bindingClass(): Class<PageWeiboBinding> = PageWeiboBinding::class.java
 
@@ -27,7 +27,7 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
 
         // 列表
         v.list.apply {
-            layoutManager = LinearLayoutManager(fragment.pages.context)
+            layoutManager = LinearLayoutManager(fragment.main)
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 16)
             setItemViewCacheSize(4)

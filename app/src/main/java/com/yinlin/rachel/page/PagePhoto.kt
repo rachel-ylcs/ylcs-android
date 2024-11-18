@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 
 class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, FragmentMsg>(fragment) {
     class Adapter(private val page: PagePhoto, var currentRes: ResFolder) : RachelAdapter<ItemPhotoBinding, ResFile>() {
-        private val rilNet = RachelImageLoader(page.fragment.pages.context, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
+        private val rilNet = RachelImageLoader(page.fragment.main, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
 
         override fun bindingClass() = ItemPhotoBinding::class.java
 
@@ -43,8 +43,8 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
         override fun onItemClicked(v: ItemPhotoBinding, item: ResFile, position: Int) {
             if (item is ResFolder) page.v.tab.addItem(item.name)
             else {
-                val pages = page.fragment.pages
-                if (item.thumbUrl != null) pages.navigate(FragmentPhotoPreview(pages, RachelPreview(item.thumbUrl!!, item.sourceUrl!!)))
+                val main = page.fragment.main
+                if (item.thumbUrl != null) main.navigate(FragmentPhotoPreview(main, RachelPreview(item.thumbUrl!!, item.sourceUrl!!)))
             }
         }
     }

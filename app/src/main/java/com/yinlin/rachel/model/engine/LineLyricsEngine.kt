@@ -27,18 +27,22 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         private val main = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = context.getColor(R.color.music_lyrics_main)
             textAlign = Paint.Align.CENTER
+            typeface = context.resources.getFont(R.font.xwwk)
+            isFakeBoldText = true
             setShadowLayer(2f, 2f, 2f, context.getColor(R.color.dark))
         }
 
         private val second = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = context.getColor(R.color.music_lyrics_second)
             textAlign = Paint.Align.CENTER
+            typeface = context.resources.getFont(R.font.xwwk)
             setShadowLayer(1f, 1f, 1f, context.getColor(R.color.dark))
         }
 
         private val fade = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = context.getColor(R.color.music_lyrics_fade)
             textAlign = Paint.Align.CENTER
+            typeface = context.resources.getFont(R.font.xwwk)
         }
 
         fun adjustPaint(maxWidth: Float, maxHeight: Float, maxLengthText: String) {

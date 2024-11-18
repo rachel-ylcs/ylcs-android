@@ -3,13 +3,13 @@ package com.yinlin.rachel.fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.topic.TopicPreview
-import com.yinlin.rachel.data.user.UserProfile
 import com.yinlin.rachel.databinding.FragmentProfileBinding
 import com.yinlin.rachel.databinding.HeaderProfileBinding
 import com.yinlin.rachel.databinding.ItemTopicBinding
@@ -18,7 +18,6 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.tip
 import com.yinlin.rachel.visible
@@ -26,10 +25,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentProfile(pages: RachelPages, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(pages) {
+class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
     class Adapter(fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
-        private val pages = fragment.pages
-        private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
+        private val main = fragment.main
+        private val rilNet = RachelImageLoader(main, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
 
         override fun bindingHeaderClass() = HeaderProfileBinding::class.java
         override fun bindingItemClass() = ItemTopicBinding::class.java
@@ -44,7 +43,7 @@ class FragmentProfile(pages: RachelPages, private val profileUid: Int) : RachelF
         }
 
         override fun onItemClicked(v: ItemTopicBinding, item: TopicPreview, position: Int) {
-            pages.navigate(FragmentTopic(pages, item.tid))
+            main.navigate(FragmentTopic(main, item.tid))
         }
     }
 
@@ -100,7 +99,7 @@ class FragmentProfile(pages: RachelPages, private val profileUid: Int) : RachelF
     @NewThread
     private fun requestUserProfile() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.getProfile(profileUid) }
             loading.dismiss()
             if (result.success) {
@@ -111,14 +110,14 @@ class FragmentProfile(pages: RachelPages, private val profileUid: Int) : RachelF
                     signature.text = profile.signature
                     level.text = profile.level.toString()
                     coin.text = profile.coin.toString()
-                    avatar.load(pages.ril, profile.avatarPath)
-                    wall.load(pages.ril, profile.wallPath)
+                    avatar.load(main.ril, profile.avatarPath)
+                    wall.load(main.ril, profile.wallPath)
                 }
                 adapter.setSource(profile.topics)
                 adapter.notifySourceEx()
             }
             else {
-                pages.pop()
+                main.pop()
                 tip(Tip.ERROR, "用户不存在")
             }
         }

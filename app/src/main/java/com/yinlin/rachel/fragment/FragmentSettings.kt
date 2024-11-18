@@ -3,13 +3,13 @@ package com.yinlin.rachel.fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.data.music.PlaylistMap
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.data.weibo.names
@@ -19,7 +19,6 @@ import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.pureColor
@@ -29,8 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBinding>(pages) {
-    private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
+class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBinding>(main) {
+    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
     private val bottomDialogCrashLog = BottomDialogCrashLog(this)
 
@@ -41,7 +40,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         // 更换头像
         v.avatar.rachelClick {
-            if (Config.isLogin) RachelPictureSelector.single(pages.context, 256, 256, true) { updateAvatar(it) }
+            if (Config.isLogin) RachelPictureSelector.single(main, 256, 256, true) { updateAvatar(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
@@ -50,7 +49,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
             val user = Config.loginUser
             if (user != null) {
                 if (user.coin < User.RENAME_COIN_COST) tip(Tip.WARNING, "你的银币不够哦~")
-                else RachelDialog.input(pages.context, "请输入新ID(改名卡: 5银币)", User.Companion.Constraint.MAX_USER_NAME_LENGTH) {
+                else RachelDialog.input(main, "请输入新ID(改名卡: 5银币)", User.Companion.Constraint.MAX_USER_NAME_LENGTH) {
                     if (User.Companion.Constraint.name(it)) updateName(it)
                     else tip(Tip.WARNING, "ID不合规则")
                 }
@@ -60,19 +59,19 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         // 更新个性签名
         v.signature.rachelClick {
-            if (Config.isLogin) RachelDialog.input(pages.context, "请输入个性签名", 64) { updateSignature(it) }
+            if (Config.isLogin) RachelDialog.input(main, "请输入个性签名", 64) { updateSignature(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
         // 更新背景墙
         v.wall.rachelClick {
-            if (Config.isLogin) RachelPictureSelector.single(pages.context, 910, 512, false) { updateWall(it) }
+            if (Config.isLogin) RachelPictureSelector.single(main, 910, 512, false) { updateWall(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
         // 退出登录
         v.logoff.rachelClick {
-            if (Config.token.isNotEmpty()) { RachelDialog.confirm(pages.context, content="是否退出登录") { logoff() } }
+            if (Config.token.isNotEmpty()) { RachelDialog.confirm(main, content="是否退出登录") { logoff() } }
             else tip(Tip.WARNING, "请先登录")
         }
 
@@ -82,7 +81,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         // 添加微博用户
         v.weibo.rachelClick {
-            RachelDialog.input(pages.context, "请输入微博用户的uid(非昵称)", 20) {
+            RachelDialog.input(main, "请输入微博用户的uid(非昵称)", 20) {
                 val weiboUserStorage: WeiboUserStorage? = Config.weibo_users[it]
                 if (weiboUserStorage != null) tip(Tip.WARNING, "${weiboUserStorage.name} 已存在")
                 else addWeiboUser(it)
@@ -91,7 +90,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         // 删除微博用户
         v.weiboList.listener = { index, text ->
-            RachelDialog.confirm(pages.context, content="是否删除此微博用户") {
+            RachelDialog.confirm(main, content="是否删除此微博用户") {
                 val weiboUsers = Config.weibo_users
                 weiboUsers.entries.removeIf { entry -> entry.value.name == text }
                 Config.weibo_users = weiboUsers
@@ -101,11 +100,14 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         /*    ----    听歌设置    ----    */
 
+        v.switchMusicFocus.isChecked = Config.music_focus
+        v.switchMusicFocus.setOnCheckedChangeListener { _, isChecked -> Config.music_focus = isChecked }
+
         // 歌单云备份
         v.buttonUploadPlaylist.rachelClick {
             val user = Config.loginUser
             if (user != null) {
-                if (user.hasPrivilegeBackup) RachelDialog.confirm(pages.context, content="是否将本地所有歌单覆盖云端") { uploadPlaylist() }
+                if (user.hasPrivilegeBackup) RachelDialog.confirm(main, content="是否将本地所有歌单覆盖云端") { uploadPlaylist() }
                 else tip(Tip.WARNING, "你没有权限")
             }
             else tip(Tip.WARNING, "请先登录")
@@ -115,7 +117,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
         v.buttonDownloadPlaylist.rachelClick {
             val user = Config.loginUser
             if (user != null) {
-                if (user.hasPrivilegeBackup) RachelDialog.confirm(pages.context, content="是否从云端覆盖所有本地歌单") { downloadPlaylist() }
+                if (user.hasPrivilegeBackup) RachelDialog.confirm(main, content="是否从云端覆盖所有本地歌单") { downloadPlaylist() }
                 else tip(Tip.WARNING, "你没有权限")
             }
             else tip(Tip.WARNING, "请先登录")
@@ -125,13 +127,13 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
 
         v.crashLog.rachelClick { bottomDialogCrashLog.update().show() }
 
-        v.version.text = pages.appVersionName(pages.appVersion)
-        v.checkUpdate.rachelClick { pages.navigate(FragmentUpdate(pages)) }
+        v.version.text = main.appVersionName(main.appVersion)
+        v.checkUpdate.rachelClick { main.navigate(FragmentUpdate(main)) }
 
-        v.about.rachelClick { pages.navigate(FragmentAbout(pages)) }
+        v.about.rachelClick { main.navigate(FragmentAbout(main)) }
 
         v.feedback.rachelClick {
-            if (Config.isLogin) RachelDialog.input(pages.context, "请给出您宝贵的建议! 被采纳后将赠送银币!", 256, 10) { sendFeedback(it) }
+            if (Config.isLogin) RachelDialog.input(main, "请给出您宝贵的建议! 被采纳后将赠送银币!", 256, 10) { sendFeedback(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
@@ -154,11 +156,11 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
             v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
         }
         else {
-            v.name.text = pages.getResString(R.string.default_name)
-            v.avatar.pureColor = pages.getResColor(R.color.micro_gray)
-            v.signature.text = pages.getResString(R.string.default_signature)
+            v.name.text = main.rs(R.string.default_name)
+            v.avatar.pureColor = main.rc(R.color.micro_gray)
+            v.signature.text = main.rs(R.string.default_signature)
             v.inviter.text = ""
-            v.wall.pureColor = pages.getResColor(R.color.micro_gray)
+            v.wall.pureColor = main.rc(R.color.micro_gray)
         }
         v.weiboList.setTags(Config.weibo_users.names)
     }
@@ -166,22 +168,22 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun logoff() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context, "退出登录中...")
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.logoff(Config.token) }
             loading.dismiss()
             when (result.code) {
                 API.Code.SUCCESS -> {
                     Config.token = ""
                     Config.user = null
-                    pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
-                    pages.pop()
+                    main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
+                    main.pop()
                 }
                 API.Code.UNAUTHORIZED -> {
                     tip(Tip.WARNING, result.msg)
                     Config.token = ""
                     Config.user = null
-                    pages.pop()
-                    pages.navigate(FragmentLogin(pages))
+                    main.pop()
+                    main.navigate(FragmentLogin(main))
                 }
                 else -> tip(Tip.ERROR, result.msg)
             }
@@ -191,7 +193,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun addWeiboUser(uid: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { WeiboAPI.extractContainerId(uid) }
             loading.dismiss()
             if (result != null) {
@@ -208,13 +210,13 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun updateName(name: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateName(Config.token, name) }
             loading.dismiss()
             if (result.success) {
                 tip(Tip.SUCCESS, result.msg)
                 v.name.text = name
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
+                main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
             }
             else tip(Tip.ERROR, result.msg)
         }
@@ -223,7 +225,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun updateAvatar(filename: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateAvatar(Config.token, filename) }
             loading.dismiss()
             if (result.success) {
@@ -231,7 +233,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
                 val user = Config.user!!
                 Config.cache_key_avatar_meta.update()
                 v.avatar.load(rilNet, user.avatarPath, Config.cache_key_avatar)
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
+                main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
             else tip(Tip.ERROR, result.msg)
         }
@@ -240,13 +242,13 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun updateSignature(signature: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateSignature(Config.token, signature) }
             loading.dismiss()
             if (result.success) {
                 tip(Tip.SUCCESS, result.msg)
                 v.signature.text = signature
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
+                main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
             }
             else tip(Tip.ERROR, result.msg)
         }
@@ -255,7 +257,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun updateWall(wall: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateWall(Config.token, wall) }
             loading.dismiss()
             if (result.success) {
@@ -263,7 +265,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
                 val user = Config.user!!
                 Config.cache_key_wall_meta.update()
                 v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
+                main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
             else tip(Tip.ERROR, result.msg)
         }
@@ -272,7 +274,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun uploadPlaylist() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.uploadPlaylist(Config.token, Config.playlist) }
             loading.dismiss()
             tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
@@ -282,14 +284,14 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun downloadPlaylist() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.downloadPlaylist(Config.token) }
             loading.dismiss()
             if (result.success) {
                 val playlist = result.data
-                pages.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
+                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 Config.playlist = playlist
-                pages.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST)
+                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST)
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)
@@ -299,7 +301,7 @@ class FragmentSettings(pages: RachelPages) : RachelFragment<FragmentSettingsBind
     @NewThread
     private fun sendFeedback(content: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.sendFeedback(Config.token, content) }
             loading.dismiss()
             tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)

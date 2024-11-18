@@ -2,6 +2,7 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.NewThread
@@ -11,7 +12,6 @@ import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentCreateTopicBinding
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
@@ -19,11 +19,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentCreateTopic(pages: RachelPages) : RachelFragment<FragmentCreateTopicBinding>(pages) {
+class FragmentCreateTopic(main: MainActivity) : RachelFragment<FragmentCreateTopicBinding>(main) {
     override fun bindingClass() = FragmentCreateTopicBinding::class.java
 
     override fun init() {
-        v.cancel.rachelClick { pages.pop() }
+        v.cancel.rachelClick { main.pop() }
 
         v.send.rachelClick {
             val user = Config.loginUser
@@ -45,13 +45,13 @@ class FragmentCreateTopic(pages: RachelPages) : RachelFragment<FragmentCreateTop
     @NewThread
     private fun sendTopic(user: User, title: String, content: String, pics: List<String>) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.sendTopic(Config.token, title, content, pics) }
             loading.dismiss()
             if (result.success) {
                 val topPreview = TopicPreview(result.data.tid, user.uid, user.name, title, result.data.pic, false, 0, 0)
-                pages.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_ADD_TOPIC, topPreview)
-                pages.pop()
+                main.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_ADD_TOPIC, topPreview)
+                main.pop()
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)

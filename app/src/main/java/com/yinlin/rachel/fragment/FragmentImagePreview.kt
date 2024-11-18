@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.luck.picture.lib.photoview.PhotoView
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Net
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.databinding.FragmentImagePreviewBinding
 import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
@@ -23,8 +23,8 @@ import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.RotateYTransformer
 
-class FragmentImagePreview(pages: RachelPages, private val pics: List<RachelPreview>, private val position: Int)
-    : RachelFragment<FragmentImagePreviewBinding>(pages) {
+class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPreview>, private val position: Int)
+    : RachelFragment<FragmentImagePreviewBinding>(main) {
 
     class ViewHolder(pic: PhotoView) : RecyclerView.ViewHolder(pic)
 
@@ -53,7 +53,7 @@ class FragmentImagePreview(pages: RachelPages, private val pics: List<RachelPrev
         }
     }
 
-    constructor(pages: RachelPages, pic: RachelPreview) : this(pages, listOf(pic), 0)
+    constructor(main: MainActivity, pic: RachelPreview) : this(main, listOf(pic), 0)
 
     override fun bindingClass() = FragmentImagePreviewBinding::class.java
 
@@ -62,12 +62,12 @@ class FragmentImagePreview(pages: RachelPages, private val pics: List<RachelPrev
             startPosition = setFuckIndex(position)
             indicator = CircleIndicator(context)
             setPageTransformer(RotateYTransformer())
-            setAdapter(Adapter(pages.context, pics), true)
+            setAdapter(Adapter(main, pics), true)
         }
 
-        v.downloadImage.rachelClick { Net.downloadPicture(pages.context, pics[getFuckIndex(v.list.currentItem)].mImageUrl, downLoadMediaListener) }
-        v.downloadSource.rachelClick { Net.downloadPicture(pages.context, pics[getFuckIndex(v.list.currentItem)].mSourceUrl, downLoadMediaListener) }
-        v.downloadAll.rachelClick { Net.downloadPictures(pages.context, pics.filter { it.isImage }.map { it.mSourceUrl }, downLoadMediaListener) }
+        v.downloadImage.rachelClick { Net.downloadPicture(main, pics[getFuckIndex(v.list.currentItem)].mImageUrl, downLoadMediaListener) }
+        v.downloadSource.rachelClick { Net.downloadPicture(main, pics[getFuckIndex(v.list.currentItem)].mSourceUrl, downLoadMediaListener) }
+        v.downloadAll.rachelClick { Net.downloadPictures(main, pics.filter { it.isImage }.map { it.mSourceUrl }, downLoadMediaListener) }
     }
 
     override fun back() = true

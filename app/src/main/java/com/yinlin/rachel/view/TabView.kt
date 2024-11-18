@@ -47,8 +47,7 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     fun addTabEx(title: String) {
         val view = TextView(context)
-        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        view.textAlignment = TEXT_ALIGNMENT_CENTER
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         view.gravity = Gravity.CENTER
         view.textColor = context.getColor(R.color.black)
         view.textSizePx = textSize

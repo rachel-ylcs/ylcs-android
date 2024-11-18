@@ -4,6 +4,7 @@ import android.text.InputType
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
@@ -18,7 +19,6 @@ import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPopMenu
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelTab
@@ -30,16 +30,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<FragmentTopicBinding>(pages) {
+class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<FragmentTopicBinding>(main) {
     class Adapter(private val fragment: FragmentTopic) : RachelHeaderAdapter<HeaderTopicBinding, ItemCommentBinding, Comment>() {
-        private val pages = fragment.pages
+        private val main = fragment.main
 
         override fun bindingHeaderClass() = HeaderTopicBinding::class.java
         override fun bindingItemClass() = ItemCommentBinding::class.java
 
         override fun initHeader(v: HeaderTopicBinding) {
-            v.avatar.rachelClick { pages.navigate(FragmentProfile(pages, fragment.topic.uid)) }
-            v.pics.listener = { position, _ -> pages.navigate(FragmentImagePreview(pages, v.pics.images, position)) }
+            v.avatar.rachelClick { main.navigate(FragmentProfile(main, fragment.topic.uid)) }
+            v.pics.listener = { position, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, position)) }
 
             // 菜单
             v.more.rachelClick(300) {
@@ -49,12 +49,12 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
                     val topicId = fragment.topic.uid
                     val topText = if (fragment.topic.isTop) "取消置顶" else "置顶"
                     if (user.canUpdateTopicTop(topicId)) menuList += RachelPopMenu.Item(topText) {
-                        RachelDialog.confirm(pages.context, content="${topText}此主题?") {
+                        RachelDialog.confirm(main, content="${topText}此主题?") {
                             fragment.updateTopicTop(!fragment.topic.isTop)
                         }
                     }
                     if (user.canDeleteTopic(topicId)) menuList += RachelPopMenu.Item("删除") {
-                        RachelDialog.confirm(pages.context, content="删除此主题?") {
+                        RachelDialog.confirm(main, content="删除此主题?") {
                             fragment.deleteTopic()
                         }
                     }
@@ -64,7 +64,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
         }
 
         override fun init(holder: RachelItemViewHolder<ItemCommentBinding>, v: ItemCommentBinding) {
-            v.avatar.rachelClick { pages.navigate(FragmentProfile(pages, this[holder.positionEx].uid)) }
+            v.avatar.rachelClick { main.navigate(FragmentProfile(main, this[holder.positionEx].uid)) }
             v.more.rachelClick(300) {
                 val menuList = ArrayList<RachelPopMenu.Item>()
                 val user = Config.loginUser
@@ -74,12 +74,12 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
                     val comment = this[position]
                     val topText = if (comment.isTop) "取消置顶" else "置顶"
                     if (user.canUpdateCommentTop(topicUid)) menuList += RachelPopMenu.Item(topText) {
-                        RachelDialog.confirm(pages.context, content="${topText}此评论?") {
+                        RachelDialog.confirm(main, content="${topText}此评论?") {
                             fragment.updateCommentTop(comment.cid, position, !comment.isTop)
                         }
                     }
                     if (user.canDeleteComment(topicUid, comment.uid)) menuList += RachelPopMenu.Item("删除") {
-                        RachelDialog.confirm(pages.context, content="删除此评论?") {
+                        RachelDialog.confirm(main, content="删除此评论?") {
                             fragment.deleteComment(comment.cid, position)
                         }
                     }
@@ -91,7 +91,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
         override fun update(v: ItemCommentBinding, item: Comment, position: Int) {
             v.name.text = item.name
             v.time.text = item.ts
-            v.avatar.load(pages.ril, item.avatarPath)
+            v.avatar.load(main.ril, item.avatarPath)
             v.content.text = item.content
             v.userLabel.setLabel(item.label, item.level)
             v.top.visible = item.isTop
@@ -105,7 +105,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
 
     override fun init() {
         v.list.apply {
-            layoutManager = LinearLayoutManager(pages.context)
+            layoutManager = LinearLayoutManager(main)
             recycledViewPool.setMaxRecycledViews(0, 16)
             setItemViewCacheSize(6)
             adapter = this@FragmentTopic.adapter
@@ -133,7 +133,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
             if (user != null) {
                 if (user.hasPrivilegeTopic) {
                     if (topic.uid == user.uid) tip(Tip.WARNING, "不能给自己投币哦")
-                    else RachelDialog.input(pages.context, "请输入投币数量(1-3)", 1, inputType=InputType.TYPE_CLASS_NUMBER) {
+                    else RachelDialog.input(main, "请输入投币数量(1-3)", 1, inputType=InputType.TYPE_CLASS_NUMBER) {
                         val value = it.toIntOrNull() ?: 0
                         if (user.coin < value) tip(Tip.WARNING, "你的银币不够哦")
                         else if (value in 1..3) sendCoin(value)
@@ -169,7 +169,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     fun requestTopic(topicId: Int) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.getTopic(topicId) }
             loading.dismiss()
             if (result.success) {
@@ -177,7 +177,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
                 adapter.header.apply {
                     name.text = topic.name
                     time.text = topic.ts
-                    avatar.load(pages.ril, topic.avatarPath)
+                    avatar.load(main.ril, topic.avatarPath)
                     title.text = topic.title
                     content.text = topic.content
                     userLabel.setLabel(topic.label, topic.level)
@@ -187,7 +187,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
                 adapter.notifySourceEx()
             }
             else {
-                pages.pop()
+                main.pop()
                 tip(Tip.ERROR, "主题不存在")
             }
         }
@@ -196,7 +196,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun sendComment(user: User, content: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.sendComment(Config.token, tid, content) }
             loading.dismiss()
             if (result.success) {
@@ -213,11 +213,11 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun sendCoin(value: Int) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.sendCoin(Config.token, topic.uid, tid, value) }
             loading.dismiss()
             if (result.success) {
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
+                main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)
@@ -227,7 +227,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun deleteComment(cid: Long, position: Int) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.deleteComment(Config.token, cid, tid) }
             loading.dismiss()
             if (result.success) {
@@ -242,7 +242,7 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun updateCommentTop(cid: Long, position: Int, isTop: Boolean) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateCommentTop(Config.token, cid, tid, isTop) }
             loading.dismiss()
             if (result.success) {
@@ -264,12 +264,12 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun deleteTopic() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.deleteTopic(Config.token, tid) }
             loading.dismiss()
             if (result.success) {
-                pages.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_DELETE_TOPIC, tid)
-                pages.popMessage(FragmentProfile::class, RachelMessage.PROFILE_DELETE_TOPIC, tid)
+                main.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_DELETE_TOPIC, tid)
+                main.popMessage(FragmentProfile::class, RachelMessage.PROFILE_DELETE_TOPIC, tid)
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)
@@ -279,11 +279,11 @@ class FragmentTopic(pages: RachelPages, private val tid: Int) : RachelFragment<F
     @NewThread
     private fun updateTopicTop(isTop: Boolean) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.updateTopicTop(Config.token, tid, isTop) }
             loading.dismiss()
             if (result.success) {
-                pages.sendBottomMessage(FragmentProfile::class, RachelMessage.PROFILE_UPDATE_TOPIC_TOP, tid, isTop)
+                main.sendBottomMessage(FragmentProfile::class, RachelMessage.PROFILE_UPDATE_TOPIC_TOP, tid, isTop)
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)

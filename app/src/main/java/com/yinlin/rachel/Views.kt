@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -24,7 +23,6 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import com.haibin.calendarview.Calendar
 import com.yinlin.rachel.Tip.*
-import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.model.RachelOnClickListener
 import java.io.File
@@ -65,15 +63,14 @@ enum class Tip {
 }
 
 @SuppressLint("InflateParams")
-fun Activity.tip(type: Tip, text: String) {
+fun Activity.tip(type: Tip, text: String, anchorView: View? = null) {
     val color = when (type) {
         INFO -> R.color.tip_info
         SUCCESS -> R.color.tip_success
         WARNING -> R.color.tip_warning
         ERROR -> R.color.tip_error
     }
-    val decorView = this.window.decorView
-    val bar = Snackbar.make(decorView, "", 1500)
+    val bar = Snackbar.make(anchorView ?: this.window.decorView, "", 1500)
     val layout = bar.view as ViewGroup
     layout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).visible = false
     val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, null)
@@ -88,8 +85,6 @@ fun Activity.tip(type: Tip, text: String) {
     layout.addView(view)
     bar.show()
 }
-
-fun RachelFragment<*>.tip(type: Tip, text: String) = this.pages.activity.tip(type, text)
 
 /*---------    TextView    --------*/
 

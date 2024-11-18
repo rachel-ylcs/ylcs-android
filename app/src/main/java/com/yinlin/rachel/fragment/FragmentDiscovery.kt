@@ -4,6 +4,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
@@ -16,7 +17,6 @@ import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
@@ -24,17 +24,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentDiscovery(pages: RachelPages) : RachelFragment<FragmentDiscoveryBinding>(pages)  {
+class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBinding>(main)  {
     class Adapter(fragment: FragmentDiscovery) : RachelAdapter<ItemTopicUserBinding, TopicPreview>() {
-        private val pages = fragment.pages
-        private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
+        private val main = fragment.main
+
+        private val rilNet = RachelImageLoader(main, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
 
         override fun bindingClass() = ItemTopicUserBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemTopicUserBinding>, v: ItemTopicUserBinding) {
             v.avatar.rachelClick {
                 val position = holder.bindingAdapterPosition
-                pages.navigate(FragmentProfile(pages, this[position].uid))
+                main.navigate(FragmentProfile(main, this[position].uid))
             }
         }
 
@@ -43,13 +44,13 @@ class FragmentDiscovery(pages: RachelPages) : RachelFragment<FragmentDiscoveryBi
             else v.pic.load(rilNet, item.picPath)
             v.title.text = item.title
             v.name.text = item.name
-            v.avatar.load(pages.ril, item.avatarPath)
+            v.avatar.load(main.ril, item.avatarPath)
             v.comment.text = item.commentNum.toString()
             v.coin.text = item.coinNum.toString()
         }
 
         override fun onItemClicked(v: ItemTopicUserBinding, item: TopicPreview, position: Int) {
-            pages.navigate(FragmentTopic(pages, item.tid))
+            main.navigate(FragmentTopic(main, item.tid))
         }
     }
 
@@ -79,7 +80,7 @@ class FragmentDiscovery(pages: RachelPages) : RachelFragment<FragmentDiscoveryBi
         v.buttonAdd.rachelClick {
             val user = Config.loginUser
             if (user != null) {
-                if (user.hasPrivilegeTopic) pages.navigate(FragmentCreateTopic(pages))
+                if (user.hasPrivilegeTopic) main.navigate(FragmentCreateTopic(main))
                 else tip(Tip.WARNING, "你没有权限")
             }
             else tip(Tip.WARNING, "请先登录")
@@ -102,7 +103,9 @@ class FragmentDiscovery(pages: RachelPages) : RachelFragment<FragmentDiscoveryBi
             setItemViewCacheSize(4)
             adapter = this@FragmentDiscovery.adapter
         }
+    }
 
+    override fun start() {
         requestNewData()
     }
 

@@ -5,18 +5,17 @@ import android.net.Uri
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Net
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.sys.DevelopState
-import com.yinlin.rachel.data.sys.ServerInfo
 import com.yinlin.rachel.databinding.FragmentUpdateBinding
 import com.yinlin.rachel.databinding.ItemDevelopStateBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
 import com.yinlin.rachel.tip
@@ -27,19 +26,19 @@ import xyz.sangcomz.stickytimelineview.callback.SectionCallback
 import xyz.sangcomz.stickytimelineview.model.SectionInfo
 
 
-class FragmentUpdate(pages: RachelPages) : RachelFragment<FragmentUpdateBinding>(pages) {
-    class Adapter(private val pages: RachelPages) : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
+class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>(main) {
+    class Adapter(private val main: MainActivity) : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
         override fun bindingClass() = ItemDevelopStateBinding::class.java
 
         override fun update(v: ItemDevelopStateBinding, item: DevelopState, position: Int) {
             v.content.text = item.content
-            v.content.textColor = pages.getResColor(item.color)
+            v.content.textColor = main.rc(item.color)
         }
     }
 
     override fun bindingClass() = FragmentUpdateBinding::class.java
 
-    private val adapter = Adapter(pages)
+    private val adapter = Adapter(main)
     private var downloadUrl: String? = null
     private var isNeedUpdate: Boolean = false
 
@@ -53,7 +52,7 @@ class FragmentUpdate(pages: RachelPages) : RachelFragment<FragmentUpdateBinding>
                 tip(Tip.SUCCESS, "当前已经是最新版本")
                 return@rachelClick
             }
-            Net.downloadFile(pages.context, downloadUrl!!, object : Net.DownLoadMediaListener {
+            Net.downloadFile(main, downloadUrl!!, object : Net.DownLoadMediaListener {
                 override fun onCancel() { }
                 override fun onDownloadComplete(status: Boolean, uri: Uri?) {
                     try {
@@ -75,7 +74,7 @@ class FragmentUpdate(pages: RachelPages) : RachelFragment<FragmentUpdateBinding>
         v.list.apply {
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 10)
-            layoutManager = LinearLayoutManager(pages.context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(main, LinearLayoutManager.VERTICAL, false)
             adapter = this@FragmentUpdate.adapter
         }
 
@@ -87,30 +86,30 @@ class FragmentUpdate(pages: RachelPages) : RachelFragment<FragmentUpdateBinding>
     // 检查更新
     @NewThread
     private fun checkUpdate() {
-        val appVersion = pages.appVersion
+        val appVersion = main.appVersion
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) { API.CommonAPI.getServerInfo() }
             if (result.success) {
                 val info = result.data
                 downloadUrl = info.downloadUrl
                 if (appVersion < info.targetVersion) isNeedUpdate = true
-                v.appVersion.text = "${pages.getResString(R.string.app_name)} ${pages.appVersionName(appVersion)}"
-                v.targetVersion.text = "服务器版本: ${pages.appVersionName(info.targetVersion)}"
-                v.minVersion.text = "最低兼容版本: ${pages.appVersionName(info.minVersion)}"
-                v.appVersion.textColor = pages.getResColor(
+                v.appVersion.text = "${main.rs(R.string.app_name)} ${main.appVersionName(appVersion)}"
+                v.targetVersion.text = "服务器版本: ${main.appVersionName(info.targetVersion)}"
+                v.minVersion.text = "最低兼容版本: ${main.appVersionName(info.minVersion)}"
+                v.appVersion.textColor = main.rc(
                     if (appVersion == info.targetVersion) R.color.sea_green
                     else if (appVersion >= info.minVersion) R.color.orange_red
                     else R.color.dark_red
                 )
                 v.list.addItemDecoration(object : SectionCallback {
-                    override fun getSectionHeader(position: Int) = SectionInfo(adapter[position].name, "", AppCompatResources.getDrawable(pages.context, adapter[position].icon))
+                    override fun getSectionHeader(position: Int) = SectionInfo(adapter[position].name, "", AppCompatResources.getDrawable(main, adapter[position].icon))
                     override fun isSection(position: Int): Boolean = adapter[position].type != adapter[position - 1].type
                 })
                 adapter.setSource(info.developState)
                 adapter.notifySource()
             }
             else {
-                pages.pop()
+                main.pop()
                 tip(Tip.ERROR, result.msg)
             }
         }

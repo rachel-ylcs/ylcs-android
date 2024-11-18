@@ -16,12 +16,12 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.config.SelectModeConfig
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPictureSelector.RachelImageEngine
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
@@ -30,15 +30,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class FragmentScanQRCode(pages: RachelPages)
-    : RachelFragment<FragmentScanQrcodeBinding>(pages), OnScanResultCallback<Result> {
+class FragmentScanQRCode(main: MainActivity)
+    : RachelFragment<FragmentScanQrcodeBinding>(main), OnScanResultCallback<Result> {
     private lateinit var cameraScan: BaseCameraScan<Result>
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         if (it) cameraScan.startCamera()
         else {
             tip(Tip.WARNING, "未开启相机权限")
-            pages.pop()
+            main.pop()
         }
     }
 
@@ -90,7 +90,7 @@ class FragmentScanQRCode(pages: RachelPages)
     @NewThread
     private fun parseQRCode(path: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { CodeUtils.parseQRCode(path) }
             loading.dismiss()
             if (result != null) processQRCode(result)
@@ -100,7 +100,7 @@ class FragmentScanQRCode(pages: RachelPages)
 
     private fun processQRCode(info: String) {
         cameraScan.setAnalyzeImage(false)
-        pages.pop()
-        pages.processUri(Uri.parse(info))
+        main.pop()
+        main.processUri(Uri.parse(info))
     }
 }

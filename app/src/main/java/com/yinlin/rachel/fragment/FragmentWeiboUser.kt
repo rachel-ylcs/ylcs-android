@@ -3,6 +3,7 @@ package com.yinlin.rachel.fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
@@ -13,15 +14,14 @@ import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentWeiboUser(pages: RachelPages, private val weiboUserId: String) : RachelFragment<FragmentWeiboUserBinding>(pages) {
-    private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
+class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : RachelFragment<FragmentWeiboUserBinding>(main) {
+    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
 
     override fun bindingClass() = FragmentWeiboUserBinding::class.java
 
@@ -40,7 +40,7 @@ class FragmentWeiboUser(pages: RachelPages, private val weiboUserId: String) : R
     @NewThread
     fun requestUserInfo() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val userInfo = withContext(Dispatchers.IO) {
                 val userInfo = WeiboAPI.getWeiboUserInfo(weiboUserId)
                 withContext(Dispatchers.Main) { loading.dismiss() }
@@ -54,7 +54,7 @@ class FragmentWeiboUser(pages: RachelPages, private val weiboUserId: String) : R
                 v.fans.text = "粉丝 ${userInfo.fansNum}"
             }
             else {
-                pages.pop()
+                main.pop()
                 tip(Tip.ERROR, "用户不存在")
             }
         }
@@ -64,7 +64,7 @@ class FragmentWeiboUser(pages: RachelPages, private val weiboUserId: String) : R
     @NewThread
     private fun addWeiboUser(uid: String) {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) {
                 val result = WeiboAPI.extractContainerId(uid)
                 withContext(Dispatchers.Main) { loading.dismiss() }

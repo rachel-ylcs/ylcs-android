@@ -20,6 +20,13 @@ object Config {
         fun isDefault(): Boolean
     }
 
+    open class BooleanMeta(name: String, defValue: Boolean) : Meta<Boolean>(name, defValue), CheckDefault {
+        override fun set(value: Boolean) { kv.encode(name, value) }
+        override fun get(): Boolean = kv.decodeBool(name, defValue!!)
+        override fun setDefault() { kv.encode(name, defValue!!) }
+        override fun isDefault(): Boolean = get() == defValue
+    }
+
     open class IntMeta(name: String, defValue: Int) : Meta<Int>(name, defValue), CheckDefault {
         override fun set(value: Int) { kv.encode(name, value) }
         override fun get() = kv.decodeInt(name, defValue!!)
@@ -40,7 +47,7 @@ object Config {
         override fun setDefault() { kv.encode(name, defJson) }
     }
 
-    class DailyCacheKeyMeta : IntMeta("daily_cache_key", currentDateInteger)
+    class DailyCacheKeyMeta : IntMeta("daily_cache_key/20241115", currentDateInteger)
 
     class CacheKeyMeta(name: String) : Meta<Long>(name, System.currentTimeMillis()), CheckDefault {
         override fun set(value: Long) { kv.encode(name, value) }
@@ -74,6 +81,12 @@ object Config {
     val isLogin: Boolean get() = !token_meta.isDefault() && user != null
     val loginUser: User? get() = if (!token_meta.isDefault()) user else null
 
+    // 音频相关
+    private val music_focus_meta = BooleanMeta("music_focus/20241115", false)
+    var music_focus: Boolean
+        get() = music_focus_meta.get()
+        set(value) { music_focus_meta.set(value) }
+
     // 歌单
     private val playlist_meta = JsonMeta<PlaylistMap>("playlist", "{}",
         object : TypeToken<HashMap<String, Playlist>>(){}.type)
@@ -92,9 +105,9 @@ object Config {
     private val cache_daily_pic_meta = DailyCacheKeyMeta()
     val cache_daily_pic get() = cache_daily_pic_meta.get()
 
-    val cache_key_avatar_meta = CacheKeyMeta("cache_key_avatar")
+    val cache_key_avatar_meta = CacheKeyMeta("cache_key_avatar/20241115")
     val cache_key_avatar get() = cache_key_avatar_meta.get()
 
-    val cache_key_wall_meta = CacheKeyMeta("cache_key_wall")
+    val cache_key_wall_meta = CacheKeyMeta("cache_key_wall/20241115")
     val cache_key_wall get() = cache_key_wall_meta.get()
 }

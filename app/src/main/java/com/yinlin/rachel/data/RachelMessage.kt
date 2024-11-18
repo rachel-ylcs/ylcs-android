@@ -2,6 +2,7 @@ package com.yinlin.rachel.data
 
 enum class RachelMessage {
     // FragmentMusic
+    PREPARE_PLAYER, // MediaController
     MUSIC_START_PLAYER,  // [Playlist | String]
     MUSIC_STOP_PLAYER,
     MUSIC_GET_PLAYLIST_INFO_PREVIEW, // String -> LoadMusicPreviewList
@@ -15,7 +16,7 @@ enum class RachelMessage {
     MUSIC_GET_MUSIC_INFO_PREVIEW, // String? -> MusicInfoPreviewList
     MUSIC_DELETE_MUSIC,  // MusicInfoPreviewList
     MUSIC_GOTO_MUSIC,  // String
-    MUSIC_NOTIFY_ADD_MUSIC,  // MusicInfoPreviewList
+    MUSIC_NOTIFY_ADD_MUSIC,  // List<String>
 
     MUSIC_USE_LYRICS_ENGINE,  // String, String
 

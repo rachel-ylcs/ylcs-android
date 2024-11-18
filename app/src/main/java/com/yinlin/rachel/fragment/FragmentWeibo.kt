@@ -4,6 +4,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.WeiboAPI
@@ -18,7 +19,6 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.visible
@@ -27,14 +27,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
-class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragment<FragmentWeiboBinding>(pages) {
-    class SubCommentAdapter(private val pages: RachelPages, private val rilNet: RachelImageLoader) : RachelAdapter<ItemWeiboSubcommentBinding, WeiboComment>() {
+class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragment<FragmentWeiboBinding>(main) {
+    class SubCommentAdapter(private val main: MainActivity, private val rilNet: RachelImageLoader) : RachelAdapter<ItemWeiboSubcommentBinding, WeiboComment>() {
         override fun bindingClass() = ItemWeiboSubcommentBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemWeiboSubcommentBinding>, v: ItemWeiboSubcommentBinding) {
             v.avatar.rachelClick {
                 val item = this[holder.bindingAdapterPosition]
-                pages.navigate(FragmentWeiboUser(pages, item.user.userId))
+                main.navigate(FragmentWeiboUser(main, item.user.userId))
             }
             v.text.setOnClickATagListener { _, _, _ -> true }
         }
@@ -49,21 +49,21 @@ class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragme
     }
 
     class Adapter(fragment: FragmentWeibo, private val rilNet: RachelImageLoader) : RachelHeaderAdapter<ItemWeiboBinding, ItemWeiboCommentBinding, WeiboComment>() {
-        private val pages = fragment.pages
+        private val main = fragment.main
         private val weibo = fragment.weibo
 
         override fun bindingHeaderClass() = ItemWeiboBinding::class.java
         override fun bindingItemClass() = ItemWeiboCommentBinding::class.java
 
         override fun initHeader(v: ItemWeiboBinding) {
-            v.avatar.rachelClick { pages.navigate(FragmentWeiboUser(pages, weibo.user.userId)) }
+            v.avatar.rachelClick { main.navigate(FragmentWeiboUser(main, weibo.user.userId)) }
             v.avatar.load(rilNet, weibo.user.avatar, Config.cache_daily_pic)
             v.name.text = weibo.user.name
             v.time.text = weibo.time
             v.location.text = weibo.user.location
             v.text.setOnClickATagListener { _, _, _ -> true }
             v.text.setHtml(weibo.text, HtmlHttpImageGetter(v.text))
-            v.pics.listener = { position, _ -> pages.navigate(FragmentImagePreview(pages, v.pics.images, position)) }
+            v.pics.listener = { position, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, position)) }
             v.pics.images = weibo.pictures
             v.like.text = weibo.likeNum.toString()
             v.comment.text = weibo.commentNum.toString()
@@ -73,18 +73,18 @@ class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragme
         override fun init(holder: RachelItemViewHolder<ItemWeiboCommentBinding>, v: ItemWeiboCommentBinding) {
             v.avatar.rachelClick {
                 val item = this[holder.positionEx]
-                pages.navigate(FragmentWeiboUser(pages, item.user.userId))
+                main.navigate(FragmentWeiboUser(main, item.user.userId))
             }
             v.text.setOnClickATagListener { _, _, _ -> true }
             v.pic.rachelClick {
                 val item = this[holder.positionEx]
-                item.pic?.let {  pages.navigate(FragmentImagePreview(pages, it)) }
+                item.pic?.let {  main.navigate(FragmentImagePreview(main, it)) }
             }
             v.list.apply {
-                layoutManager = LinearLayoutManager(pages.context)
+                layoutManager = LinearLayoutManager(main)
                 setItemViewCacheSize(4)
                 recycledViewPool.setMaxRecycledViews(0, 10)
-                adapter = SubCommentAdapter(pages, rilNet)
+                adapter = SubCommentAdapter(main, rilNet)
             }
         }
 
@@ -105,14 +105,14 @@ class FragmentWeibo(pages: RachelPages, private val weibo: Weibo) : RachelFragme
         }
     }
 
-    private val rilNet = RachelImageLoader(pages.context, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
+    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
     private val mAdapter = Adapter(this, rilNet)
 
     override fun bindingClass() = FragmentWeiboBinding::class.java
 
     override fun init() {
         v.list.apply {
-            layoutManager = LinearLayoutManager(pages.context)
+            layoutManager = LinearLayoutManager(main)
             recycledViewPool.setMaxRecycledViews(0, 10)
             adapter = mAdapter
         }

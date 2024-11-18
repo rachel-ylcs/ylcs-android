@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, FragmentMsg>(fragment) {
-    private val adapter = WeiboAdapter(fragment.pages)
+    private val adapter = WeiboAdapter(fragment.main)
     private var sinceId: Long = 0L
 
     override fun bindingClass(): Class<PageChaohuaBinding> = PageChaohuaBinding::class.java
@@ -29,7 +29,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
 
         // 列表
         v.list.apply {
-            layoutManager = LinearLayoutManager(fragment.pages.context)
+            layoutManager = LinearLayoutManager(fragment.main)
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 16)
             setItemViewCacheSize(4)

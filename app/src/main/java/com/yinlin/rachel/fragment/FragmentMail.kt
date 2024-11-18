@@ -4,18 +4,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.user.Mail
-import com.yinlin.rachel.data.user.MailList
 import com.yinlin.rachel.databinding.FragmentMailBinding
 import com.yinlin.rachel.databinding.ItemMailBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
 import com.yinlin.rachel.tip
@@ -24,8 +23,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pages) {
-    class Adapter(private val pages: RachelPages, private val fragment: FragmentMail) : RachelAdapter<ItemMailBinding, Mail>() {
+class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(main) {
+    class Adapter(private val fragment: FragmentMail) : RachelAdapter<ItemMailBinding, Mail>() {
+        private val main = fragment.main
+
         override fun bindingClass() = ItemMailBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemMailBinding>, v: ItemMailBinding) {
@@ -34,7 +35,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
                 val mail = this[position]
                 if (mail.processed) fragment.tip(Tip.WARNING, "此邮件已处理")
                 else {
-                    RachelDialog.confirm(pages.context, content="处理此邮件?") {
+                    RachelDialog.confirm(main, content="处理此邮件?") {
                         processMail(position, mail, true)
                     }
                 }
@@ -44,7 +45,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
                 val mail = this[position]
                 if (mail.processed) fragment.tip(Tip.WARNING, "此邮件已处理")
                 else {
-                    RachelDialog.confirm(pages.context, content="拒绝此邮件?") {
+                    RachelDialog.confirm(main, content="拒绝此邮件?") {
                         processMail(position, mail, false)
                     }
                 }
@@ -53,7 +54,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
                 val position = holder.bindingAdapterPosition
                 val mail = this[position]
                 if (mail.processed) {
-                    RachelDialog.confirm(pages.context, content="删除此邮件?") {
+                    RachelDialog.confirm(main, content="删除此邮件?") {
                         deleteMail(position, mail)
                     }
                 }
@@ -65,31 +66,31 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
             when (item.type) {
                 Mail.TYPE_INFO -> {
                     v.label.text = "通知"
-                    v.label.bgColor = pages.getResColor(R.color.steel_blue)
+                    v.label.bgColor = main.rc(R.color.steel_blue)
                     v.buttonYes.visible = false
                     v.buttonNo.visible = false
                 }
                 Mail.TYPE_CONFIRM -> {
                     v.label.text = "验证"
-                    v.label.bgColor = pages.getResColor(R.color.green)
+                    v.label.bgColor = main.rc(R.color.green)
                     v.buttonYes.visible = true
                     v.buttonNo.visible = false
                 }
                 Mail.TYPE_DECISION -> {
                     v.label.text = "决定"
-                    v.label.bgColor = pages.getResColor(R.color.purple)
+                    v.label.bgColor = main.rc(R.color.purple)
                     v.buttonYes.visible = true
                     v.buttonNo.visible = true
                 }
                 Mail.TYPE_INPUT -> {
                     v.label.text = "输入"
-                    v.label.bgColor = pages.getResColor(R.color.orange)
+                    v.label.bgColor = main.rc(R.color.orange)
                     v.buttonYes.visible = false
                     v.buttonNo.visible = false
                 }
                 else -> {
                     v.label.text = "未知"
-                    v.label.bgColor = pages.getResColor(R.color.red)
+                    v.label.bgColor = main.rc(R.color.red)
                     v.buttonYes.visible = false
                     v.buttonNo.visible = false
                 }
@@ -99,7 +100,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
                 v.buttonNo.visible = false
             }
             v.title.text = item.title
-            v.title.textColor = pages.getResColor(if (item.processed) R.color.black else R.color.steel_blue)
+            v.title.textColor = main.rc(if (item.processed) R.color.black else R.color.steel_blue)
             v.content.text = item.content
             v.date.text = item.ts
             v.contentDetails.text = item.content
@@ -108,12 +109,12 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
 
         override fun onItemClicked(v: ItemMailBinding, item: Mail, position: Int) {
             if (v.expander.isExpand) {
-                val drawable = ContextCompat.getDrawable(pages.context, R.drawable.svg_expand_gray)
+                val drawable = ContextCompat.getDrawable(main, R.drawable.svg_expand_gray)
                 v.content.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
                 v.expander.isExpand = false
             }
             else {
-                val drawable = ContextCompat.getDrawable(pages.context, R.drawable.svg_expand_gray_down)
+                val drawable = ContextCompat.getDrawable(main, R.drawable.svg_expand_gray_down)
                 v.content.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
                 v.expander.isExpand = true
             }
@@ -122,7 +123,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
         @NewThread
         private fun processMail(position: Int, mail: Mail, confirm: Boolean) {
             fragment.lifecycleScope.launch {
-                val loading = RachelDialog.loading(pages.context)
+                val loading = main.loading
                 val result = withContext(Dispatchers.IO) { API.UserAPI.processMail(Config.token, mail.mid, confirm) }
                 loading.dismiss()
                 if (result.success) {
@@ -137,7 +138,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
         @NewThread
         private fun deleteMail(position: Int, mail: Mail) {
             fragment.lifecycleScope.launch {
-                val loading = RachelDialog.loading(pages.context)
+                val loading = main.loading
                 val result = withContext(Dispatchers.IO) { API.UserAPI.deleteMail(Config.token, mail.mid) }
                 loading.dismiss()
                 if (result.success) {
@@ -150,14 +151,14 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
         }
     }
 
-    private val adapter = Adapter(pages, this)
+    private val adapter = Adapter(this)
 
     override fun bindingClass() = FragmentMailBinding::class.java
 
     override fun init() {
         // 列表
         v.list.apply {
-            layoutManager = LinearLayoutManager(pages.context)
+            layoutManager = LinearLayoutManager(main)
             recycledViewPool.setMaxRecycledViews(0, 10)
             setHasFixedSize(true)
             adapter = this@FragmentMail.adapter
@@ -175,7 +176,7 @@ class FragmentMail(pages: RachelPages) : RachelFragment<FragmentMailBinding>(pag
     @NewThread
     private fun loadMail() {
         lifecycleScope.launch {
-            val loading = RachelDialog.loading(pages.context)
+            val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.getMail(Config.token) }
             if (v.container.isRefreshing) v.container.finishRefresh()
             loading.dismiss()

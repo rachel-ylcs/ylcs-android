@@ -6,6 +6,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.haibin.calendarview.Calendar
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.activity.ShowActivity
@@ -13,15 +14,14 @@ import com.yinlin.rachel.databinding.FragmentAddActivityBinding
 import com.yinlin.rachel.date
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPages
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.tip
 import com.yinlin.rachel.view.ImageSelectView
 
-class FragmentAddActivity(pages: RachelPages, private val calendar: Calendar) : RachelFragment<FragmentAddActivityBinding>(pages) {
-    private val schemeAPPWebView = WebView(pages.context)
+class FragmentAddActivity(main: MainActivity, private val calendar: Calendar) : RachelFragment<FragmentAddActivityBinding>(main) {
+    private val schemeAPPWebView = WebView(main)
 
     override fun bindingClass() = FragmentAddActivityBinding::class.java
 
@@ -33,7 +33,7 @@ class FragmentAddActivity(pages: RachelPages, private val calendar: Calendar) : 
             }
 
             override fun onImageClicked(position: Int, images: List<RachelPreview>) {
-                pages.navigate(FragmentImagePreview(pages, images, position))
+                main.navigate(FragmentImagePreview(main, images, position))
             }
         }
 
@@ -74,12 +74,12 @@ class FragmentAddActivity(pages: RachelPages, private val calendar: Calendar) : 
             val content = v.content.text
             if (title.isEmpty() || content.isEmpty()) tip(Tip.WARNING, "活动名称或内容不能为空")
             else {
-                pages.sendMessage(RachelTab.me, RachelMessage.ME_ADD_ACTIVITY, calendar,
+                main.sendMessage(RachelTab.me, RachelMessage.ME_ADD_ACTIVITY, calendar,
                     ShowActivity(calendar.date, title, content, v.pics.images,
                         v.showstart.text.ifEmpty { null }, v.damai.text.ifEmpty { null },
                         v.maoyan.text.ifEmpty { null })
                 )
-                pages.pop()
+                main.pop()
             }
         }
     }
@@ -90,7 +90,7 @@ class FragmentAddActivity(pages: RachelPages, private val calendar: Calendar) : 
 
     override fun back(): Boolean {
         if (v.title.text.isNotEmpty() || v.content.text.isNotEmpty() || v.pics.images.isNotEmpty()) {
-            RachelDialog.confirm(pages.context, "添加活动", "您确定要放弃已经填写的内容吗") { pages.pop() }
+            RachelDialog.confirm(main, "添加活动", "您确定要放弃已经填写的内容吗") { main.pop() }
             return false
         }
         return true
