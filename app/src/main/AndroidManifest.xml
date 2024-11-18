@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:ignore="SelectedPhotoAccess" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:ignore="SelectedPhotoAccess" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
@@ -56,6 +55,11 @@
                 <data android:mimeType="image/jpeg" />
                 <data android:mimeType="image/png" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.VideoActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|fontWeightAdjustment|fontScale|density|colorMode|uiMode"
+            tools:ignore="DiscouragedApi" >
         </activity>
         <service
             android:name=".service.MusicService"

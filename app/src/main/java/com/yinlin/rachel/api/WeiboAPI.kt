@@ -32,7 +32,7 @@ object WeiboAPI {
             }
         }
         arr
-    } catch (ignored: Exception) { null }
+    } catch (_: Exception) { null }
 
     private fun extractWeibo(card: JsonObject): Weibo {
         var blogs = card.getAsJsonObject("mblog")
@@ -50,7 +50,7 @@ object WeiboAPI {
         try {
             val date = inputFormat.parse(blogs["created_at"].asString)
             formattedTime = outputFormat.format(date!!)
-        } catch (ignored: Exception) { }
+        } catch (_: Exception) { }
         // 提取IP
         var location = "IP未知"
         if (blogs.has("region_name")) {
@@ -101,7 +101,7 @@ object WeiboAPI {
             userInfo["followers_count_str"].asString else userInfo["followers_count"].asString
         WeiboUserInfo(userId, name, avatar, signature, followNum, fansNum)
     }
-    catch (ignored: Exception) { null }
+    catch (_: Exception) { null }
 
     private fun getWeibo(uid: String, containerId: String, array: WeiboList) {
         try {
@@ -114,10 +114,10 @@ object WeiboAPI {
                     if (card["card_type"].asInt != 9) continue  // 非微博类型
                     array += extractWeibo(card)
                 }
-                catch (ignored: Exception) { }
+                catch (_: Exception) { }
             }
         }
-        catch (ignored: Exception) { }
+        catch (_: Exception) { }
     }
 
     fun getAllWeibo(weiboUsers: WeiboUserStorageMap, array: WeiboList) {
@@ -143,7 +143,7 @@ object WeiboAPI {
         try {
             val date = inputFormat.parse(card["created_at"].asString)
             formattedTime = outputFormat.format(date!!)
-        } catch (ignored: Exception) { }
+        } catch (_: Exception) { }
         // 提取IP
         val location = if (card.has("source")) card["source"].asString.removePrefix("来自") else "IP未知"
         // 提取内容
@@ -174,7 +174,7 @@ object WeiboAPI {
                 array += comment
             }
         }
-        catch (ignored: Exception) { }
+        catch (_: Exception) { }
     }
 
     fun getChaohua(sinceId: Long, array: WeiboList): Long {
@@ -196,11 +196,11 @@ object WeiboAPI {
                     }
                     else if (cardType == 9) array += extractWeibo(card)
                 }
-                catch (ignored: Exception) { }
+                catch (_: Exception) { }
             }
             return newSinceId
         }
-        catch (ignored: Exception) {
+        catch (_: Exception) {
             return 0L
         }
     }

@@ -9,13 +9,7 @@
         style="@style/RachelText.X"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="世界因为有你更精彩!"
+        android:text="世界因你更精彩!"
         android:textSize="@dimen/xxl"
         android:textColor="@color/steel_blue" />
-    <TextView
-        style="@style/RachelText.X"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:text="敬请期待新版本!"
-        android:textSize="@dimen/xxl" />
 </LinearLayout>

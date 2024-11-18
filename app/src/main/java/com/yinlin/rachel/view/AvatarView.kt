@@ -123,7 +123,7 @@ class AvatarView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                     d.setBounds(0, 0, canvas.width, canvas.height)
                     d.draw(canvas)
                     bitmap
-                } catch (ignored: Exception) { null }
+                } catch (_: Exception) { null }
             }
         }
         setup()

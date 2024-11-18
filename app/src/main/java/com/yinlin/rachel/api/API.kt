@@ -80,7 +80,7 @@ object API {
             val root = ResFolder(parent, name, author)
             if (json.has("folders")) {
                 json.getAsJsonObject("folders").asMap().forEach { (folderName, value) ->
-                    parseResFolder(root, folderName, value.asJsonObject)?.apply { root.items += this }
+                    parseResFolder(root, folderName, value.asJsonObject)?.let { root.items += it }
                 }
             }
             if (json.has("files")) {
@@ -280,9 +280,9 @@ object API {
             val fileMap = LinkedHashMap<String, String>()
             for (index in 0 until minOf(show.pics.size, 9)) fileMap["pic${index + 1}"] = show.pics[index]
             val argMap = mutableMapOf("token" to token, "ts" to show.ts, "title" to show.title, "content" to show.content)
-            show.showstart?.apply { argMap["showstart"] = this }
-            show.damai?.apply { argMap["damai"] = this }
-            show.maoyan?.apply { argMap["maoyan"] = this }
+            show.showstart?.let { argMap["showstart"] = it }
+            show.damai?.let { argMap["damai"] = it }
+            show.maoyan?.let { argMap["maoyan"] = it }
             Net.postForm("$BASEURL/addActivity", fileMap, argMap).msgResult
         } catch (_: Exception) { errResult() }
 

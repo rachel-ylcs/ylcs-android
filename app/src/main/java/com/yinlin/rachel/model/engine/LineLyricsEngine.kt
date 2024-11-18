@@ -101,9 +101,7 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
                 return true
             }
         }
-        catch (ignored: Exception) {
-            clear()
-        }
+        catch (_: Exception) { clear() }
         return false
     }
 
@@ -128,8 +126,8 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
 
     override fun update(position: Long) {
         if (currentIndex >= 2) {
-            texture?.apply {
-                val canvas = lockCanvas()
+            texture?.let {
+                val canvas = it.lockCanvas()
                 if (canvas != null) {
                     val item1 = items[currentIndex - 2]
                     val item2 = items[currentIndex - 1]
@@ -137,7 +135,7 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
                     val item4 = items[currentIndex + 1]
                     val item5 = items[currentIndex + 2]
                     paints.draw(canvas, item1.text, item2.text, item3.text, item4.text, item5.text)
-                    unlockCanvasAndPost(canvas)
+                    it.unlockCanvasAndPost(canvas)
                 }
             }
         }

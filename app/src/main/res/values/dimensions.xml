@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="xxxl">27sp</dimen>
-    <dimen name="xxl">24sp</dimen>
-    <dimen name="xl">20sp</dimen>
-    <dimen name="lg">18sp</dimen>
-    <dimen name="base">16sp</dimen>
-    <dimen name="sm">14sp</dimen>
-    <dimen name="xs">12sp</dimen>
-    <dimen name="xxs">10sp</dimen>
-    <dimen name="xxxs">8sp</dimen>
+    <dimen name="xxxl">28sp</dimen>
+    <dimen name="xxl">25sp</dimen>
+    <dimen name="xl">21sp</dimen>
+    <dimen name="lg">19sp</dimen>
+    <dimen name="base">17sp</dimen>
+    <dimen name="sm">15sp</dimen>
+    <dimen name="xs">13sp</dimen>
+    <dimen name="xxs">11sp</dimen>
+    <dimen name="xxxs">9sp</dimen>
 </resources>

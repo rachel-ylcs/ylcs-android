@@ -17,6 +17,7 @@ import java.lang.reflect.Field
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -63,7 +64,7 @@ fun <T> Any.reflect(name: String): T? = try {
     @Suppress("UNCHECKED_CAST")
     field.get(this) as T
 }
-catch (ignored: Exception) { null }
+catch (_: Exception) { null }
 
 /*---------    File    --------*/
 
@@ -85,7 +86,7 @@ fun File.read() : ByteArray {
                 it.read(data)
             }
         }
-    } catch (ignored: Exception) { }
+    } catch (_: Exception) { }
     return data
 }
 
@@ -95,7 +96,7 @@ fun File.write(data: ByteArray) {
     try {
         FileOutputStream(this, false).use { it.write(data) }
     }
-    catch (ignored: Exception) { }
+    catch (_: Exception) { }
 }
 
 fun File.writeText(data: String) = write(data.toByteArray(StandardCharsets.UTF_8))
@@ -126,6 +127,11 @@ fun File.deleteFilter(delName: String) {
 
 /*---------    ValueGetter    --------*/
 
+fun compareLatestTime(t1: String, t2: String): Boolean = try {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    LocalDateTime.parse(t1, formatter).isAfter(LocalDateTime.parse(t2, formatter))
+} catch (_: Exception) { false }
+
 val Long.timeString: String get() {
     val second = (this / 1000).toInt()
     return String.format(Locale.ENGLISH,"%02d:%02d", second / 60, second % 60)
@@ -137,7 +143,7 @@ val currentDateInteger: Int get() = try {
     val formattedDate = currentDate.format(formatter)
     formattedDate.toInt()
 }
-catch (err: Exception) { System.currentTimeMillis().toInt() }
+catch (_: Exception) { System.currentTimeMillis().toInt() }
 
 val String.md5: String get() = try {
     val md = MessageDigest.getInstance("MD5")
@@ -150,7 +156,7 @@ val String.md5: String get() = try {
     }
     hexString.toString()
 }
-catch (ignored: Exception) { "" }
+catch (_: Exception) { "" }
 
 /*---------    Container    --------*/
 

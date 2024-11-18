@@ -2,58 +2,66 @@ package com.yinlin.rachel
 
 import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV
+import com.yinlin.rachel.data.music.MusicPlayMode
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.data.music.PlaylistMap
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.data.weibo.WeiboUserStorageMap
+import com.yinlin.rachel.model.RachelEnum
 import java.lang.reflect.Type
 
 object Config {
-    abstract class Meta<T>(protected val name: String, protected val defValue: T?) {
+    abstract class Meta<T>(protected val name: String) {
         abstract fun set(value: T)
         abstract fun get(): T
         abstract fun setDefault()
+        abstract fun getDefault(): T
+        val isDefault: Boolean get() = get() == getDefault()
     }
 
-    interface CheckDefault {
-        fun isDefault(): Boolean
+    abstract class DefaultMeta<T>(name: String, protected val defValue: T) : Meta<T>(name) {
+        override fun getDefault(): T = defValue
     }
 
-    open class BooleanMeta(name: String, defValue: Boolean) : Meta<Boolean>(name, defValue), CheckDefault {
+    open class BooleanMeta(name: String, defValue: Boolean) : DefaultMeta<Boolean>(name, defValue) {
         override fun set(value: Boolean) { kv.encode(name, value) }
-        override fun get(): Boolean = kv.decodeBool(name, defValue!!)
-        override fun setDefault() { kv.encode(name, defValue!!) }
-        override fun isDefault(): Boolean = get() == defValue
-    }
-
-    open class IntMeta(name: String, defValue: Int) : Meta<Int>(name, defValue), CheckDefault {
-        override fun set(value: Int) { kv.encode(name, value) }
-        override fun get() = kv.decodeInt(name, defValue!!)
-        override fun setDefault() { kv.encode(name, defValue!!) }
-        override fun isDefault() = get() == defValue
-    }
-
-    open class StringMeta(name: String, defValue: String) : Meta<String>(name, defValue), CheckDefault {
-        override fun set(value: String) { kv.encode(name, value) }
-        override fun get() = kv.decodeString(name, defValue)!!
+        override fun get(): Boolean = kv.decodeBool(name, defValue)
         override fun setDefault() { kv.encode(name, defValue) }
-        override fun isDefault() = get() == defValue
     }
 
-    class JsonMeta<U>(name: String, private val defJson: String, private val type: Type) : Meta<U>(name, null) {
+    open class IntMeta(name: String, defValue: Int) : DefaultMeta<Int>(name, defValue) {
+        override fun set(value: Int) { kv.encode(name, value) }
+        override fun get() = kv.decodeInt(name, defValue)
+        override fun setDefault() { kv.encode(name, defValue) }
+    }
+
+    open class EnumMeta(name: String, defValue: RachelEnum) : DefaultMeta<RachelEnum>(name, defValue) {
+        override fun set(value: RachelEnum) { kv.encode(name, value.ordinal) }
+        override fun get() = RachelEnum(kv.decodeInt(name, defValue.ordinal))
+        override fun setDefault() { kv.encode(name, defValue.ordinal) }
+    }
+
+    open class StringMeta(name: String, defValue: String) : DefaultMeta<String>(name, defValue) {
+        override fun set(value: String) { kv.encode(name, value) }
+        override fun get() = kv.decodeString(name, defValue) ?: defValue
+        override fun setDefault() { kv.encode(name, defValue) }
+    }
+
+    class JsonMeta<U>(name: String, private val defJson: String, private val type: Type) : Meta<U>(name) {
+        private val defValue: U = gson.fromJson(defJson, type)
         override fun set(value: U) { kv.encode(name, if (value != null) gson.toJson(value) else "null") }
-        override fun get(): U = gson.fromJson(kv.decodeString(name, defJson), type)
+        override fun get(): U = try { gson.fromJson(kv.decodeString(name, defJson), type) } catch (_: Exception) { defValue }
         override fun setDefault() { kv.encode(name, defJson) }
+        override fun getDefault(): U = defValue
     }
 
     class DailyCacheKeyMeta : IntMeta("daily_cache_key/20241115", currentDateInteger)
 
-    class CacheKeyMeta(name: String) : Meta<Long>(name, System.currentTimeMillis()), CheckDefault {
+    class CacheKeyMeta(name: String) : DefaultMeta<Long>(name, System.currentTimeMillis()) {
         override fun set(value: Long) { kv.encode(name, value) }
-        override fun get() = kv.decodeLong(name, defValue!!)
-        override fun setDefault() { kv.encode(name, defValue!!) }
-        override fun isDefault() = get() == defValue
+        override fun get() = kv.decodeLong(name, defValue)
+        override fun setDefault() { kv.encode(name, defValue) }
         fun update() = set(System.currentTimeMillis())
     }
 
@@ -68,6 +76,9 @@ object Config {
 
     lateinit var kv: MMKV
 
+    /* ------------------  配置  ------------------ */
+
+
     // 用户信息
     private val token_meta = StringMeta("token/20241115", "")
     var token: String
@@ -78,10 +89,15 @@ object Config {
     var user: User?
         get() = user_meta.get()
         set(value) { user_meta.set(value) }
-    val isLogin: Boolean get() = !token_meta.isDefault() && user != null
-    val loginUser: User? get() = if (!token_meta.isDefault()) user else null
+    val isLogin: Boolean get() = !token_meta.isDefault && user != null
+    val loginUser: User? get() = if (!token_meta.isDefault) user else null
 
     // 音频相关
+    private val music_play_mode_meta = EnumMeta("music_play_mode/20241115", MusicPlayMode.ORDER)
+    var music_play_mode: MusicPlayMode
+        get() = MusicPlayMode(music_play_mode_meta.get().ordinal)
+        set(value) { music_play_mode_meta.set(value) }
+
     private val music_focus_meta = BooleanMeta("music_focus/20241115", false)
     var music_focus: Boolean
         get() = music_focus_meta.get()

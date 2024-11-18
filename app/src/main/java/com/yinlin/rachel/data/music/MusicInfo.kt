@@ -56,7 +56,7 @@ data class MusicInfo (
             }
             sb.toString()
         }
-        catch (ignored: Exception) { "" }
+        catch (_: Exception) { "" }
     }
 }
 

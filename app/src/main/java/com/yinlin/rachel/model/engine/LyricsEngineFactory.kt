@@ -12,7 +12,7 @@ object LyricsEngineFactory {
     fun newEngine(context: Context, name: String): LyricsEngine? = try {
         engineMap[name]?.getDeclaredConstructor(Context::class.java)?.newInstance(context)
     }
-    catch (ignored: Exception) { null }
+    catch (_: Exception) { null }
 
     fun hasEngine(name: String) = engineMap.containsKey(name)
 

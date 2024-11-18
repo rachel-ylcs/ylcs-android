@@ -25,6 +25,7 @@
             android:background="@color/dark"
             android:color="@color/white"
             android:padding="5dp"
+            app:ButtonGroupItemGap="2dp"
             app:ButtonGroupText="曲库,歌单,歌词,工坊"
             app:ButtonGroupIcon1="@drawable/svg_tool_library"
             app:ButtonGroupIcon2="@drawable/svg_tool_playlist"

@@ -53,7 +53,7 @@ object RachelMod {
                 if (!magic.contentEquals(MOD_MAGIC)) return metadata
                 metadata = stream.readUTF().parseJsonFetch()
             }
-            catch (ignored: Exception) { }
+            catch (_: Exception) { }
             return metadata
         }
 
@@ -87,13 +87,13 @@ object RachelMod {
                     }
                 }
             }
-            catch (ignored: Exception) { return false }
+            catch (_: Exception) { return false }
             return true
         }
 
         fun close() {
             try { stream.close() }
-            catch (ignored: Exception) { }
+            catch (_: Exception) { }
         }
     }
 

@@ -50,13 +50,20 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
         }
     }
 
+    companion object {
+        const val GROUP_ADD = 0
+        const val GROUP_PLAY = 1
+        const val GROUP_RENAME = 2
+        const val GROUP_DELETE = 3
+    }
+
     private var adapter = Adapter(this)
 
     override fun bindingClass() = FragmentPlaylistBinding::class.java
 
     override fun init() {
         v.group.listener = { pos -> when (pos) {
-            0 -> RachelDialog.input(main, "请输入新歌单名称", 10) {
+            GROUP_ADD -> RachelDialog.input(main, "请输入新歌单名称", 10) {
                 if (main.sendMessageForResult<Boolean>(RachelTab.music, RachelMessage.MUSIC_CREATE_PLAYLIST, it)!!) {
                     tip(Tip.SUCCESS, "创建成功")
                     v.tab.addTabEx(it)
@@ -65,11 +72,11 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
                 }
                 else tip(Tip.WARNING, "歌单已存在或名称不合法")
             }
-            1 -> v.tab.processCurrentTabEx { _, title, _ ->
+            GROUP_PLAY -> v.tab.processCurrentTabEx { _, title, _ ->
                 main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, title)
                 main.pop()
             }
-            2 -> v.tab.processCurrentTabEx { view, title, _ ->
+            GROUP_RENAME -> v.tab.processCurrentTabEx { view, title, _ ->
                 RachelDialog.input(main, "请输入歌单名称", 10) {
                     if (main.sendMessageForResult<Boolean>(RachelTab.music, RachelMessage.MUSIC_RENAME_PLAYLIST, title, it)!!) {
                         tip(Tip.SUCCESS, "修改成功")
@@ -78,7 +85,7 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
                     else tip(Tip.WARNING, "歌单已存在或名称不合法")
                 }
             }
-            3 -> v.tab.processCurrentTabEx { _, title, position ->
+            GROUP_DELETE -> v.tab.processCurrentTabEx { _, title, position ->
                 RachelDialog.confirm(main, content="是否删除歌单\"${title}\"") {
                     main.sendMessage(RachelTab.music, RachelMessage.MUSIC_DELETE_PLAYLIST, title)
                     v.tab.removeTabEx(position)

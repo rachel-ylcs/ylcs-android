@@ -65,7 +65,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
                             return
                         }
                     }
-                    catch (ignored: Exception) { }
+                    catch (_: Exception) { }
                     tip(Tip.ERROR, "下载失败")
                 }
             })

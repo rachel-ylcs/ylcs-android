@@ -110,7 +110,7 @@ class MainActivity : RachelActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.apply { processIntent(this) }
+        intent?.let { processIntent(it) }
     }
 
     @SuppressLint("MissingSuperCall") @Deprecated("Deprecated in Java")
@@ -233,7 +233,7 @@ class MainActivity : RachelActivity() {
 
     private fun processActionView(uri: Uri) {
         val args = HashMap<String, String>()
-        for (name in uri.queryParameterNames) uri.getQueryParameter(name)?.apply { args[name] = this }
+        for (name in uri.queryParameterNames) uri.getQueryParameter(name)?.let { args[name] = it }
         when (uri.scheme) {
             "content" -> processSchemeContent(uri)
             "rachel" -> processSchemeRachel(uri, args)
@@ -244,7 +244,7 @@ class MainActivity : RachelActivity() {
 
     fun processUri(uri: Uri) {
         val args = HashMap<String, String>()
-        for (name in uri.queryParameterNames) uri.getQueryParameter(name)?.apply { args[name] = this }
+        for (name in uri.queryParameterNames) uri.getQueryParameter(name)?.let { args[name] = it }
         processSchemeRachel(uri, args)
     }
 
@@ -253,12 +253,12 @@ class MainActivity : RachelActivity() {
             when (intent.action) {
                 Intent.ACTION_MAIN -> processActionMain()
                 Intent.ACTION_VIEW -> {
-                    intent.data?.apply { processActionView(this) }
+                    intent.data?.let { processActionView(it) }
                 }
                 Intent.ACTION_SEND -> { }
             }
         }
-        catch (ignored: Exception) { }
+        catch (_: Exception) { }
     }
 
     fun isForeground(tab: RachelTab): Boolean = isMain && currentMainIndex == tab.index

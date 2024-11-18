@@ -22,7 +22,6 @@ class MusicService : MediaLibraryService(), MediaLibraryService.MediaLibrarySess
 
     private lateinit var player: ExoPlayer
     private lateinit var session: MediaLibrarySession
-    private lateinit var notificationManager: PlayerNotificationManager
 
     override fun onCreate() {
         super.onCreate()
@@ -36,7 +35,6 @@ class MusicService : MediaLibraryService(), MediaLibraryService.MediaLibrarySess
 
     override fun onDestroy() {
         session.release()
-        notificationManager.setPlayer(null)
         player.release()
         super.onDestroy()
     }

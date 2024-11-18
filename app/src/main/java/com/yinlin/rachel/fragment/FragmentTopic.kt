@@ -8,6 +8,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.compareLatestTime
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.topic.Comment
 import com.yinlin.rachel.data.topic.Topic
@@ -249,13 +250,37 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
                 val comment = adapter[position]
                 if (comment.isTop != isTop) {
                     comment.isTop = isTop
+                    val items = adapter.items
+                    val activeComment = items[position]
+                    var targetIndex = if (isTop) position else items.size - 1
+                    if (isTop) {
+                        // 只需要找 0 到 position-1 的评论
+                        for (index in 0..< position) {
+                            val currentComment = items[index]
+                            // 如果此评论比置顶评论更晚或不是置顶评论则跳出
+                            if (compareLatestTime(currentComment.ts, activeComment.ts) || !currentComment.isTop) {
+                                targetIndex = index
+                                break
+                            }
+                        }
+                    }
+                    else {
+                        // 只需要找 position+1 到 size-1 的评论
+                        for (index in position + 1..< items.size) {
+                            val currentComment = items[index]
+                            if (currentComment.isTop) continue
+                            if (compareLatestTime(currentComment.ts, activeComment.ts)) {
+                                targetIndex = index - 1
+                                break
+                            }
+                        }
+                    }
                     adapter.notifyChangedEx(position)
-                    if (position != 0) {
-                        adapter.swapItem(position, 0)
-                        adapter.notifyMovedEx(position, 0)
+                    if (position != targetIndex) {
+                        adapter.moveItem(position, targetIndex)
+                        adapter.notifyMovedEx(position, targetIndex)
                     }
                 }
-                tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)
         }

@@ -238,8 +238,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:week_bar_height="24dp"
-                        app:week_text_size="@dimen/xs" />
+                        app:week_bar_height="24dp" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

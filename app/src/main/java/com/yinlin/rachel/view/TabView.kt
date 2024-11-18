@@ -61,8 +61,8 @@ class TabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     inline fun processCurrentTabEx(callback: (view: TextView, title: String, position: Int) -> Unit) {
         val currentPosition = selectedTabPosition
-        getTabAt(currentPosition)?.apply {
-            val view = this.customView as TextView
+        getTabAt(currentPosition)?.let {
+            val view = it.customView as TextView
             callback(view, view.text.toString(), currentPosition)
         }
     }

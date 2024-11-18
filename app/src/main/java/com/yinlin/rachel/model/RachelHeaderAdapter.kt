@@ -101,6 +101,11 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
     fun addItem(index: Int, item: Item) = items.add(index, item)
     inline fun findItem(predicate: (Item) -> Boolean) = items.indexOfFirst(predicate)
     fun removeItem(index: Int) = items.removeAt(index)
+    fun moveItem(src: Int, des: Int) {
+        val element = items[src]
+        items.removeAt(src)
+        items.add(des, element)
+    }
     fun swapItem(src: Int, des: Int) = Collections.swap(items, src, des)
 
     fun setSource(items: List<Item>) = this.items.clearAddAll(items)

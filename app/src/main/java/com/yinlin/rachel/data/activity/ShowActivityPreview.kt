@@ -20,7 +20,7 @@ open class ShowActivityPreview(
             scheme = title
         }
     }
-    catch (ignored: Exception) { null }
+    catch (_: Exception) { null }
 }
 
 typealias ShowActivityPreviewList = List<ShowActivityPreview>

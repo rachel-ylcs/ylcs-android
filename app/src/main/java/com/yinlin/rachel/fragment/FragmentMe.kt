@@ -22,7 +22,6 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import com.yinlin.rachel.view.ActivityCalendarView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +35,13 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     override fun bindingClass() = FragmentMeBinding::class.java
 
     override fun init() {
+        v.avatar.rachelClick {
+            if (!Config.isLogin) {
+                tip(Tip.WARNING, "请先登录")
+                main.navigate(FragmentLogin(main))
+            }
+        }
+
         // 扫码
         v.buttonScan.rachelClick { main.navigate(FragmentScanQRCode(main)) }
 

@@ -66,7 +66,7 @@ class FragmentImportMod(main: MainActivity, private val uri: Uri) : RachelFragme
                                 v.progress.progress = percent
                             } }
                         }
-                        catch (ignored: Exception) { }
+                        catch (_: Exception) { }
                         canCancel = true
                         releaser.close()
                     }

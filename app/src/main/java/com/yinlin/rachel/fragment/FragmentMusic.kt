@@ -16,6 +16,7 @@ import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
+import com.yinlin.rachel.activity.VideoActivity
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.clear
 import com.yinlin.rachel.clearAddAll
@@ -26,6 +27,7 @@ import com.yinlin.rachel.data.music.LyricsInfo
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.data.music.MusicInfoPreview
 import com.yinlin.rachel.data.music.MusicInfoPreviewList
+import com.yinlin.rachel.data.music.MusicPlayMode
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.databinding.FragmentMusicBinding
 import com.yinlin.rachel.deleteFilter
@@ -50,6 +52,24 @@ import kotlinx.coroutines.withContext
 class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(main), Player.Listener {
     companion object {
         const val UPDATE_FREQUENCY: Long = 100L // 更新频率
+
+        const val GROUP_HEADER_LIBRARY = 0
+        const val GROUP_HEADER_PLAYLIST = 1
+        const val GROUP_HEADER_LYRICS = 2
+        const val GROUP_HEADER_MOD = 3
+
+        const val GROUP_CONTROL_MODE = 0
+        const val GROUP_CONTROL_PREVIOUS = 1
+        const val GROUP_CONTROL_PLAY = 2
+        const val GROUP_CONTROL_NEXT = 3
+        const val GROUP_CONTROL_PLAYLIST = 4
+
+        const val GROUP_TOOL_AN = 0
+        const val GROUP_TOOL_MV = 1
+        const val GROUP_TOOL_LYRICS = 2
+        const val GROUP_TOOL_COMMENT = 3
+        const val GROUP_TOOL_SHARE = 4
+        const val GROUP_TOOL_INFO = 5
     }
 
     private val musicInfos = HashMap<String, MusicInfo>() // 曲库集
@@ -71,13 +91,13 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
 
     override fun init() {
         v.headerContainer.listener = { pos -> when (pos) {
-            0 -> main.navigate(FragmentLibrary(main, musicInfos.map {
+            GROUP_HEADER_LIBRARY -> main.navigate(FragmentLibrary(main, musicInfos.map {
                 val value = it.value
                 MusicInfoPreview(value.version, value.id, value.name, value.singer)
             }))
-            1 -> main.navigate(FragmentPlaylist(main, playlists.map { it.key }))
-            2 -> bottomDialogLyricsEngine.update().show()
-            3 -> RachelDialog.choice(main, "跳转工坊资源QQ群", listOf("专辑EP合集", "专辑EP", "单曲集")) {
+            GROUP_HEADER_PLAYLIST -> main.navigate(FragmentPlaylist(main, playlists.map { it.key }))
+            GROUP_HEADER_LYRICS -> bottomDialogLyricsEngine.update().show()
+            GROUP_HEADER_MOD -> RachelDialog.choice(main, "跳转工坊资源QQ群", listOf("专辑EP合集", "专辑EP", "单曲集")) {
                 RachelAppIntent.QQGroup(main.rs(when (it) {
                     0 -> R.string.qqgroup_mod0
                     1 -> R.string.qqgroup_mod1
@@ -108,8 +128,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             withContext(Dispatchers.IO) {
                 pathMusic.listFiles { file ->
                     file.isFile() && file.getName().lowercase().endsWith(RachelMod.RES_INFO)
-                }?.apply {
-                    for (f in this) {
+                }?.let {
+                    for (f in it) {
                         try {
                             val info: MusicInfo = f.readJson()
                             if (info.isCorrect) {
@@ -117,11 +137,32 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                                 musicInfos[info.id] = info
                             }
                         }
-                        catch (ignored: Exception) { }
+                        catch (_: Exception) { }
                     }
                 }
             }
             loading.dismiss()
+        }
+    }
+
+    // 设置播放模式
+    private fun updatePlayMode(mode: MusicPlayMode) {
+        when (mode) {
+            MusicPlayMode.ORDER -> {
+                player.repeatMode = Player.REPEAT_MODE_ALL
+                player.shuffleModeEnabled = false
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_order)
+            }
+            MusicPlayMode.LOOP -> {
+                player.repeatMode = Player.REPEAT_MODE_ONE
+                player.shuffleModeEnabled = false
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_loop)
+            }
+            MusicPlayMode.RANDOM -> {
+                player.repeatMode = Player.REPEAT_MODE_ALL
+                player.shuffleModeEnabled = true
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_random)
+            }
         }
     }
 
@@ -130,7 +171,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         player = controller
         isPlayerInit = true
         player.addListener(this)
-        player.repeatMode = Player.REPEAT_MODE_ALL
+        updatePlayMode(Config.music_play_mode)
+
         // 更新播放进度回调
         onTimeUpdate = object : Runnable {
             override fun run() {
@@ -147,42 +189,28 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             if (!player.isPlaying) player.play()
         }
 
-        val modeOrder = "order"
-        val modeLoop = "loop"
-        val modeRandom = "random"
-        v.controlContainer.setItemTag(0, modeOrder)
         v.controlContainer.listener = { pos -> when (pos) {
-            0 -> when (v.controlContainer.getItemTag(0)) {
-                modeOrder -> { // 顺序播放
-                    v.controlContainer.setItemTag(0, modeLoop)
-                    v.controlContainer.setItemImage(0, R.drawable.svg_music_loop)
-                    player.repeatMode = Player.REPEAT_MODE_ONE
-                    player.shuffleModeEnabled = false
+            GROUP_CONTROL_MODE -> when (Config.music_play_mode) {
+                MusicPlayMode.ORDER -> { // 顺序播放
+                    Config.music_play_mode = MusicPlayMode.LOOP
+                    updatePlayMode(MusicPlayMode.LOOP)
                 }
-                modeLoop -> { // 单曲循环
-                    v.controlContainer.setItemTag(0, modeRandom)
-                    v.controlContainer.setItemImage(0, R.drawable.svg_music_random)
-                    player.repeatMode = Player.REPEAT_MODE_ALL
-                    player.shuffleModeEnabled = true
-                    // 更新随机池
-                    if (player.shuffleModeEnabled) {
-                        // player.setShuffleOrder(DefaultShuffleOrder(player.mediaItemCount, System.currentTimeMillis()))
-                    }
+                MusicPlayMode.LOOP -> { // 单曲循环
+                    Config.music_play_mode = MusicPlayMode.RANDOM
+                    updatePlayMode(MusicPlayMode.RANDOM)
                 }
-                modeRandom -> { // 随机播放
-                    v.controlContainer.setItemTag(0, modeOrder)
-                    v.controlContainer.setItemImage(0, R.drawable.svg_music_order)
-                    player.repeatMode = Player.REPEAT_MODE_ALL
-                    player.shuffleModeEnabled = false
+                MusicPlayMode.RANDOM -> { // 随机播放
+                    Config.music_play_mode = MusicPlayMode.ORDER
+                    updatePlayMode(MusicPlayMode.ORDER)
                 }
             }
-            1 -> if (isLoadMusic) player.seekToPreviousMediaItem()
-            2 -> if (isLoadMusic) { if (player.isPlaying) player.pause() else player.play() }
-            3 -> if (isLoadMusic) player.seekToNextMediaItem()
-            4 -> if (isLoadMusic) {
+            GROUP_CONTROL_PREVIOUS -> if (isLoadMusic) player.seekToPreviousMediaItem()
+            GROUP_CONTROL_PLAY -> if (isLoadMusic) { if (player.isPlaying) player.pause() else player.play() }
+            GROUP_CONTROL_NEXT -> if (isLoadMusic) player.seekToNextMediaItem()
+            GROUP_CONTROL_PLAYLIST -> if (isLoadMusic) {
                 val currentMusicInfo = currentMusic
-                currentPlaylist?.apply {
-                    bottomDialogCurrentPlaylist.update(this.name, this.items.map {
+                currentPlaylist?.let { playlist ->
+                    bottomDialogCurrentPlaylist.update(playlist.name, playlist.items.map {
                         val musicInfo = musicInfos[it]
                         LoadMusicPreview(it, musicInfo?.name ?: it, musicInfo?.singer ?: "",
                             musicInfo == null, musicInfo == currentMusicInfo)
@@ -191,30 +219,38 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             }
         } }
         v.toolContainer.listener = { pos -> when (pos) {
-            0 -> currentMusic?.apply {
-                if (this.bgd) {
+            GROUP_TOOL_AN -> currentMusic?.let {
+                if (it.bgd) {
                     val isBgd = v.bg.tag as Boolean
-                    v.bg.load(main.ril, if (isBgd) this.bgsPath else this.bgdPath)
+                    v.bg.load(main.ril, if (isBgd) it.bgsPath else it.bgdPath)
                     v.bg.tag = !isBgd
                 }
                 else tip(Tip.WARNING, "此歌曲不支持壁纸动画")
             }
-            1 -> { }
-            2 -> currentMusic?.lyrics?.apply {
+            GROUP_TOOL_MV -> currentMusic?.let {
+                if (it.video) {
+                    player.pause()
+                    val intent = Intent(main, VideoActivity::class.java)
+                    intent.putExtra("uri", it.videoPath.absolutePath)
+                    startActivity(intent)
+                }
+                else tip(Tip.WARNING, "此歌曲不支持视频PV")
+            }
+            GROUP_TOOL_LYRICS -> currentMusic?.lyrics?.let {
                 val arr = mutableListOf<LyricsInfo>()
-                for ((engineName, nameList) in this) {
+                for ((engineName, nameList) in it) {
                     val available = LyricsEngineFactory.hasEngine(engineName)
                     for (name in nameList) arr += LyricsInfo(engineName, name, available)
                 }
                 bottomDialogLyricsInfo.update(arr).show()
             }
-            3 -> tip(Tip.INFO, "即将开放, 敬请期待新版本!")
-            4 -> currentMusic?.apply {
+            GROUP_TOOL_COMMENT -> tip(Tip.INFO, "即将开放, 敬请期待新版本!")
+            GROUP_TOOL_SHARE -> currentMusic?.let {
                 RachelDialog.confirm(main, content="导出MOD\"${this.id}\"到文件分享?") {
-                    shareMusic(this.id)
+                    shareMusic(it.id)
                 }
             }
-            5 -> currentMusic?.apply { bottomDialogMusicInfo.update(this).show() }
+            GROUP_TOOL_INFO -> currentMusic?.let { bottomDialogMusicInfo.update(it).show() }
         } }
     }
 
@@ -238,17 +274,17 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             RachelMessage.PREPARE_PLAYER -> preparePlayer(args[0] as MediaController)
             RachelMessage.MUSIC_START_PLAYER -> {
                 val arg = args[0]
-                if (arg is String) playlists[arg]?.apply { startPlayer(this) }
+                if (arg is String) playlists[arg]?.let { startPlayer(it) }
                 else if (arg is Playlist) startPlayer(arg)
             }
             RachelMessage.MUSIC_STOP_PLAYER -> stopPlayer()
             RachelMessage.MUSIC_DELETE_PLAYLIST -> {
                 val title = args[0] as String
-                playlists[title]?.apply {
+                playlists[title]?.let {
                     // 检查歌单是否正在播放
-                    if (isLoadPlaylist(this)) stopPlayer()
+                    if (isLoadPlaylist(it)) stopPlayer()
                     // UI更新
-                    playlists.remove(this.name)
+                    playlists.remove(it.name)
                     // 数据存储
                     Config.playlist = playlists
                 }
@@ -256,8 +292,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             RachelMessage.MUSIC_UPDATE_PLAYLIST -> {
                 val title = args[0] as String
                 val newItems = args[1] as LoadMusicPreviewList
-                playlists[title]?.apply {
-                    this.items.clearAddAll(newItems.map { it.id })
+                playlists[title]?.let {
+                    it.items.clearAddAll(newItems.map { item -> item.id })
                     // 数据存储
                     Config.playlist = playlists
                 }
@@ -300,11 +336,11 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             RachelMessage.MUSIC_DELETE_MUSIC_FROM_PLAYLIST -> {
                 val title = args[0] as String
                 val id = args[1] as String
-                playlists[title]?.apply {
-                    val position = this.items.indexOf(id)
+                playlists[title]?.let {
+                    val position = it.items.indexOf(id)
                     if (position != -1) {
                         // 检查歌单是否正在播放
-                        if (isLoadPlaylist(this)) {
+                        if (isLoadPlaylist(it)) {
                             val mediaIndex = loadMusics.indexOf(id)
                             // 如果是单曲循环, 则直接结束播放
                             if (player.repeatMode == Player.REPEAT_MODE_ONE) stopPlayer()
@@ -314,7 +350,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                             }
                         }
                         // UI更新
-                        this.items.removeAt(position)
+                        it.items.removeAt(position)
                         // 数据存储
                         Config.playlist = playlists
                     }
@@ -322,11 +358,11 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             }
             RachelMessage.MUSIC_DELETE_MUSIC -> {
                 val selectItems = args[0] as MusicInfoPreviewList
-                currentPlaylist?.apply {
+                currentPlaylist?.let {
                     val currentMusicId = currentMusic?.id
                     for (selectItem in selectItems) {
                         val id = selectItem.id
-                        if (this.items.contains(id)) {
+                        if (it.items.contains(id)) {
                             if (id == currentMusicId) {
                                 // 删除歌曲正在播放，只能停止播放器
                                 stopPlayer()
@@ -379,8 +415,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             RachelMessage.MUSIC_USE_LYRICS_ENGINE -> {
                 val engineName = args[0] as String
                 val name = args[1] as String
-                currentMusic?.apply {
-                    if (!v.lyrics.switchEngine(this, engineName, name)) tip(Tip.ERROR, "加载歌词引擎失败")
+                currentMusic?.let {
+                    if (!v.lyrics.switchEngine(it, engineName, name)) tip(Tip.ERROR, "加载歌词引擎失败")
                 }
             }
             else -> {}
@@ -436,15 +472,15 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     // 媒体切换
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
-        if (mediaItem == null) return
+        if (mediaItem != null) {
+            // 加载歌词引擎
+            musicInfos[mediaItem.mediaId]?.let {
+                if(!v.lyrics.loadEngine(it)) tip(Tip.ERROR, "加载歌词引擎失败")
+            }
 
-        // 加载歌词引擎
-        musicInfos[mediaItem.mediaId]?.apply {
-            if(!v.lyrics.loadEngine(this)) tip(Tip.ERROR, "加载歌词引擎失败")
+            // 处于前台时更新前台信息
+            if (isForeground) updateForeground()
         }
-
-        // 处于前台时更新前台信息
-        if (isForeground) updateForeground()
     }
 
     override fun onPlayerError(error: PlaybackException) {
@@ -472,10 +508,10 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         super.onIsPlayingChanged(isPlaying)
         if (isPlaying) {
-            v.controlContainer.setItemImage(2, R.drawable.svg_music_play)
+            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.svg_music_play)
             if (isForeground) startTimeUpdate()
         } else {
-            v.controlContainer.setItemImage(2, R.drawable.svg_music_pause)
+            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.svg_music_pause)
             if (isForeground) endTimeUpdate()
         }
     }
@@ -529,11 +565,6 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         }
         currentPlaylist = playlist // 设置当前播放歌单
 
-        // 更新随机池
-        if (player.shuffleModeEnabled) {
-            // player.setShuffleOrder(DefaultShuffleOrder(player.mediaItemCount, System.currentTimeMillis()))
-        }
-
         // 启动 Player
         player.setMediaItems(mediaItems)
         player.prepare()
@@ -561,8 +592,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.record.clearCD()
             v.bg.tag = false
             v.bg.clear(main.ril)
-            v.toolContainer.setItemImage(0, R.drawable.svg_an_off)
-            v.toolContainer.setItemImage(1, R.drawable.svg_mv_off)
+            v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.svg_an_off)
+            v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.svg_mv_off)
             // 更新已播放进度与进度条
             v.progress.updateProgress(0L, true)
         }
@@ -576,8 +607,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 v.record.loadCD(info.recordPath)
                 v.bg.tag = info.bgd
                 v.bg.load(main.ril, if (info.bgd) info.bgdPath else info.bgsPath)
-                v.toolContainer.setItemImage(0, if (info.bgd) R.drawable.svg_an_on else R.drawable.svg_an_off)
-                v.toolContainer.setItemImage(1, if (info.video) R.drawable.svg_mv_on else R.drawable.svg_mv_off)
+                v.toolContainer.setItemImage(GROUP_TOOL_AN, if (info.bgd) R.drawable.svg_an_on else R.drawable.svg_an_off)
+                v.toolContainer.setItemImage(GROUP_TOOL_MV, if (info.video) R.drawable.svg_mv_on else R.drawable.svg_mv_off)
                 // 已播放进度和进度条由onTimeUpdate更新, 不用在此更新
             }
         }
@@ -604,7 +635,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                         return@withContext
                     }
                 }
-                catch (ignored: Exception) { }
+                catch (_: Exception) { }
                 tip(Tip.ERROR, "导出MOD失败")
             }
             loading.dismiss()

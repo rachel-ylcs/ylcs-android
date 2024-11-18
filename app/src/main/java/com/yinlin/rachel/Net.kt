@@ -38,22 +38,22 @@ object Net {
 
     fun get(url: String, headers: Map<String, String>? = null): JsonElement = try {
         val builder = Request.Builder().url(url)
-        headers?.apply { builder.headers(this.toHeaders()) }
+        headers?.let { builder.headers(it.toHeaders()) }
         client.newCall(builder.build()).execute().use { it.body?.string().parseJson }
     }
-    catch (ignored: Exception) { JsonNull.INSTANCE }
+    catch (_: Exception) { JsonNull.INSTANCE }
 
     fun post(url: String, data: JsonElement = JsonNull.INSTANCE, headers: Map<String, String>? = null): JsonElement = try {
         val builder = Request.Builder().url(url)
-        headers?.apply { builder.headers(this.toHeaders()) }
+        headers?.let { builder.headers(it.toHeaders()) }
         builder.post(data.jsonString.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull()))
         client.newCall(builder.build()).execute().use { it.body?.string().parseJson }
     }
-    catch (ignored: Exception) { JsonNull.INSTANCE }
+    catch (_: Exception) { JsonNull.INSTANCE }
 
     fun postForm(url: String, files: Map<String, String>, content: Map<String, String>?, headers: Map<String, String>? = null): JsonElement = try {
         val builder = Request.Builder().url(url)
-        headers?.apply { builder.headers(this.toHeaders()) }
+        headers?.let { builder.headers(it.toHeaders()) }
         val bodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
         content?.forEach { (key, value) -> bodyBuilder.addFormDataPart(key, value) }
         files.forEach { (key, value) ->
@@ -63,7 +63,7 @@ object Net {
         builder.post(bodyBuilder.build())
         client.newCall(builder.build()).execute().use { it.body?.string().parseJson }
     }
-    catch (ignored: Exception) { JsonNull.INSTANCE }
+    catch (_: Exception) { JsonNull.INSTANCE }
 
     interface DownLoadMediaListener {
         fun onCancel()
@@ -102,7 +102,7 @@ object Net {
                     }
                 }
             }
-            catch (ignored: Exception) { }
+            catch (_: Exception) { }
             val isCancel = dialog.isCancel
             dialog.dismiss()
             if (isCancel) {
@@ -171,7 +171,7 @@ object Net {
                     }
                 }
             }
-            catch (ignored: Exception) { }
+            catch (_: Exception) { }
             val isCancel = dialog.isCancel
             dialog.dismiss()
             if (isCancel) {

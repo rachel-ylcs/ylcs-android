@@ -14,6 +14,7 @@ import com.yinlin.rachel.databinding.ItemMusicBinding
 import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
+import com.yinlin.rachel.model.RachelEnum
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tip
@@ -76,29 +77,37 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
         val checkIds: MusicInfoPreviewList get() = filterSource { it.selected }
     }
 
+    companion object {
+        const val GROUP_SEARCH = 0
+        const val GROUP_REFRESH = 1
+        const val GROUP_ADD = 2
+        const val GROUP_DELETE = 3
+        const val GROUP_ALL = 4
+    }
+
     private var adapter = Adapter(main, this)
 
     override fun bindingClass() = FragmentLibraryBinding::class.java
 
     override fun init() {
         v.group.apply {
-            setItemVisibility(2, false)
-            setItemVisibility(3, false)
-            setItemVisibility(4, false)
+            setItemVisibility(GROUP_ADD, false)
+            setItemVisibility(GROUP_DELETE, false)
+            setItemVisibility(GROUP_ALL, false)
             listener = { pos -> when (pos) {
-                0 -> RachelDialog.input(main, "搜索歌曲", 32) {
+                GROUP_SEARCH -> RachelDialog.input(main, "搜索歌曲", 32) {
                     val newItems = main.sendMessageForResult<MusicInfoPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO_PREVIEW, it)!!
                     adapter.setSource(newItems)
                     adapter.notifySource()
                 }
-                1 -> {
+                GROUP_REFRESH -> {
                     val newItems = main.sendMessageForResult<MusicInfoPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO_PREVIEW, null)!!
                     adapter.setSource(newItems)
                     adapter.notifySource()
                 }
-                2 -> addMusicIntoPlaylist()
-                3 -> deleteMusic()
-                4 -> adapter.selectAll()
+                GROUP_ADD -> addMusicIntoPlaylist()
+                GROUP_DELETE -> deleteMusic()
+                GROUP_ALL -> adapter.selectAll()
             } }
         }
 
@@ -125,11 +134,11 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
 
     private fun setManageButtonStatus(status: Boolean) {
         v.group.apply {
-            setItemVisibility(0, !status)
-            setItemVisibility(1, !status)
-            setItemVisibility(2, status)
-            setItemVisibility(3, status)
-            setItemVisibility(4, status)
+            setItemVisibility(GROUP_SEARCH, !status)
+            setItemVisibility(GROUP_REFRESH, !status)
+            setItemVisibility(GROUP_ADD, status)
+            setItemVisibility(GROUP_DELETE, status)
+            setItemVisibility(GROUP_ALL, status)
         }
     }
 
