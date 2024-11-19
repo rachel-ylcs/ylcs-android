@@ -8,7 +8,6 @@ import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 
 class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) : RachelFragment<FragmentShowActivityBinding>(main) {
     private val showstartUrl: String? = show.showstart
@@ -19,7 +18,7 @@ class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) :
 
     override fun init() {
         v.showstart.rachelClick {
-            if (showstartUrl != null) {
+            if (showstartUrl != null && showstartUrl.startsWith("mlink://com.showstartfans.activity")) {
                 val intent = RachelAppIntent.Showstart(showstartUrl)
                 if (!intent.start(main)) tip(Tip.WARNING, "未安装${intent.name}")
             }

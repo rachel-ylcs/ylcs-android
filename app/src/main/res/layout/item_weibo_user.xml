@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginVertical="3dp"
+    android:layout_marginHorizontal="10dp"
+    android:gravity="center"
+    android:background="@color/white" >
+    <com.yinlin.rachel.view.AvatarView
+        android:id="@+id/avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+    <TextView
+        android:id="@+id/name"
+        style="@style/RachelText.X0"
+        android:layout_marginHorizontal="10dp"
+        android:layout_weight="1" />
+</LinearLayout>

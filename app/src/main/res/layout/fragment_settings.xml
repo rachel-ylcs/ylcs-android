@@ -53,7 +53,8 @@
                 android:id="@+id/signature"
                 style="@style/RachelText.X.Overflow"
                 android:maxLines="2"
-                android:gravity="end" />
+                android:gravity="end"
+                android:textSize="@dimen/xs" />
         </com.yinlin.rachel.view.SettingsItem>
         <com.yinlin.rachel.view.SettingsItem
             android:layout_width="match_parent"
@@ -110,7 +111,7 @@
             android:id="@+id/weibo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="微博 API"
+            android:text="搜索微博用户"
             android:elevation="3dp" />
         <com.yinlin.rachel.view.TagView
             android:id="@+id/weibo_list"

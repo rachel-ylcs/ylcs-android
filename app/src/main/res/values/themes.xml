@@ -119,5 +119,6 @@
         <item name="materialButtonStyle">@style/Theme.RachelButton</item>
         <item name="android:scrollViewStyle">@style/RachelScrollView</item>
         <item name="switchStyle">@style/Theme.RachelSwitch</item>
+        <item name="tabStyle">@style/Widget.Design.TabLayout</item>
     </style>
 </resources>

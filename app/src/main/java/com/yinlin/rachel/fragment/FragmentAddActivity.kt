@@ -58,6 +58,7 @@ class FragmentAddActivity(main: MainActivity, private val calendar: Calendar) : 
                         view.evaluateJavascript(script, null)
                     }
                 }
+                println(url)
             }
 
             override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {

@@ -17,6 +17,29 @@ import java.util.Locale
 
 
 object WeiboAPI {
+    fun searchUser(name: String): List<WeiboUser>? = try {
+        val result = mutableListOf<WeiboUser>()
+        val url = "https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D3%26q%3D${name}&page_type=searchall"
+        val json = Net.get(url).asJsonObject
+        val data = json.getAsJsonObject("data")
+        for (item1 in data.getAsJsonArray("cards")) {
+            val group = item1.asJsonObject
+            if (group["card_type"].asInt == 11) {
+                for (item2 in group.getAsJsonArray("card_group")) {
+                    val card = item2.asJsonObject
+                    if (card["card_type"].asInt == 10) {
+                        val user = card["user"].asJsonObject
+                        val id = user["id"].asString
+                        val userName = user["screen_name"].asString
+                        val avatar = user["avatar_hd"].asString
+                        result += WeiboUser(id, userName, avatar, "")
+                    }
+                }
+            }
+        }
+        result
+    } catch (_: Exception) { null }
+
     fun extractContainerId(uid: String): Array<String>? = try {
         val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
         val json = Net.get(url).asJsonObject

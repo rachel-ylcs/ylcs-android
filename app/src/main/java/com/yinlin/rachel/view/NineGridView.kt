@@ -42,11 +42,10 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
         override fun getItemCount() = items.size.coerceAtMost(9)
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            (holder.itemView as ImageView).apply {
-                val width = ngv.measuredWidth / ngv.column
-                layoutParams = ViewGroup.LayoutParams(width, width)
-                load(rilNet, items[position].mImageUrl)
-            }
+            val imageView = holder.itemView as ImageView
+            val width = ngv.measuredWidth / ngv.column
+            imageView.layoutParams = ViewGroup.LayoutParams(width, width)
+            imageView.load(rilNet, items[position].mImageUrl)
         }
     }
 

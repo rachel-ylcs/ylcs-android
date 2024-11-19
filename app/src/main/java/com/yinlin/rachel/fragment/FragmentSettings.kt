@@ -23,7 +23,6 @@ import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,11 +80,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
         // 添加微博用户
         v.weibo.rachelClick {
-            RachelDialog.input(main, "请输入微博用户的uid(非昵称)", 20) {
-                val weiboUserStorage: WeiboUserStorage? = Config.weibo_users[it]
-                if (weiboUserStorage != null) tip(Tip.WARNING, "${weiboUserStorage.name} 已存在")
-                else addWeiboUser(it)
-            }
+            RachelDialog.input(main, "输入微博用户的昵称", 24) { searchWeiboUser(it) }
         }
 
         // 删除微博用户
@@ -191,19 +186,16 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
     }
 
     @NewThread
-    private fun addWeiboUser(uid: String) {
+    private fun searchWeiboUser(name: String) {
         lifecycleScope.launch {
             val loading = main.loading
-            val result = withContext(Dispatchers.IO) { WeiboAPI.extractContainerId(uid) }
+            val result = withContext(Dispatchers.IO) { WeiboAPI.searchUser(name) }
             loading.dismiss()
             if (result != null) {
-                val weiboUsers = Config.weibo_users
-                val name = result[1]
-                weiboUsers[result[0]] = WeiboUserStorage(name, result[2])
-                Config.weibo_users = weiboUsers
-                v.weiboList.addTag(name)
+                if (result.isNotEmpty()) main.navigate(FragmentSearchWeiboUser(main, result))
+                else tip(Tip.WARNING, "未搜索到满足的微博用户")
             }
-            else tip(Tip.ERROR, "解析微博用户失败")
+            else tip(Tip.ERROR, "网络异常")
         }
     }
 
