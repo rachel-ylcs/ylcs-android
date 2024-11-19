@@ -31,7 +31,7 @@ class RachelApplication : Application() {
         fun initBaseContext(context: Context): Context =
             context.createConfigurationContext(context.resources.configuration.apply {
                 fontScale = 1f
-                densityDpi = 480
+                densityDpi = if (densityDpi >= 480) 480 else 320
                 setLocale(Locale.SIMPLIFIED_CHINESE)
             })
         lateinit var crashHandler: CrashHandler
