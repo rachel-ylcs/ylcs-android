@@ -12,8 +12,8 @@ import com.yinlin.rachel.model.RachelBottomDialog
 class BottomDialogMusicInfo(fragment: FragmentMusic) : RachelBottomDialog<BottomDialogMusicInfoBinding, FragmentMusic>(
     fragment, 0.7f, BottomDialogMusicInfoBinding::class.java) {
     private var currentMusicInfo: MusicInfo? = null
-    private val drawableYes = AppCompatResources.getDrawable(fragment.main, R.drawable.svg_yes)
-    private val drawableNo = AppCompatResources.getDrawable(fragment.main, R.drawable.svg_no)
+    private val drawableYes = AppCompatResources.getDrawable(fragment.main, R.drawable.icon_yes)
+    private val drawableNo = AppCompatResources.getDrawable(fragment.main, R.drawable.icon_no)
 
     override fun init() {
         v.lyricsContainer.interceptScroll()

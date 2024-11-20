@@ -163,7 +163,7 @@ abstract class RachelDialog<T : ViewBinding> (
         class DialogLoading(context: Context, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class.java, false, false) {
             override fun init(v: DialogLoadingBinding) {
                 v.title.text = title
-                v.pic.load(RachelImageLoader(context), R.drawable.dialog_loading_rachel)
+                v.pic.load(RachelImageLoader(context), R.drawable.img_dialog_loading_rachel)
             }
         }
 

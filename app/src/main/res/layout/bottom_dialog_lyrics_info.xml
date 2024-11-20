@@ -8,7 +8,8 @@
     android:padding="10dp"
     tools:context=".dialog.BottomDialogLyricsInfo" >
     <TextView
-        style="@style/RachelText"
+        style="@style/RachelText.X"
+        android:gravity="center"
         android:text="歌词"
         android:textColor="@color/steel_blue"
         android:textSize="@dimen/xl"

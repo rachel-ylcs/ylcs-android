@@ -101,7 +101,7 @@ class ImageSelectView @JvmOverloads constructor(context: Context, attrs: Attribu
             val v = holder.v
             if (position == items.size) { // 是添加按钮
                 v.delete.visible = false
-                Glide.with(v.root.context).load(R.drawable.svg_add_image).into(v.pic)
+                Glide.with(v.root.context).load(R.drawable.img_add_image).into(v.pic)
             }
             else { // 是图片
                 v.delete.visible = true

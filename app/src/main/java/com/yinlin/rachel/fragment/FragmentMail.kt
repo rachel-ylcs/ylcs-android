@@ -17,7 +17,6 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
-import com.yinlin.rachel.tip
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,12 +108,12 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
 
         override fun onItemClicked(v: ItemMailBinding, item: Mail, position: Int) {
             if (v.expander.isExpand) {
-                val drawable = ContextCompat.getDrawable(main, R.drawable.svg_expand_gray)
+                val drawable = ContextCompat.getDrawable(main, R.drawable.icon_expand)
                 v.content.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
                 v.expander.isExpand = false
             }
             else {
-                val drawable = ContextCompat.getDrawable(main, R.drawable.svg_expand_gray_down)
+                val drawable = ContextCompat.getDrawable(main, R.drawable.icon_expand_down)
                 v.content.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
                 v.expander.isExpand = true
             }

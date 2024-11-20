@@ -15,7 +15,7 @@ class PAGLyricsEngine(private val context: Context) : LyricsEngine {
     companion object {
         const val NAME = "pag"
         const val DESCRIPTION = "腾讯自研完整动画工作流解决方案, 以AE动效为基础渲染动画，具有高支持度、高可用性、高性能的特点"
-        val ICON: Int = R.drawable.lyrics_engine_pag
+        val ICON: Int = R.drawable.img_lyrics_engine_pag
     }
     override val name: String = NAME
     override val ext: String = ".pag"

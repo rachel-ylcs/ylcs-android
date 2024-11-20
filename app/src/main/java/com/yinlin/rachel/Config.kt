@@ -7,7 +7,7 @@ import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.data.music.PlaylistMap
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
-import com.yinlin.rachel.data.weibo.WeiboUserStorageMap
+import com.yinlin.rachel.data.weibo.WeiboUserStorageList
 import com.yinlin.rachel.model.RachelEnum
 import java.lang.reflect.Type
 
@@ -111,9 +111,9 @@ object Config {
         set(value) { playlist_meta.set(value) }
 
     // 微博用户
-    private val weibo_users_meta = JsonMeta<WeiboUserStorageMap>("weibo_users", WeiboUserStorage.defaultWeiboUsers,
-        object : TypeToken<LinkedHashMap<String, WeiboUserStorage>>(){}.type)
-    var weibo_users: WeiboUserStorageMap
+    private val weibo_users_meta = JsonMeta<WeiboUserStorageList>("weibo_users/20241115", WeiboUserStorage.defaultWeiboUsers,
+        object : TypeToken<MutableList<WeiboUserStorage>>(){}.type)
+    var weibo_users: WeiboUserStorageList
         get() = weibo_users_meta.get()
         set(value) { weibo_users_meta.set(value) }
 

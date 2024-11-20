@@ -23,6 +23,9 @@
     <string name="default_name">未登录</string>
     <string name="default_signature">泸沽烟水里的过客…</string>
 
+    <string name="weibo_user_list_like">微博关注</string>
+    <string name="weibo_user_list_search">搜索结果</string>
+
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
     <string name="yes">是</string>

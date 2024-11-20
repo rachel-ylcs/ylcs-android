@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentShowActivity" >
     <TextView
         android:id="@+id/title"
@@ -25,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:src="@drawable/showstart" />
+            android:src="@drawable/img_show_showstart" />
         <ImageView
             android:id="@+id/damai"
             android:layout_width="0dp"
@@ -33,14 +34,14 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_marginHorizontal="10dp"
-            android:src="@drawable/damai" />
+            android:src="@drawable/img_show_damai" />
         <ImageView
             android:id="@+id/maoyan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:src="@drawable/maoyan" />
+            android:src="@drawable/img_show_maoyan" />
     </LinearLayout>
     <TextView
         android:id="@+id/content"

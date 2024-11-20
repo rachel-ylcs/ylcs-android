@@ -11,11 +11,9 @@ import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.databinding.FragmentWeiboUserBinding
 import com.yinlin.rachel.load
-import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,7 +25,7 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
 
     override fun init() {
         v.add.rachelClick {
-            val weiboUserStorage: WeiboUserStorage? = Config.weibo_users[weiboUserId]
+            val weiboUserStorage: WeiboUserStorage? = Config.weibo_users.find { it.userId == weiboUserId }
             if (weiboUserStorage != null) tip(Tip.WARNING, "${weiboUserStorage.name} 已存在")
             else addWeiboUser(weiboUserId)
         }
@@ -41,11 +39,8 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
     fun requestUserInfo() {
         lifecycleScope.launch {
             val loading = main.loading
-            val userInfo = withContext(Dispatchers.IO) {
-                val userInfo = WeiboAPI.getWeiboUserInfo(weiboUserId)
-                withContext(Dispatchers.Main) { loading.dismiss() }
-                userInfo
-            }
+            val userInfo = withContext(Dispatchers.IO) { WeiboAPI.getWeiboUserInfo(weiboUserId) }
+            loading.dismiss()
             if (userInfo != null) {
                 v.name.text = userInfo.name
                 v.avatar.load(rilNet, userInfo.avatar, Config.cache_daily_pic)
@@ -65,14 +60,11 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
     private fun addWeiboUser(uid: String) {
         lifecycleScope.launch {
             val loading = main.loading
-            val result = withContext(Dispatchers.IO) {
-                val result = WeiboAPI.extractContainerId(uid)
-                withContext(Dispatchers.Main) { loading.dismiss() }
-                result
-            }
+            val result = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserStorage(uid) }
+            loading.dismiss()
             if (result != null) {
                 val weiboUsers = Config.weibo_users
-                weiboUsers[result[0]] = WeiboUserStorage(result[1], result[2])
+                weiboUsers += result
                 Config.weibo_users = weiboUsers
                 tip(Tip.SUCCESS, "添加成功")
             }

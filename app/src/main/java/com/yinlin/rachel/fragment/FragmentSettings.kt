@@ -8,11 +8,8 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
-import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
-import com.yinlin.rachel.data.weibo.WeiboUserStorage
-import com.yinlin.rachel.data.weibo.names
 import com.yinlin.rachel.databinding.FragmentSettingsBinding
 import com.yinlin.rachel.dialog.BottomDialogCrashLog
 import com.yinlin.rachel.load
@@ -77,20 +74,8 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         /*    ----    个性化设置    ----    */
 
         /*    ----    资讯设置    ----    */
-
-        // 添加微博用户
         v.weibo.rachelClick {
-            RachelDialog.input(main, "输入微博用户的昵称", 24) { searchWeiboUser(it) }
-        }
-
-        // 删除微博用户
-        v.weiboList.listener = { index, text ->
-            RachelDialog.confirm(main, content="是否删除此微博用户") {
-                val weiboUsers = Config.weibo_users
-                weiboUsers.entries.removeIf { entry -> entry.value.name == text }
-                Config.weibo_users = weiboUsers
-                v.weiboList.removeTag(index)
-            }
+            main.navigate(FragmentWeiboUserList(main))
         }
 
         /*    ----    听歌设置    ----    */
@@ -157,7 +142,6 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             v.inviter.text = ""
             v.wall.pureColor = main.rc(R.color.micro_gray)
         }
-        v.weiboList.setTags(Config.weibo_users.names)
     }
 
     @NewThread
@@ -182,20 +166,6 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
                 }
                 else -> tip(Tip.ERROR, result.msg)
             }
-        }
-    }
-
-    @NewThread
-    private fun searchWeiboUser(name: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { WeiboAPI.searchUser(name) }
-            loading.dismiss()
-            if (result != null) {
-                if (result.isNotEmpty()) main.navigate(FragmentSearchWeiboUser(main, result))
-                else tip(Tip.WARNING, "未搜索到满足的微博用户")
-            }
-            else tip(Tip.ERROR, "网络异常")
         }
     }
 

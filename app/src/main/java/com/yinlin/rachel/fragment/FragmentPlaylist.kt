@@ -65,7 +65,6 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
         v.group.listener = { pos -> when (pos) {
             GROUP_ADD -> RachelDialog.input(main, "请输入新歌单名称", 10) {
                 if (main.sendMessageForResult<Boolean>(RachelTab.music, RachelMessage.MUSIC_CREATE_PLAYLIST, it)!!) {
-                    tip(Tip.SUCCESS, "创建成功")
                     v.tab.addTabEx(it)
                     v.tab.selectTabEx(v.tab.tabCount - 1)
                     v.tab.scrollToTabEx(v.tab.tabCount - 1)
@@ -77,11 +76,9 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
                 main.pop()
             }
             GROUP_RENAME -> v.tab.processCurrentTabEx { view, title, _ ->
-                RachelDialog.input(main, "请输入歌单名称", 10) {
-                    if (main.sendMessageForResult<Boolean>(RachelTab.music, RachelMessage.MUSIC_RENAME_PLAYLIST, title, it)!!) {
-                        tip(Tip.SUCCESS, "修改成功")
+                RachelDialog.input(main, "修改歌单名称", 10) {
+                    if (main.sendMessageForResult<Boolean>(RachelTab.music, RachelMessage.MUSIC_RENAME_PLAYLIST, title, it)!!)
                         view.text = it
-                    }
                     else tip(Tip.WARNING, "歌单已存在或名称不合法")
                 }
             }

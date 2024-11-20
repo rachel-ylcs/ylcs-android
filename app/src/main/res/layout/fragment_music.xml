@@ -27,10 +27,10 @@
             android:padding="5dp"
             app:ButtonGroupItemGap="2dp"
             app:ButtonGroupText="曲库,歌单,歌词,工坊"
-            app:ButtonGroupIcon1="@drawable/svg_tool_library"
-            app:ButtonGroupIcon2="@drawable/svg_tool_playlist"
-            app:ButtonGroupIcon3="@drawable/svg_tool_lyrics_engine"
-            app:ButtonGroupIcon4="@drawable/svg_tool_workshop" />
+            app:ButtonGroupIcon1="@drawable/icon_library"
+            app:ButtonGroupIcon2="@drawable/icon_playlist_blue"
+            app:ButtonGroupIcon3="@drawable/icon_lyrics_engine"
+            app:ButtonGroupIcon4="@drawable/icon_workshop" />
         <com.yinlin.rachel.view.LyricsView
             android:id="@+id/lyrics"
             android:layout_width="match_parent"
@@ -91,11 +91,11 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="15dp"
                 app:ButtonGroupItemGravity="AVERAGE"
-                app:ButtonGroupIcon1="@drawable/svg_music_order"
-                app:ButtonGroupIcon2="@drawable/svg_music_previous"
-                app:ButtonGroupIcon3="@drawable/svg_music_pause"
-                app:ButtonGroupIcon4="@drawable/svg_music_next"
-                app:ButtonGroupIcon5="@drawable/svg_music_list" />
+                app:ButtonGroupIcon1="@drawable/icon_play_mode_order"
+                app:ButtonGroupIcon2="@drawable/icon_player_previous"
+                app:ButtonGroupIcon3="@drawable/icon_player_pause"
+                app:ButtonGroupIcon4="@drawable/icon_player_next"
+                app:ButtonGroupIcon5="@drawable/icon_playlist_white" />
             <com.yinlin.rachel.view.ButtonGroup
                 android:id="@+id/tool_container"
                 android:layout_width="match_parent"
@@ -106,12 +106,12 @@
                 android:orientation="horizontal"
                 android:layout_marginVertical="10dp"
                 app:ButtonGroupItemGravity="AVERAGE"
-                app:ButtonGroupIcon1="@drawable/svg_an_off"
-                app:ButtonGroupIcon2="@drawable/svg_mv_off"
-                app:ButtonGroupIcon3="@drawable/svg_lyrics"
-                app:ButtonGroupIcon4="@drawable/svg_comment"
-                app:ButtonGroupIcon5="@drawable/svg_share"
-                app:ButtonGroupIcon6="@drawable/svg_info" />
+                app:ButtonGroupIcon1="@drawable/icon_an_off"
+                app:ButtonGroupIcon2="@drawable/icon_mv_off"
+                app:ButtonGroupIcon3="@drawable/icon_lyrics"
+                app:ButtonGroupIcon4="@drawable/icon_music_comment"
+                app:ButtonGroupIcon5="@drawable/icon_share_white"
+                app:ButtonGroupIcon6="@drawable/icon_info" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </FrameLayout>

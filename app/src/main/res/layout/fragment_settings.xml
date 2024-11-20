@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentSettings" >
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,8 +14,8 @@
         <TextView
             android:id="@+id/tv_account"
             style="@style/RachelText.X"
-            android:gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
             android:textColor="@color/steel_blue"
             android:textStyle="bold"
             android:textSize="@dimen/base"
@@ -91,8 +91,8 @@
         <TextView
             android:id="@+id/tv_theme"
             style="@style/RachelText.X"
-            android:gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
             android:textColor="@color/steel_blue"
             android:textStyle="bold"
             android:textSize="@dimen/base"
@@ -101,8 +101,8 @@
         <TextView
             android:id="@+id/tv_msg"
             style="@style/RachelText.X"
-            android:gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
             android:textColor="@color/steel_blue"
             android:textStyle="bold"
             android:textSize="@dimen/base"
@@ -111,20 +111,14 @@
             android:id="@+id/weibo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="搜索微博用户"
+            android:text="微博关注列表"
             android:elevation="3dp" />
-        <com.yinlin.rachel.view.TagView
-            android:id="@+id/weibo_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="@color/white" />
 
         <TextView
             android:id="@+id/tv_music"
             style="@style/RachelText.X"
-            android:gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
             android:textColor="@color/steel_blue"
             android:textStyle="bold"
             android:textSize="@dimen/base"
@@ -138,8 +132,7 @@
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_music_focus"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false" />
+                android:layout_height="wrap_content" />
         </com.yinlin.rachel.view.SettingsItem>
         <com.yinlin.rachel.view.SettingsItem
             android:layout_width="match_parent"
@@ -152,20 +145,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/svg_upload_blue" />
+                android:src="@drawable/icon_upload_blue" />
             <ImageView
                 android:id="@+id/button_download_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/svg_download_blue" />
+                android:src="@drawable/icon_download_blue" />
         </com.yinlin.rachel.view.SettingsItem>
 
         <TextView
             android:id="@+id/tv_other"
             style="@style/RachelText.X"
-            android:gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
             android:textColor="@color/steel_blue"
             android:textStyle="bold"
             android:textSize="@dimen/base"
@@ -180,7 +173,7 @@
             android:id="@+id/check_update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/svg_settings_update"
+            android:src="@drawable/icon_update"
             android:text="检查更新"
             android:textColor="@color/orange_red"
             android:elevation="3dp" >
@@ -193,14 +186,14 @@
             android:id="@+id/feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/svg_settings_feedback"
+            android:src="@drawable/icon_feedback"
             android:text="反馈与建议"
             android:elevation="3dp" />
         <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/svg_settings_about"
+            android:src="@drawable/icon_about"
             android:text="关于茶舍"
             android:elevation="3dp" />
     </LinearLayout>

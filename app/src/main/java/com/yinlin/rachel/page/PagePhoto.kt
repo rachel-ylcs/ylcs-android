@@ -32,7 +32,7 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
             if (item is ResFolder) {
                 v.author.text = ""
                 v.author.visible = false
-                v.pic.load(rilNet, R.drawable.photo_album)
+                v.pic.load(rilNet, R.drawable.img_photo_album)
             } else {
                 v.author.text = item.author
                 v.author.visible = true

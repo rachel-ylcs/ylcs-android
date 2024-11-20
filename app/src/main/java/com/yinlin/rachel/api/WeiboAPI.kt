@@ -8,7 +8,8 @@ import com.yinlin.rachel.data.weibo.WeiboCommentList
 import com.yinlin.rachel.data.weibo.WeiboList
 import com.yinlin.rachel.data.weibo.WeiboUser
 import com.yinlin.rachel.data.weibo.WeiboUserInfo
-import com.yinlin.rachel.data.weibo.WeiboUserStorageMap
+import com.yinlin.rachel.data.weibo.WeiboUserStorage
+import com.yinlin.rachel.data.weibo.WeiboUserStorageList
 import com.yinlin.rachel.model.RachelPreview
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -40,21 +41,23 @@ object WeiboAPI {
         result
     } catch (_: Exception) { null }
 
-    fun extractContainerId(uid: String): Array<String>? = try {
+    fun extractWeiboUserStorage(uid: String): WeiboUserStorage? = try {
         val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
         val json = Net.get(url).asJsonObject
         val data = json.getAsJsonObject("data")
-        val name = data.getAsJsonObject("userInfo")["screen_name"].asString
+        val userInfo = data.getAsJsonObject("userInfo")
+        val name = userInfo["screen_name"].asString
+        val avatar = userInfo["avatar_hd"].asString
         val tabs = data.getAsJsonObject("tabsInfo").getAsJsonArray("tabs")
-        var arr: Array<String>? = null
+        var user: WeiboUserStorage? = null
         for (item in tabs) {
             val tab = item.asJsonObject
             if (tab["title"].asString == "微博") {
-                arr = arrayOf(uid, name, tab["containerid"].asString)
+                user = WeiboUserStorage(uid, tab["containerid"].asString, name, avatar)
                 break
             }
         }
-        arr
+        user
     } catch (_: Exception) { null }
 
     private fun extractWeibo(card: JsonObject): Weibo {
@@ -143,8 +146,8 @@ object WeiboAPI {
         catch (_: Exception) { }
     }
 
-    fun getAllWeibo(weiboUsers: WeiboUserStorageMap, array: WeiboList) {
-        for ((key, value) in weiboUsers) getWeibo(key, value.containerId, array)
+    fun getAllWeibo(weiboUsers: WeiboUserStorageList, array: WeiboList) {
+        for (user in weiboUsers) getWeibo(user.userId, user.containerId, array)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         array.sortWith { o1, o2 ->
             val dateTime1 = LocalDateTime.parse(o1.time, formatter)

@@ -7,25 +7,26 @@
     android:orientation="vertical"
     android:padding="10dp"
     tools:context=".dialog.BottomDialogCurrentPlaylist" >
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center" >
-        <TextView
-            android:id="@+id/title"
-            style="@style/RachelText.X0"
-            android:layout_weight="1"
-            android:text="播放列表"
-            android:textColor="@color/steel_blue"
-            android:textSize="@dimen/xl"
-            android:textStyle="bold" />
+        android:layout_height="wrap_content" >
         <ImageView
             android:id="@+id/button_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/svg_stop_blue" />
-    </LinearLayout>
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/icon_stop_blue"
+            android:elevation="1dp" />
+        <TextView
+            android:id="@+id/title"
+            style="@style/RachelText.X"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:text="播放列表"
+            android:textColor="@color/steel_blue"
+            android:textSize="@dimen/xl"
+            android:textStyle="bold" />
+    </FrameLayout>
     <com.yinlin.rachel.view.LineView
         android:layout_width="match_parent"
         android:layout_height="1dp"

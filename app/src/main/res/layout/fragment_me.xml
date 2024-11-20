@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentMe" >
     <com.yinlin.rachel.view.PAGRefreshHeader
         android:layout_width="match_parent"
@@ -124,28 +124,28 @@
                         android:layout_weight="1"
                         android:text="扫码"
                         android:textSize="@dimen/xs"
-                        app:drawableTopCompat="@drawable/svg_me_scan" />
+                        app:drawableTopCompat="@drawable/icon_scan" />
                     <TextView
                         android:id="@+id/button_profile"
                         style="@style/RachelText.Image"
                         android:layout_weight="1"
                         android:text="名片"
                         android:textSize="@dimen/xs"
-                        app:drawableTopCompat="@drawable/svg_me_profile" />
+                        app:drawableTopCompat="@drawable/icon_profile" />
                     <TextView
                         android:id="@+id/button_settings"
                         style="@style/RachelText.Image"
                         android:layout_weight="1"
                         android:text="设置"
                         android:textSize="@dimen/xs"
-                        app:drawableTopCompat="@drawable/svg_me_settings" />
+                        app:drawableTopCompat="@drawable/icon_settings" />
                     <TextView
                         android:id="@+id/button_shop"
                         style="@style/RachelText.Image"
                         android:layout_weight="1"
                         android:text="店铺"
                         android:textSize="@dimen/xs"
-                        app:drawableTopCompat="@drawable/svg_me_shop" />
+                        app:drawableTopCompat="@drawable/icon_shop" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
             <com.google.android.material.card.MaterialCardView
@@ -173,35 +173,35 @@
                             android:layout_weight="1"
                             android:text="签到"
                             android:textSize="@dimen/xs"
-                            app:drawableTopCompat="@drawable/svg_me_sign_in" />
+                            app:drawableTopCompat="@drawable/icon_signin" />
                         <TextView
                             android:id="@+id/button_friend"
                             style="@style/RachelText.Image"
                             android:layout_weight="1"
                             android:text="好友"
                             android:textSize="@dimen/xs"
-                            app:drawableTopCompat="@drawable/svg_me_friend" />
+                            app:drawableTopCompat="@drawable/icon_friend" />
                         <TextView
                             android:id="@+id/button_topic"
                             style="@style/RachelText.Image"
                             android:layout_weight="1"
                             android:text="主题"
                             android:textSize="@dimen/xs"
-                            app:drawableTopCompat="@drawable/svg_me_topic" />
+                            app:drawableTopCompat="@drawable/icon_topic" />
                         <TextView
                             android:id="@+id/button_mail"
                             style="@style/RachelText.Image"
                             android:layout_weight="1"
                             android:text="邮箱"
                             android:textSize="@dimen/xs"
-                            app:drawableTopCompat="@drawable/svg_me_mail" />
+                            app:drawableTopCompat="@drawable/icon_mail" />
                         <TextView
                             android:id="@+id/button_medal"
                             style="@style/RachelText.Image"
                             android:layout_weight="1"
                             android:text="徽章"
                             android:textSize="@dimen/xs"
-                            app:drawableTopCompat="@drawable/svg_me_medal" />
+                            app:drawableTopCompat="@drawable/icon_medal" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -231,7 +231,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        android:src="@drawable/svg_refresh_blue" />
+                        android:src="@drawable/icon_refresh_blue" />
                     <com.yinlin.rachel.view.ActivityCalendarView
                         android:id="@+id/calendar"
                         android:layout_width="match_parent"

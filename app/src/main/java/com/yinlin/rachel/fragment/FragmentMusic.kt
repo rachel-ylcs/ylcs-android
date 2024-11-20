@@ -151,17 +151,17 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             MusicPlayMode.ORDER -> {
                 player.repeatMode = Player.REPEAT_MODE_ALL
                 player.shuffleModeEnabled = false
-                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_order)
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.icon_play_mode_order)
             }
             MusicPlayMode.LOOP -> {
                 player.repeatMode = Player.REPEAT_MODE_ONE
                 player.shuffleModeEnabled = false
-                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_loop)
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.icon_play_mode_loop)
             }
             MusicPlayMode.RANDOM -> {
                 player.repeatMode = Player.REPEAT_MODE_ALL
                 player.shuffleModeEnabled = true
-                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.svg_music_random)
+                v.controlContainer.setItemImage(GROUP_CONTROL_MODE, R.drawable.icon_player_mode_random)
             }
         }
     }
@@ -439,7 +439,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 if (newName.isEmpty() || playlists.containsKey(newName) ||
                     newName == main.rs(R.string.default_playlist_name)) return false
                 // UI更新
-                playlists[newName] = Playlist(newName, ArrayList())
+                playlists[newName] = Playlist(newName, mutableListOf())
                 // 数据存储
                 Config.playlist = playlists
                 return true
@@ -508,10 +508,10 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         super.onIsPlayingChanged(isPlaying)
         if (isPlaying) {
-            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.svg_music_play)
+            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.icon_player_play)
             if (isForeground) startTimeUpdate()
         } else {
-            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.svg_music_pause)
+            v.controlContainer.setItemImage(GROUP_CONTROL_PLAY, R.drawable.icon_player_pause)
             if (isForeground) endTimeUpdate()
         }
     }
@@ -592,8 +592,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.record.clearCD()
             v.bg.tag = false
             v.bg.clear(main.ril)
-            v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.svg_an_off)
-            v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.svg_mv_off)
+            v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.icon_an_off)
+            v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.icon_mv_off)
             // 更新已播放进度与进度条
             v.progress.updateProgress(0L, true)
         }
@@ -607,8 +607,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 v.record.loadCD(info.recordPath)
                 v.bg.tag = info.bgd
                 v.bg.load(main.ril, if (info.bgd) info.bgdPath else info.bgsPath)
-                v.toolContainer.setItemImage(GROUP_TOOL_AN, if (info.bgd) R.drawable.svg_an_on else R.drawable.svg_an_off)
-                v.toolContainer.setItemImage(GROUP_TOOL_MV, if (info.video) R.drawable.svg_mv_on else R.drawable.svg_mv_off)
+                v.toolContainer.setItemImage(GROUP_TOOL_AN, if (info.bgd) R.drawable.icon_an_on else R.drawable.icon_an_off)
+                v.toolContainer.setItemImage(GROUP_TOOL_MV, if (info.video) R.drawable.icon_mv_on else R.drawable.icon_mv_off)
                 // 已播放进度和进度条由onTimeUpdate更新, 不用在此更新
             }
         }

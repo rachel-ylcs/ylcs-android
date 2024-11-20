@@ -13,13 +13,13 @@ data class DevelopState(val type: Int, val content: String) {
     }
 
     val icon: Int get() = when (type) {
-        NEW -> R.drawable.svg_develop_state_new
-        ADJUSTMENT -> R.drawable.svg_develop_state_adjustment
-        REPAIR -> R.drawable.svg_develop_state_repair
-        WORKING -> R.drawable.svg_develop_state_working
-        FEATURE -> R.drawable.svg_develop_state_feature
-        FUTURE -> R.drawable.svg_develop_state_future
-        else -> R.drawable.svg_develop_state_new
+        NEW -> R.drawable.icon_develop_state_new
+        ADJUSTMENT -> R.drawable.icon_develop_state_adjustment
+        REPAIR -> R.drawable.icon_develop_state_repair
+        WORKING -> R.drawable.icon_develop_state_working
+        FEATURE -> R.drawable.icon_develop_state_feature
+        FUTURE -> R.drawable.icon_develop_state_future
+        else -> R.drawable.icon_develop_state_new
     }
 
     val name: String get() = when (type) {

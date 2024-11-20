@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.yinlin.rachel"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.yinlin.rachel"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 221
         versionName = "2.2.1"
 
@@ -62,20 +64,10 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf(
-        "dir" to "libs",
-        "include" to listOf("*.aar", "*.jar"),
-    )))
-
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.activity:activity:1.8.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.exifinterface:exifinterface:1.3.6")
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
-    implementation("androidx.media3:media3-session:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.media3:media3-session:1.3.1")
 
     implementation("com.haibin:calendarview:3.7.1")
 
@@ -100,7 +92,12 @@ dependencies {
     implementation("io.github.youth5201314:banner:2.2.3")
 
     implementation("com.tencent:mmkv:1.3.9")
-    implementation("com.tencent.tav:libpag:4.4.12-harfbuzz")
+    implementation("com.tencent.tav:libpag:4.4.15-harfbuzz")
+
+    implementation(fileTree(mapOf(
+        "dir" to "libs",
+        "include" to listOf("*.aar", "*.jar"),
+    )))
 
     testImplementation("junit:junit:4.13.2")
 }

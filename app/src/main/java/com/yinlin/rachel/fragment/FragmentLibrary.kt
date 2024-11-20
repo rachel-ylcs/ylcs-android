@@ -80,9 +80,9 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
     companion object {
         const val GROUP_SEARCH = 0
         const val GROUP_REFRESH = 1
-        const val GROUP_ADD = 2
-        const val GROUP_DELETE = 3
-        const val GROUP_ALL = 4
+        const val GROUP_ADD = 0
+        const val GROUP_DELETE = 1
+        const val GROUP_ALL = 2
     }
 
     private var adapter = Adapter(main, this)
@@ -90,10 +90,7 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
     override fun bindingClass() = FragmentLibraryBinding::class.java
 
     override fun init() {
-        v.group.apply {
-            setItemVisibility(GROUP_ADD, false)
-            setItemVisibility(GROUP_DELETE, false)
-            setItemVisibility(GROUP_ALL, false)
+        v.groupLeft.apply {
             listener = { pos -> when (pos) {
                 GROUP_SEARCH -> RachelDialog.input(main, "搜索歌曲", 32) {
                     val newItems = main.sendMessageForResult<MusicInfoPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO_PREVIEW, it)!!
@@ -105,6 +102,10 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
                     adapter.setSource(newItems)
                     adapter.notifySource()
                 }
+            } }
+        }
+        v.groupRight.apply {
+            listener = { pos -> when (pos) {
                 GROUP_ADD -> addMusicIntoPlaylist()
                 GROUP_DELETE -> deleteMusic()
                 GROUP_ALL -> adapter.selectAll()
@@ -133,13 +134,8 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
     }
 
     private fun setManageButtonStatus(status: Boolean) {
-        v.group.apply {
-            setItemVisibility(GROUP_SEARCH, !status)
-            setItemVisibility(GROUP_REFRESH, !status)
-            setItemVisibility(GROUP_ADD, status)
-            setItemVisibility(GROUP_DELETE, status)
-            setItemVisibility(GROUP_ALL, status)
-        }
+        v.groupLeft.visible = !status
+        v.groupRight.visible = status
     }
 
     // 添加到歌单

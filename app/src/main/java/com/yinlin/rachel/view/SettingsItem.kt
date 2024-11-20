@@ -31,7 +31,7 @@ class SettingsItem @JvmOverloads constructor(context: Context, attrs: AttributeS
         iconView.scaleType = ImageView.ScaleType.FIT_XY
         contentView.layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f)
         contentView.orientation = HORIZONTAL
-        arrowView.setImageResource(R.drawable.svg_expand_gray)
+        arrowView.setImageResource(R.drawable.icon_expand)
 
         orientation = HORIZONTAL
         gravity = Gravity.CENTER

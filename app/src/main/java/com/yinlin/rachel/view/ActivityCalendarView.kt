@@ -23,7 +23,7 @@ class ActivityCalendarView @JvmOverloads constructor(context: Context, attrs: At
         private val colorWeekend = context.getColor(R.color.calendar_weekend)
         private val colorActivity = context.getColor(R.color.calendar_activity)
         private var showStar = run {
-            val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.svg_calendar_star)!!).mutate()
+            val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.icon_calendar_star)!!).mutate()
             val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)

@@ -21,7 +21,7 @@ class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
     private var angle: Float = 0f
 
     init {
-        setBackgroundResource(R.drawable.record)
+        setBackgroundResource(R.drawable.img_music_record)
 
         pic.layoutParams = LayoutParams(0, 0).apply {
             matchConstraintPercentWidth = 0.75f

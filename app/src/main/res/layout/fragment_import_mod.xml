@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentImportMod" >
     <ListView
         android:id="@+id/list"

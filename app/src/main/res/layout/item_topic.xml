@@ -72,7 +72,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/svg_topic_comment" />
+                    android:src="@drawable/icon_comment" />
                 <TextView
                     android:id="@+id/comment"
                     style="@style/RachelText"
@@ -90,7 +90,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/svg_topic_coin" />
+                    android:src="@drawable/icon_coin" />
                 <TextView
                     android:id="@+id/coin"
                     style="@style/RachelText"

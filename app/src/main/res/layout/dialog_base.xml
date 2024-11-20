@@ -14,7 +14,7 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/dialog_rachel"
+        android:src="@drawable/img_dialog_rachel"
         android:elevation="5dp" />
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"

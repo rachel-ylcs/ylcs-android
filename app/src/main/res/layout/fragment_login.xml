@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentLogin" >
     <com.yinlin.rachel.view.AspectRatioImageView
         android:id="@+id/icon"
@@ -15,7 +16,7 @@
         app:layout_constraintTop_toTopOf="@id/title"
         app:layout_constraintBottom_toBottomOf="@id/title"
         android:layout_marginHorizontal="20dp"
-        android:src="@drawable/icon" />
+        android:src="@drawable/img_logo" />
     <com.yinlin.rachel.view.AspectRatioImageView
         android:id="@+id/title"
         android:layout_width="0dp"
@@ -26,7 +27,7 @@
         app:Ratio="0.535"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/title" />
+        android:src="@drawable/img_logo_title" />
     <com.yinlin.rachel.view.ExpandLayout
         android:id="@+id/login_container"
         android:layout_width="match_parent"

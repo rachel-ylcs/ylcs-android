@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentDiscovery" >
     <com.yinlin.rachel.view.PAGRefreshHeader
         android:layout_width="match_parent"
@@ -37,13 +37,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:src="@drawable/svg_add_blue" />
+                android:src="@drawable/icon_add_blue" />
             <ImageView
                 android:id="@+id/button_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/svg_search_blue" />
+                android:src="@drawable/icon_search_blue" />
         </LinearLayout>
         <com.gturedi.views.StatefulLayout
             android:id="@+id/state"

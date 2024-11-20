@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.google.common.util.concurrent.MoreExecutors
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.databinding.ActivityMainBinding
@@ -32,7 +31,6 @@ import com.yinlin.rachel.service.MusicService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.reflect.KClass
 
@@ -108,9 +106,9 @@ class MainActivity : RachelActivity() {
         currentFragment.onActivityStop()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent?.let { processIntent(it) }
+        processIntent(intent)
     }
 
     @SuppressLint("MissingSuperCall") @Deprecated("Deprecated in Java")
@@ -165,7 +163,7 @@ class MainActivity : RachelActivity() {
 
     fun pop() {
         if (isNotMain) {
-            fragmentStack.removeLast()
+            fragmentStack.removeLastOrNull()
             manager.popBackStackImmediate()
             if (isMain) {
                 v.btv.visible = true

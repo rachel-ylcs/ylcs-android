@@ -6,40 +6,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentLibrary" >
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp"
-        android:gravity="center" >
+        android:layout_margin="10dp" >
+        <com.yinlin.rachel.view.ButtonGroup
+            android:id="@+id/group_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:ButtonGroupIcon1="@drawable/icon_search_blue"
+            app:ButtonGroupIcon2="@drawable/icon_refresh_blue" />
         <TextView
-            style="@style/RachelText"
+            style="@style/RachelText.X"
+            android:gravity="center"
             android:text="曲库"
             android:textColor="@color/steel_blue"
             android:textSize="@dimen/xl"
             android:textStyle="bold" />
         <com.yinlin.rachel.view.ButtonGroup
-            android:id="@+id/group"
-            android:layout_width="0dp"
+            android:id="@+id/group_right"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center|end"
-            android:layout_marginStart="10dp"
-            app:ButtonGroupIcon1="@drawable/svg_search_blue"
-            app:ButtonGroupIcon2="@drawable/svg_refresh_blue"
-            app:ButtonGroupIcon3="@drawable/svg_playlist_blue"
-            app:ButtonGroupIcon4="@drawable/svg_delete_blue"
-            app:ButtonGroupIcon5="@drawable/svg_select_all_blue" />
-    </LinearLayout>
+            android:visibility="gone"
+            android:layout_gravity="end|center_horizontal"
+            app:ButtonGroupIcon1="@drawable/icon_add_playlist_blue"
+            app:ButtonGroupIcon2="@drawable/icon_delete_blue"
+            app:ButtonGroupIcon3="@drawable/icon_select_all_blue" />
+    </FrameLayout>
     <com.yinlin.rachel.view.LineView
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginHorizontal="10dp" />
     <com.gturedi.views.StatefulLayout
         android:id="@+id/state"
         android:layout_width="match_parent"

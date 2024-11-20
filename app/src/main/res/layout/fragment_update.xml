@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentUpdate" >
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginHorizontal="20dp"
-            android:src="@drawable/icon" />
+            android:src="@drawable/img_logo" />
         <TextView
             android:id="@+id/app_version"
             style="@style/RachelText"
@@ -34,7 +35,7 @@
         android:layout_marginHorizontal="20dp"
         android:text="服务器版本: x.x.x"
         android:textSize="@dimen/lg"
-        app:drawableEndCompat="@drawable/svg_settings_update" />
+        app:drawableEndCompat="@drawable/icon_update" />
     <TextView
         android:id="@+id/min_version"
         style="@style/RachelText.X"

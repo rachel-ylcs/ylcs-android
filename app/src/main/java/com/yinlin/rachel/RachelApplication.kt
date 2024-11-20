@@ -2,7 +2,6 @@ package com.yinlin.rachel
 
 import android.app.Application
 import android.content.Context
-import android.text.format.DateFormat
 import com.tencent.mmkv.MMKV
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -31,7 +30,7 @@ class RachelApplication : Application() {
         fun initBaseContext(context: Context): Context =
             context.createConfigurationContext(context.resources.configuration.apply {
                 fontScale = 1f
-                densityDpi = if (densityDpi >= 480) 480 else 320
+                densityDpi = (context.resources.displayMetrics.widthPixels / 360f * 160).toInt()
                 setLocale(Locale.SIMPLIFIED_CHINESE)
             })
         lateinit var crashHandler: CrashHandler

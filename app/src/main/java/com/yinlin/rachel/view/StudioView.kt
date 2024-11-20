@@ -36,7 +36,7 @@ class StudioView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     init {
         adjustViewBounds = true
-        setImageResource(R.drawable.studio)
+        setImageResource(R.drawable.img_studio)
     }
 
 //    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

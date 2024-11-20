@@ -93,7 +93,7 @@
             app:layout_constraintLeft_toRightOf="@id/an_tv"
             app:layout_constraintTop_toTopOf="@id/an_tv"
             app:layout_constraintBottom_toBottomOf="@id/an_tv"
-            android:src="@drawable/svg_no"/>
+            android:src="@drawable/icon_no"/>
         <TextView
             android:id="@+id/mv_tv"
             style="@style/RachelText"
@@ -110,7 +110,7 @@
             app:layout_constraintLeft_toRightOf="@id/mv_tv"
             app:layout_constraintTop_toTopOf="@id/mv_tv"
             app:layout_constraintBottom_toBottomOf="@id/mv_tv"
-            android:src="@drawable/svg_no"/>
+            android:src="@drawable/icon_no"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ScrollView
         android:id="@+id/lyrics_container"

@@ -7,7 +7,7 @@
     android:padding="5dp"
     android:layout_marginStart="20dp"
     android:layout_marginBottom="3dp"
-    android:background="@color/micro_gray" >
+    android:background="@color/ghost_white" >
     <com.yinlin.rachel.view.AvatarView
         android:id="@+id/avatar"
         style="@style/RachelCircleImage"

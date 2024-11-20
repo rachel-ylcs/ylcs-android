@@ -6,6 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentMail" >
     <com.yinlin.rachel.view.PAGRefreshHeader
         android:layout_width="match_parent"
@@ -17,17 +18,18 @@
         android:orientation="vertical"
         android:padding="10dp" >
         <TextView
-            style="@style/RachelText"
+            style="@style/RachelText.X"
             android:layout_margin="10dp"
+            android:gravity="center"
             android:text="邮箱"
             android:textColor="@color/steel_blue"
-            android:textSize="@dimen/xxl" />
+            android:textSize="@dimen/xxl"
+            android:textStyle="bold" />
         <com.gturedi.views.StatefulLayout
             android:id="@+id/state"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"
             app:stfInAnimation="@anim/anim_fade_in"
             app:stfOutAnimation="@anim/anim_fade_out" >
             <androidx.recyclerview.widget.RecyclerView

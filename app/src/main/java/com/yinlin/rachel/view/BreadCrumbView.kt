@@ -60,7 +60,7 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
     class TabDecoration(context: Context) : ItemDecoration() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         private val iconWidth = 10.toDP(context)
-        private val bitmap = AppCompatResources.getDrawable(context, R.drawable.svg_expand_gray)!!.toBitmap(iconWidth, iconWidth)
+        private val bitmap = AppCompatResources.getDrawable(context, R.drawable.icon_expand)!!.toBitmap(iconWidth, iconWidth)
 
         override fun onDraw(canvas: Canvas, parent: RecyclerView, state: State) {
             val childCount = parent.childCount

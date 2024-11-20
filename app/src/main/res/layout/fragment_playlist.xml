@@ -7,37 +7,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    android:background="@color/micro_gray"
+    android:background="@color/ghost_white"
     tools:context=".fragment.FragmentPlaylist" >
-    <LinearLayout
+    <TextView
+        style="@style/RachelText.X"
+        android:gravity="center"
+        android:text="歌单"
+        android:textColor="@color/steel_blue"
+        android:textSize="@dimen/xl"
+        android:textStyle="bold" />
+    <com.yinlin.rachel.view.ButtonGroup
+        android:id="@+id/group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center" >
-        <TextView
-            style="@style/RachelText"
-            android:text="歌单"
-            android:textColor="@color/steel_blue"
-            android:textSize="@dimen/xl"
-            android:textStyle="bold" />
-        <com.yinlin.rachel.view.ButtonGroup
-            android:id="@+id/group"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center|end"
-            android:layout_marginStart="10dp"
-            app:ButtonGroupIcon1="@drawable/svg_add_blue"
-            app:ButtonGroupIcon2="@drawable/svg_play_blue"
-            app:ButtonGroupIcon3="@drawable/svg_edit_blue"
-            app:ButtonGroupIcon4="@drawable/svg_delete_blue" />
-    </LinearLayout>
+        android:gravity="end"
+        app:ButtonGroupIcon1="@drawable/icon_add_blue"
+        app:ButtonGroupIcon2="@drawable/icon_play_blue"
+        app:ButtonGroupIcon3="@drawable/icon_edit_blue"
+        app:ButtonGroupIcon4="@drawable/icon_delete_blue" />
     <com.yinlin.rachel.view.TabView
         android:id="@+id/tab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMinWidth="0dp" />
+        android:layout_height="wrap_content" />
     <com.yinlin.rachel.view.LineView
         android:layout_width="match_parent"
         android:layout_height="1dp" />

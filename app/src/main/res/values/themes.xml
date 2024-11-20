@@ -95,13 +95,22 @@
         <item name="cornerRadius">15dp</item>
         <item name="backgroundTint">@color/selector_button_primary</item>
     </style>
-    <style name="Theme.RachelSwitch" parent="Widget.AppCompat.CompoundButton.Switch" >
+
+    <style name="Theme.RachelSwitch" parent="Widget.Material3.CompoundButton.Switch" >
         <item name="android:minHeight">0dp</item>
         <item name="switchPadding">0dp</item>
+        <item name="thumbTint">@color/selector_switch_thumb</item>
+        <item name="trackTint">@color/selector_switch_track</item>
     </style>
-    <style name="RachelScrollView" >
+
+    <style name="RachelScrollView">
         <item name="android:scrollbars">none</item>
     </style>
+
+    <style name="Theme.RachelTabLayout" parent="Widget.MaterialComponents.TabLayout" >
+        <item name="tabMinWidth">0dp</item>
+    </style>
+
     <style name="Theme.Rachel" parent="Theme.Material3.Light.NoActionBar" >
         <item name="android:scrollbars">none</item>
         <item name="android:textSize">@dimen/sm</item>
@@ -119,5 +128,6 @@
         <item name="materialButtonStyle">@style/Theme.RachelButton</item>
         <item name="android:scrollViewStyle">@style/RachelScrollView</item>
         <item name="switchStyle">@style/Theme.RachelSwitch</item>
+        <item name="tabStyle">@style/Theme.RachelTabLayout</item>
     </style>
 </resources>

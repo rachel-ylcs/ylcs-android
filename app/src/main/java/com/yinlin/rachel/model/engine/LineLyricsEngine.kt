@@ -80,7 +80,7 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         const val MAX_WIDTH_RATIO = 0.8f
         const val NAME = "line"
         const val DESCRIPTION = "原生逐行歌词渲染引擎, 自适应字体大小, 自内向外渐隐"
-        val ICON: Int = R.drawable.lyrics_engine_line
+        val ICON: Int = R.drawable.img_lyrics_engine_line
     }
     override val name: String = NAME
     override val ext: String = ".lrc"
