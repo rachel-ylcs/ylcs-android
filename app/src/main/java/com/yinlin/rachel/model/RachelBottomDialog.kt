@@ -26,6 +26,7 @@ abstract class RachelBottomDialog<Binding : ViewBinding, F : RachelFragment<*>>
     }
 
     protected open fun init() { }
+    protected open fun hidden() { }
     protected open fun quit() { }
 
     fun show() {
@@ -36,6 +37,7 @@ abstract class RachelBottomDialog<Binding : ViewBinding, F : RachelFragment<*>>
         dialog = BottomSheetDialog(context, R.style.Theme_RachelBottomDialog)
         dialog?.setContentView(v.root)
         dialog?.setOnDismissListener {
+            hidden()
             (v.root.parent as ViewGroup).removeView(v.root)
             dialog = null
         }

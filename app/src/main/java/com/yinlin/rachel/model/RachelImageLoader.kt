@@ -18,7 +18,7 @@ object RachelImageLoader {
         .diskCacheStrategy(DiskCacheStrategy.NONE)
 
     private val fileOptions = RequestOptions()
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 
     private val netOptions = RequestOptions()
         .diskCacheStrategy(DiskCacheStrategy.ALL)

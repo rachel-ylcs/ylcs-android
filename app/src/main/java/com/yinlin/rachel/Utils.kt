@@ -133,8 +133,11 @@ fun compareLatestTime(t1: String, t2: String): Boolean = try {
 } catch (_: Exception) { false }
 
 val Long.timeString: String get() {
-    val second = (this / 1000).toInt()
-    return String.format(Locale.ENGLISH,"%02d:%02d", second / 60, second % 60)
+    val hours = (this / (1000 * 60 * 60)).toInt()
+    val minutes = (this % (1000 * 60 * 60) / (1000 * 60)).toInt()
+    val seconds = (this % (1000 * 60) / 1000).toInt()
+    return if (hours > 0) String.format(Locale.ENGLISH,"%02d:%02d:%02d", hours, minutes, seconds)
+        else String.format(Locale.ENGLISH,"%02d:%02d", minutes, seconds)
 }
 
 val currentDateInteger: Int get() = try {

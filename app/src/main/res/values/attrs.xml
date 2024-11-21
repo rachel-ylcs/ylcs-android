@@ -53,11 +53,11 @@
             <enum name="WRAP" value="1" />
             <enum name="AVERAGE" value="2" />
         </attr>
-        <attr name="ButtonGroupItemGap" format="dimension" />
         <attr name="android:textSize" />
         <attr name="android:color" />
         <attr name="Bold" />
         <attr name="Gap" />
+        <attr name="ButtonGroupItemGap" format="dimension" />
         <attr name="ButtonGroupIcon1" format="reference" />
         <attr name="ButtonGroupIcon2" format="reference" />
         <attr name="ButtonGroupIcon3" format="reference" />

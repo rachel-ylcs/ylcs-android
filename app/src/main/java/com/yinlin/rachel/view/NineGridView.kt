@@ -129,8 +129,8 @@ class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeS
                 val itemWidth = child.measuredWidth
                 val x = i / mCol
                 val y = i % mCol
-                val left = itemWidth * x + mGap * (x + 1)
-                val top = itemWidth * y + mGap * (y + 1)
+                val left = itemWidth * y + mGap * (y + 1)
+                val top = itemWidth * x + mGap * (x + 1)
                 child.layout(left, top, left + itemWidth, top + itemWidth)
             }
         }

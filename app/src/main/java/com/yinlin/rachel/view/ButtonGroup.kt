@@ -29,7 +29,6 @@ class ButtonGroup @JvmOverloads constructor(context: Context, attrs: AttributeSe
     var listener: ((Int) -> Unit)? = null
 
     init {
-        isClickable = true
         RachelAttr(context, attrs, R.styleable.ButtonGroup).use {
             val textPosition = it.value(R.styleable.ButtonGroup_ButtonGroupTextPosition, BOTTOM)
             val itemGravity = it.value(R.styleable.ButtonGroup_ButtonGroupItemGravity, WRAP)
@@ -83,7 +82,6 @@ class ButtonGroup @JvmOverloads constructor(context: Context, attrs: AttributeSe
     override fun onFinishInflate() {
         super.onFinishInflate()
         for (item in items) addView(item)
-        requestLayout()
     }
 
     fun setItemVisibility(index: Int, visible: Boolean) {

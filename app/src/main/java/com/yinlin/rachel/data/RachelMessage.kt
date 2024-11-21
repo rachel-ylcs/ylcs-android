@@ -4,6 +4,7 @@ enum class RachelMessage {
     // FragmentMusic
     PREPARE_PLAYER, // MediaController
     MUSIC_START_PLAYER,  // [Playlist | String]
+    MUSIC_PAUSE_PLAYER,
     MUSIC_STOP_PLAYER,
     MUSIC_GET_PLAYLIST_INFO_PREVIEW, // String -> LoadMusicPreviewList
     MUSIC_CREATE_PLAYLIST,  // String -> Boolean

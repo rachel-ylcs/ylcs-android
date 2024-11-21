@@ -34,6 +34,7 @@ import com.yinlin.rachel.dialog.BottomDialogCurrentPlaylist
 import com.yinlin.rachel.dialog.BottomDialogLyricsEngine
 import com.yinlin.rachel.dialog.BottomDialogLyricsInfo
 import com.yinlin.rachel.dialog.BottomDialogMusicInfo
+import com.yinlin.rachel.dialog.BottomDialogSleepMode
 import com.yinlin.rachel.div
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
@@ -41,6 +42,7 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelTab
+import com.yinlin.rachel.model.RachelTimer
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
 import com.yinlin.rachel.pathMusic
 import com.yinlin.rachel.pureColor
@@ -57,6 +59,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         const val GROUP_HEADER_PLAYLIST = 1
         const val GROUP_HEADER_LYRICS = 2
         const val GROUP_HEADER_MOD = 3
+        const val GROUP_HEADER_SLEEP_MODE = 4
 
         const val GROUP_CONTROL_MODE = 0
         const val GROUP_CONTROL_PREVIOUS = 1
@@ -82,10 +85,13 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     private lateinit var player: MediaController
     private var isPlayerInit: Boolean = false
 
+    val sleepModeTimer = RachelTimer()
+
     private val bottomDialogLyricsEngine = BottomDialogLyricsEngine(this)
     private val bottomDialogCurrentPlaylist = BottomDialogCurrentPlaylist(this)
     private val bottomDialogLyricsInfo = BottomDialogLyricsInfo(this)
     private val bottomDialogMusicInfo = BottomDialogMusicInfo(this)
+    private val bottomDialogSleepMode = BottomDialogSleepMode(this)
 
     override fun bindingClass() = FragmentMusicBinding::class.java
 
@@ -105,6 +111,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                     else -> R.string.qqgroup_main
                 })).start(main)
             }
+            GROUP_HEADER_SLEEP_MODE -> bottomDialogSleepMode.update().show()
         } }
     }
 
@@ -113,6 +120,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         bottomDialogCurrentPlaylist.release()
         bottomDialogLyricsInfo.release()
         bottomDialogMusicInfo.release()
+        bottomDialogSleepMode.release()
 
         if (isPlayerInit) {
             endTimeUpdate()
@@ -277,6 +285,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 if (arg is String) playlists[arg]?.let { startPlayer(it) }
                 else if (arg is Playlist) startPlayer(arg)
             }
+            RachelMessage.MUSIC_PAUSE_PLAYER -> if (isLoadMusic && player.isPlaying) player.pause()
             RachelMessage.MUSIC_STOP_PLAYER -> stopPlayer()
             RachelMessage.MUSIC_DELETE_PLAYLIST -> {
                 val title = args[0] as String

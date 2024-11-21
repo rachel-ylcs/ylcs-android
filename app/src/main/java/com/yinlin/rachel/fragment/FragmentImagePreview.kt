@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import android.content.Context
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +21,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
 
     class ViewHolder(pic: PhotoView) : RecyclerView.ViewHolder(pic)
 
-    class Adapter(context: Context, pics: List<RachelPreview>) : BannerAdapter<RachelPreview, ViewHolder>(pics) {
+    class Adapter(pics: List<RachelPreview>) : BannerAdapter<RachelPreview, ViewHolder>(pics) {
         override fun onCreateHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val pic = PhotoView(parent.context)
             pic.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -52,7 +51,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
             startPosition = setFuckIndex(position)
             indicator = CircleIndicator(context)
             setPageTransformer(RotateYTransformer())
-            setAdapter(Adapter(main, pics), true)
+            setAdapter(Adapter(pics), true)
         }
 
         v.downloadImage.rachelClick { Net.downloadPicture(main, pics[getFuckIndex(v.list.currentItem)].mImageUrl, downLoadMediaListener) }

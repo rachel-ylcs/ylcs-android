@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@color/black" />
+        android:background="@color/black" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,11 +26,12 @@
             android:color="@color/white"
             android:padding="5dp"
             app:ButtonGroupItemGap="2dp"
-            app:ButtonGroupText="曲库,歌单,歌词,工坊"
+            app:ButtonGroupText="曲库,歌单,歌词,工坊,睡眠,"
             app:ButtonGroupIcon1="@drawable/icon_library"
             app:ButtonGroupIcon2="@drawable/icon_playlist_blue"
             app:ButtonGroupIcon3="@drawable/icon_lyrics_engine"
-            app:ButtonGroupIcon4="@drawable/icon_workshop" />
+            app:ButtonGroupIcon4="@drawable/icon_workshop"
+            app:ButtonGroupIcon5="@drawable/icon_sleep_mode" />
         <com.yinlin.rachel.view.LyricsView
             android:id="@+id/lyrics"
             android:layout_width="match_parent"
