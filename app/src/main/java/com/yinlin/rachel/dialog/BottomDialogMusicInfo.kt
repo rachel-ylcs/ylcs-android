@@ -6,8 +6,8 @@ import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.databinding.BottomDialogMusicInfoBinding
 import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.interceptScroll
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelBottomDialog
+import com.yinlin.rachel.model.RachelImageLoader.load
 
 class BottomDialogMusicInfo(fragment: FragmentMusic) : RachelBottomDialog<BottomDialogMusicInfoBinding, FragmentMusic>(
     fragment, 0.7f, BottomDialogMusicInfoBinding::class.java) {
@@ -25,7 +25,7 @@ class BottomDialogMusicInfo(fragment: FragmentMusic) : RachelBottomDialog<Bottom
             v.name.text = musicInfo.name
             v.version.text = "v ${musicInfo.version}"
             v.id.text = "ID: ${musicInfo.id}"
-            v.pic.load(root.main.ril, musicInfo.recordPath)
+            v.pic.load(musicInfo.recordPath)
             v.singer.text = "演唱: ${musicInfo.singer}"
             v.lyricist.text = "作词: ${musicInfo.lyricist}"
             v.composer.text = "作曲: ${musicInfo.composer}"

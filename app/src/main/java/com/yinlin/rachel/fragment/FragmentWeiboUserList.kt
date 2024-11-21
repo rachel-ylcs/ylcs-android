@@ -2,7 +2,6 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
@@ -12,11 +11,10 @@ import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.databinding.FragmentWeiboUserListBinding
 import com.yinlin.rachel.databinding.ItemWeiboUserBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +24,6 @@ import kotlinx.coroutines.withContext
 class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUserListBinding>(main) {
     class Adapter(fragment: FragmentWeiboUserList) : RachelAdapter<ItemWeiboUserBinding, WeiboUserStorage>() {
         private val main = fragment.main
-        private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
         var isManagerMode = true
 
         override fun bindingClass() = ItemWeiboUserBinding::class.java
@@ -45,7 +42,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         }
 
         override fun update(v: ItemWeiboUserBinding, item: WeiboUserStorage, position: Int) {
-            v.avatar.load(rilNet, item.avatar)
+            v.avatar.loadDaily(item.avatar)
             v.name.text = item.name
             v.delete.visible = isManagerMode
         }
@@ -90,10 +87,9 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
             val correctUsers = mutableListOf<WeiboUserStorage>()
             var isNeedUpdate = false
             for (user in users) {
-                if (user.containerId.isEmpty() || user.name.isEmpty() || user.avatar.isEmpty()) {
+                if (user.name.isEmpty() || user.avatar.isEmpty()) {
                     val userStorage = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserStorage(user.userId) }
                     if (userStorage != null) {
-                        user.containerId = userStorage.containerId
                         user.name = userStorage.name
                         user.avatar = userStorage.avatar
                         correctUsers += user
@@ -121,7 +117,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
                 if (result.isNotEmpty()) {
                     v.title.text = main.rs(R.string.weibo_user_list_search)
                     adapter.isManagerMode = false
-                    adapter.setSource(result.map { WeiboUserStorage(it.userId, "", it.name, it.avatar) })
+                    adapter.setSource(result)
                     adapter.notifySource()
                 }
                 else tip(Tip.WARNING, "未搜索到满足的微博用户")

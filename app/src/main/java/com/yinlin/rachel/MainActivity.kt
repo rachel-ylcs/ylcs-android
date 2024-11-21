@@ -25,7 +25,6 @@ import com.yinlin.rachel.fragment.FragmentProfile
 import com.yinlin.rachel.model.RachelActivity
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.service.MusicService
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +42,6 @@ class MainActivity : RachelActivity() {
     private var currentMainIndex: Int = 0
 
     lateinit var handler: Handler
-    lateinit var ril: RachelImageLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
@@ -125,7 +123,6 @@ class MainActivity : RachelActivity() {
 
     private fun createPages() {
         handler = Handler(mainLooper)
-        ril = RachelImageLoader(this)
 
         // 初始化页面
         val transaction = manager.beginTransaction()

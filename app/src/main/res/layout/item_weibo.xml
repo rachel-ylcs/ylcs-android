@@ -56,7 +56,8 @@
             <com.yinlin.rachel.view.NineGridView
                 android:id="@+id/pics"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:Icon="@drawable/icon_video_play_blue" />
             <LinearLayout
                 android:id="@+id/bottom_container"
                 android:layout_width="match_parent"

@@ -2,9 +2,8 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.NewThread
@@ -13,13 +12,12 @@ import com.yinlin.rachel.data.topic.TopicPreview
 import com.yinlin.rachel.databinding.FragmentProfileBinding
 import com.yinlin.rachel.databinding.HeaderProfileBinding
 import com.yinlin.rachel.databinding.ItemTopicBinding
-import com.yinlin.rachel.load
-import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.load
+import com.yinlin.rachel.model.RachelImageLoader.loadDaily
+import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.tip
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,14 +26,13 @@ import kotlinx.coroutines.withContext
 class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
     class Adapter(fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
         private val main = fragment.main
-        private val rilNet = RachelImageLoader(main, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
 
         override fun bindingHeaderClass() = HeaderProfileBinding::class.java
         override fun bindingItemClass() = ItemTopicBinding::class.java
 
         override fun update(v: ItemTopicBinding, item: TopicPreview, position: Int) {
             if (item.pic == null) v.pic.pureColor = 0
-            else v.pic.load(rilNet, item.picPath)
+            else v.pic.loadLoading(item.picPath)
             v.top.visible = item.isTop
             v.title.text = item.title
             v.comment.text = item.commentNum.toString()
@@ -110,8 +107,15 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
                     signature.text = profile.signature
                     level.text = profile.level.toString()
                     coin.text = profile.coin.toString()
-                    avatar.load(main.ril, profile.avatarPath)
-                    wall.load(main.ril, profile.wallPath)
+                    val user = Config.user
+                    if (user != null && profileUid == user.uid) {
+                        avatar.load(profile.avatarPath, Config.cache_key_avatar)
+                        avatar.load(profile.wallPath, Config.cache_key_wall)
+                    }
+                    else {
+                        avatar.loadDaily(profile.avatarPath)
+                        wall.loadDaily(profile.wallPath)
+                    }
                 }
                 adapter.setSource(profile.topics)
                 adapter.notifySourceEx()

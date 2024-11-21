@@ -2,10 +2,8 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
@@ -13,13 +11,12 @@ import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.topic.TopicPreview
 import com.yinlin.rachel.databinding.FragmentDiscoveryBinding
 import com.yinlin.rachel.databinding.ItemTopicUserBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.loadDaily
+import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,8 +24,6 @@ import kotlinx.coroutines.withContext
 class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBinding>(main)  {
     class Adapter(fragment: FragmentDiscovery) : RachelAdapter<ItemTopicUserBinding, TopicPreview>() {
         private val main = fragment.main
-
-        private val rilNet = RachelImageLoader(main, R.drawable.placeholder_loading, DiskCacheStrategy.ALL)
 
         override fun bindingClass() = ItemTopicUserBinding::class.java
 
@@ -41,10 +36,10 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
 
         override fun update(v: ItemTopicUserBinding, item: TopicPreview, position: Int) {
             if (item.pic == null) v.pic.pureColor = 0
-            else v.pic.load(rilNet, item.picPath)
+            else v.pic.loadLoading(item.picPath)
             v.title.text = item.title
             v.name.text = item.name
-            v.avatar.load(main.ril, item.avatarPath)
+            v.avatar.loadDaily(item.avatarPath)
             v.comment.text = item.commentNum.toString()
             v.coin.text = item.coinNum.toString()
         }

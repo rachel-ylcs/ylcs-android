@@ -56,7 +56,7 @@ object Config {
         override fun getDefault(): U = defValue
     }
 
-    class DailyCacheKeyMeta : IntMeta("daily_cache_key/20241115", currentDateInteger)
+    class DailyCacheKeyMeta : IntMeta("daily_cache_key", currentDateInteger)
 
     class CacheKeyMeta(name: String) : DefaultMeta<Long>(name, System.currentTimeMillis()) {
         override fun set(value: Long) { kv.encode(name, value) }
@@ -119,7 +119,8 @@ object Config {
 
     // 图片缓存键
     private val cache_daily_pic_meta = DailyCacheKeyMeta()
-    val cache_daily_pic get() = cache_daily_pic_meta.get()
+    var cache_daily_pic get() = cache_daily_pic_meta.get()
+        set(value) { cache_daily_pic_meta.set(value) }
 
     val cache_key_avatar_meta = CacheKeyMeta("cache_key_avatar/20241115")
     val cache_key_avatar get() = cache_key_avatar_meta.get()

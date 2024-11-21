@@ -1,7 +1,7 @@
 package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.Glide
 import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
@@ -12,10 +12,9 @@ import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentSettingsBinding
 import com.yinlin.rachel.dialog.BottomDialogCrashLog
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.pureColor
@@ -25,8 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBinding>(main) {
-    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
-
     private val bottomDialogCrashLog = BottomDialogCrashLog(this)
 
     override fun bindingClass() = FragmentSettingsBinding::class.java
@@ -105,6 +102,15 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
         /*    ----    通用设置    ----    */
 
+        v.clearCache.rachelClick {
+            lifecycleScope.launch {
+                val loading = main.loading
+                withContext(Dispatchers.IO) { Glide.get(main).clearDiskCache() }
+                loading.dismiss()
+                tip(Tip.SUCCESS, "清理缓存成功")
+            }
+        }
+
         v.crashLog.rachelClick { bottomDialogCrashLog.update().show() }
 
         v.version.text = main.appVersionName(main.appVersion)
@@ -130,10 +136,10 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         val user = Config.user
         if (user != null) {
             v.name.text = user.name
-            v.avatar.load(rilNet, user.avatarPath, Config.cache_key_avatar)
+            v.avatar.load(user.avatarPath, Config.cache_key_avatar)
             v.signature.text = user.signature
             v.inviter.text = user.inviterName ?: ""
-            v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
+            v.wall.load(user.wallPath, Config.cache_key_wall)
         }
         else {
             v.name.text = main.rs(R.string.default_name)
@@ -194,7 +200,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
                 tip(Tip.SUCCESS, result.msg)
                 val user = Config.user!!
                 Config.cache_key_avatar_meta.update()
-                v.avatar.load(rilNet, user.avatarPath, Config.cache_key_avatar)
+                v.avatar.load(user.avatarPath, Config.cache_key_avatar)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
             else tip(Tip.ERROR, result.msg)
@@ -226,7 +232,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
                 tip(Tip.SUCCESS, result.msg)
                 val user = Config.user!!
                 Config.cache_key_wall_meta.update()
-                v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
+                v.wall.load(user.wallPath, Config.cache_key_wall)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
             else tip(Tip.ERROR, result.msg)

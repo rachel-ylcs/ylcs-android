@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
     tools:context=".fragment.FragmentMusic" >
     <ImageView
         android:id="@+id/bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@color/black" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -12,7 +12,6 @@ import com.google.gson.JsonNull
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.model.RachelDialog
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
@@ -24,7 +23,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.net.Proxy
-import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
 
@@ -32,6 +30,18 @@ object Net {
     private const val DOWNLOAD_BUFFER_SIZE = 1024 * 64
 
     private val client: OkHttpClient = OkHttpClient.Builder()
+        .proxy(Proxy.NO_PROXY)
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .callTimeout(10, TimeUnit.SECONDS)
+        .build()
+
+    private val fileClient: OkHttpClient = OkHttpClient.Builder()
+        .proxy(Proxy.NO_PROXY)
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .callTimeout(60, TimeUnit.SECONDS)
+        .build()
+
+    private val downloadClient: OkHttpClient = OkHttpClient.Builder()
         .proxy(Proxy.NO_PROXY)
         .connectTimeout(5, TimeUnit.SECONDS)
         .build()
@@ -61,7 +71,7 @@ object Net {
             if (file.exists()) bodyBuilder.addFormDataPart(key, file.name, file.asRequestBody("file/raw".toMediaTypeOrNull()))
         }
         builder.post(bodyBuilder.build())
-        client.newCall(builder.build()).execute().use { it.body?.string().parseJson }
+        fileClient.newCall(builder.build()).execute().use { it.body?.string().parseJson }
     }
     catch (_: Exception) { JsonNull.INSTANCE }
 
@@ -81,7 +91,7 @@ object Net {
                 withContext(Dispatchers.IO) {
                     context.contentResolver.openOutputStream(uri).use { outputStream ->
                         if (outputStream == null) return@withContext
-                        client.newCall(Request.Builder().url(url).build()).execute().use { response ->
+                        downloadClient.newCall(Request.Builder().url(url).build()).execute().use { response ->
                             val body = response.body ?: return@withContext
                             val inputStream = body.byteStream()
                             val totalSize = body.contentLength()
@@ -150,7 +160,7 @@ object Net {
                         uri?.let { saveUri ->
                             context.contentResolver.openOutputStream(saveUri).use { outputStream ->
                                 if (outputStream == null) return@withContext
-                                client.newCall(Request.Builder().url(url).build()).execute().use { response ->
+                                downloadClient.newCall(Request.Builder().url(url).build()).execute().use { response ->
                                     val body = response.body ?: return@withContext
                                     val inputStream = body.byteStream()
                                     if (body.contentLength() <= 0) return@withContext

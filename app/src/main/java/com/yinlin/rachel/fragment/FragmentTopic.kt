@@ -16,15 +16,14 @@ import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentTopicBinding
 import com.yinlin.rachel.databinding.HeaderTopicBinding
 import com.yinlin.rachel.databinding.ItemCommentBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
+import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelPopMenu
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -92,7 +91,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         override fun update(v: ItemCommentBinding, item: Comment, position: Int) {
             v.name.text = item.name
             v.time.text = item.ts
-            v.avatar.load(main.ril, item.avatarPath)
+            v.avatar.loadDaily(item.avatarPath)
             v.content.text = item.content
             v.userLabel.setLabel(item.label, item.level)
             v.top.visible = item.isTop
@@ -178,7 +177,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
                 adapter.header.apply {
                     name.text = topic.name
                     time.text = topic.ts
-                    avatar.load(main.ril, topic.avatarPath)
+                    avatar.loadDaily(topic.avatarPath)
                     title.text = topic.title
                     content.text = topic.content
                     userLabel.setLabel(topic.label, topic.level)

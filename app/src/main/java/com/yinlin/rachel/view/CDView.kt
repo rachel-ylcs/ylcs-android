@@ -8,14 +8,12 @@ import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.yinlin.rachel.R
-import com.yinlin.rachel.load
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.pureColor
 import java.io.File
 
 class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : ConstraintLayout(context, attrs, defStyleAttr) {
-    private val ril = RachelImageLoader(context)
     private val pic = AvatarView(context)
     private val animator = ObjectAnimator.ofFloat(pic, "rotation", 0f, 360f)
     private var angle: Float = 0f
@@ -45,8 +43,7 @@ class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
         }
     }
 
-    fun loadCD(path: String) { pic.load(ril, path) }
-    fun loadCD(file: File) { pic.load(ril, file) }
+    fun loadCD(file: File) { pic.load(file) }
     fun clearCD() { pic.pureColor = 0 }
     fun startCD() = if (animator.isPaused) animator.resume() else animator.start()
     fun pauseCD() = animator.pause()

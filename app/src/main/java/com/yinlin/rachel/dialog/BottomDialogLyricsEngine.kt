@@ -5,9 +5,9 @@ import com.yinlin.rachel.databinding.BottomDialogLyricsEngineBinding
 import com.yinlin.rachel.databinding.ItemLyricsEngineBinding
 import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.interceptScroll
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelBottomDialog
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
 import com.yinlin.rachel.model.engine.LyricsEngineInfo
 
@@ -22,7 +22,7 @@ class BottomDialogLyricsEngine(fragment: FragmentMusic) : RachelBottomDialog<Bot
         override fun update(v: ItemLyricsEngineBinding, item: LyricsEngineInfo, position: Int) {
             v.name.text = item.name
             v.description.text = item.description
-            v.icon.load(dialog.root.main.ril, item.icon)
+            v.icon.load(item.icon)
         }
     }
 

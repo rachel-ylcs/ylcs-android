@@ -31,6 +31,8 @@
     <attr name="Expanded" format="boolean" />
     <attr name="HasArrow" format="boolean" />
 
+    <attr name="Icon" format="reference" />
+
     <declare-styleable name="AspectRatioImageView" >
         <attr name="Ratio" />
     </declare-styleable>
@@ -103,6 +105,7 @@
     </declare-styleable>
     <declare-styleable name="NineGridView" >
         <attr name="Gap" />
+        <attr name="Icon" />
     </declare-styleable>
     <declare-styleable name="PageTabView" >
         <attr name="android:textSize" />

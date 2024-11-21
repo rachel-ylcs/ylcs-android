@@ -18,7 +18,6 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.activity.VideoActivity
 import com.yinlin.rachel.annotation.NewThread
-import com.yinlin.rachel.clear
 import com.yinlin.rachel.clearAddAll
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LoadMusicPreview
@@ -36,14 +35,15 @@ import com.yinlin.rachel.dialog.BottomDialogLyricsEngine
 import com.yinlin.rachel.dialog.BottomDialogLyricsInfo
 import com.yinlin.rachel.dialog.BottomDialogMusicInfo
 import com.yinlin.rachel.div
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
 import com.yinlin.rachel.pathMusic
+import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.readJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -222,7 +222,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             GROUP_TOOL_AN -> currentMusic?.let {
                 if (it.bgd) {
                     val isBgd = v.bg.tag as Boolean
-                    v.bg.load(main.ril, if (isBgd) it.bgsPath else it.bgdPath)
+                    v.bg.load(if (isBgd) it.bgsPath else it.bgdPath)
                     v.bg.tag = !isBgd
                 }
                 else tip(Tip.WARNING, "此歌曲不支持壁纸动画")
@@ -591,7 +591,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.singer.text = ""
             v.record.clearCD()
             v.bg.tag = false
-            v.bg.clear(main.ril)
+            v.bg.pureColor = main.rc(R.color.black)
             v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.icon_an_off)
             v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.icon_mv_off)
             // 更新已播放进度与进度条
@@ -606,7 +606,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 v.singer.text = info.singer
                 v.record.loadCD(info.recordPath)
                 v.bg.tag = info.bgd
-                v.bg.load(main.ril, if (info.bgd) info.bgdPath else info.bgsPath)
+                v.bg.load(if (info.bgd) info.bgdPath else info.bgsPath)
                 v.toolContainer.setItemImage(GROUP_TOOL_AN, if (info.bgd) R.drawable.icon_an_on else R.drawable.icon_an_off)
                 v.toolContainer.setItemImage(GROUP_TOOL_MV, if (info.video) R.drawable.icon_mv_on else R.drawable.icon_mv_off)
                 // 已播放进度和进度条由onTimeUpdate更新, 不用在此更新

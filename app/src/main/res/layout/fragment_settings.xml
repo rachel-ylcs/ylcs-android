@@ -164,6 +164,12 @@
             android:textSize="@dimen/base"
             android:text="通用设置" />
         <com.yinlin.rachel.view.SettingsItem
+            android:id="@+id/clear_cache"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="清理缓存"
+            android:elevation="3dp" />
+        <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/crash_log"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

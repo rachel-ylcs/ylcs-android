@@ -19,7 +19,7 @@ import com.yinlin.rachel.databinding.DialogInfoBinding
 import com.yinlin.rachel.databinding.DialogInputBinding
 import com.yinlin.rachel.databinding.DialogLoadingBinding
 import com.yinlin.rachel.databinding.DialogProgressBinding
-import com.yinlin.rachel.load
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.toDP
 import com.yinlin.rachel.view.InputView
@@ -163,7 +163,7 @@ abstract class RachelDialog<T : ViewBinding> (
         class DialogLoading(context: Context, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class.java, false, false) {
             override fun init(v: DialogLoadingBinding) {
                 v.title.text = title
-                v.pic.load(RachelImageLoader(context), R.drawable.img_dialog_loading_rachel)
+                v.pic.load(R.drawable.img_dialog_loading_rachel)
             }
         }
 

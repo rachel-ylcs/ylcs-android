@@ -51,7 +51,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
             v.state.showLoading()
             v.container.setEnableLoadMore(false)
             adapter.clearSource()
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.getChaohua(0, adapter.items) }
+            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(0, adapter.items) }
             if (adapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) {
@@ -67,7 +67,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
     fun requestMoreData() {
         lifecycleScope.launch {
             val oldSize = adapter.size
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.getChaohua(sinceId, adapter.items) }
+            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(sinceId, adapter.items) }
             if (sinceId == 0L) v.container.finishLoadMoreWithNoMoreData()
             else {
                 adapter.notifyItemRangeInserted(oldSize, adapter.size - oldSize)

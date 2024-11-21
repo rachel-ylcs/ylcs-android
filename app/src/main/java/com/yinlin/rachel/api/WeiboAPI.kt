@@ -1,13 +1,17 @@
 package com.yinlin.rachel.api
 
+import android.net.Uri
 import com.google.gson.JsonObject
 import com.yinlin.rachel.Net
 import com.yinlin.rachel.data.weibo.Weibo
+import com.yinlin.rachel.data.weibo.WeiboAlbum
+import com.yinlin.rachel.data.weibo.WeiboAlbumList
 import com.yinlin.rachel.data.weibo.WeiboComment
 import com.yinlin.rachel.data.weibo.WeiboCommentList
+import com.yinlin.rachel.data.weibo.WeiboContainer
 import com.yinlin.rachel.data.weibo.WeiboList
+import com.yinlin.rachel.data.weibo.WeiboCommentUser
 import com.yinlin.rachel.data.weibo.WeiboUser
-import com.yinlin.rachel.data.weibo.WeiboUserInfo
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.data.weibo.WeiboUserStorageList
 import com.yinlin.rachel.model.RachelPreview
@@ -15,12 +19,13 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.jvm.internal.Ref.IntRef
 
 
 object WeiboAPI {
-    fun searchUser(name: String): List<WeiboUser>? = try {
-        val result = mutableListOf<WeiboUser>()
-        val url = "https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D3%26q%3D${name}&page_type=searchall"
+    fun searchUser(name: String): List<WeiboUserStorage>? = try {
+        val result = mutableListOf<WeiboUserStorage>()
+        val url = "https://m.weibo.cn/api/container/getIndex?containerid=${WeiboContainer.searchUser(name)}&page_type=searchall"
         val json = Net.get(url).asJsonObject
         val data = json.getAsJsonObject("data")
         for (item1 in data.getAsJsonArray("cards")) {
@@ -33,7 +38,7 @@ object WeiboAPI {
                         val id = user["id"].asString
                         val userName = user["screen_name"].asString
                         val avatar = user["avatar_hd"].asString
-                        result += WeiboUser(id, userName, avatar, "")
+                        result += WeiboUserStorage(id, userName, avatar)
                     }
                 }
             }
@@ -44,21 +49,13 @@ object WeiboAPI {
     fun extractWeiboUserStorage(uid: String): WeiboUserStorage? = try {
         val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
         val json = Net.get(url).asJsonObject
-        val data = json.getAsJsonObject("data")
-        val userInfo = data.getAsJsonObject("userInfo")
+        val userInfo = json.getAsJsonObject("data").getAsJsonObject("userInfo")
+        val userId = userInfo["id"].asString
         val name = userInfo["screen_name"].asString
         val avatar = userInfo["avatar_hd"].asString
-        val tabs = data.getAsJsonObject("tabsInfo").getAsJsonArray("tabs")
-        var user: WeiboUserStorage? = null
-        for (item in tabs) {
-            val tab = item.asJsonObject
-            if (tab["title"].asString == "微博") {
-                user = WeiboUserStorage(uid, tab["containerid"].asString, name, avatar)
-                break
-            }
-        }
-        user
-    } catch (_: Exception) { null }
+        WeiboUserStorage(userId, name, avatar)
+    }
+    catch (_: Exception) { null }
 
     private fun extractWeibo(card: JsonObject): Weibo {
         var blogs = card.getAsJsonObject("mblog")
@@ -111,27 +108,12 @@ object WeiboAPI {
                 pictures += RachelPreview(videoPicUrl, videoPicUrl, videoUrl)
             }
         }
-        return Weibo(blogId, WeiboUser(userId, userName, avatar, location), formattedTime, text, commentNum, likeNum, repostNum, pictures)
+        return Weibo(blogId, WeiboCommentUser(userId, userName, avatar, location), formattedTime, text, commentNum, likeNum, repostNum, pictures)
     }
 
-    fun getWeiboUserInfo(uid: String): WeiboUserInfo? =  try {
-        val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
-        val json = Net.get(url).asJsonObject
-        val userInfo = json.getAsJsonObject("data").getAsJsonObject("userInfo")
-        val userId = userInfo["id"].asString
-        val name = userInfo["screen_name"].asString
-        val avatar = userInfo["avatar_hd"].asString
-        val signature = userInfo["description"].asString
-        val followNum = userInfo["follow_count"].asInt.toString()
-        val fansNum = if (userInfo.has("followers_count_str"))
-            userInfo["followers_count_str"].asString else userInfo["followers_count"].asString
-        WeiboUserInfo(userId, name, avatar, signature, followNum, fansNum)
-    }
-    catch (_: Exception) { null }
-
-    private fun getWeibo(uid: String, containerId: String, array: WeiboList) {
+    fun extractAllWeibo(uid: String, array: WeiboList) {
         try {
-            val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid&containerid=$containerId"
+            val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid&containerid=${WeiboContainer.weibo(uid)}"
             val json = Net.get(url).asJsonObject
             val cards = json.getAsJsonObject("data").getAsJsonArray("cards")
             for (item in cards) {
@@ -146,8 +128,8 @@ object WeiboAPI {
         catch (_: Exception) { }
     }
 
-    fun getAllWeibo(weiboUsers: WeiboUserStorageList, array: WeiboList) {
-        for (user in weiboUsers) getWeibo(user.userId, user.containerId, array)
+    fun extractAllUserWeibo(weiboUsers: WeiboUserStorageList, array: WeiboList) {
+        for (user in weiboUsers) extractAllWeibo(user.userId, array)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         array.sortWith { o1, o2 ->
             val dateTime1 = LocalDateTime.parse(o1.time, formatter)
@@ -156,7 +138,66 @@ object WeiboAPI {
         }
     }
 
-    private fun extractComment(card: JsonObject): WeiboComment {
+    fun extractWeiboUser(uid: String): WeiboUser? =  try {
+        val url = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid"
+        val json = Net.get(url).asJsonObject
+        val userInfo = json.getAsJsonObject("data").getAsJsonObject("userInfo")
+        val userId = userInfo["id"].asString
+        val name = userInfo["screen_name"].asString
+        val avatar = userInfo["avatar_hd"].asString
+        val background = userInfo["cover_image_phone"].asString
+        val signature = userInfo["description"].asString
+        val followNum = userInfo["follow_count"].asInt.toString()
+        val fansNum = if (userInfo.has("followers_count_str"))
+            userInfo["followers_count_str"].asString else userInfo["followers_count"].asString
+        WeiboUser(userId, name, avatar, background, signature, followNum, fansNum)
+    }
+    catch (_: Exception) { null }
+
+    fun extractWeiboUserAlbum(uid: String): WeiboAlbumList = try {
+        val albums = mutableListOf<WeiboAlbum>()
+        val albumUrl = "https://m.weibo.cn/api/container/getIndex?type=uid&value=$uid&containerid=${WeiboContainer.album(uid)}"
+        val albumJson = Net.get(albumUrl).asJsonObject
+        val cards = albumJson.getAsJsonObject("data").getAsJsonArray("cards")
+        for (item1 in cards) {
+            val card = item1.asJsonObject
+            if (card["itemid"].asString.endsWith("albumeach")) {
+                for (item2 in card.getAsJsonArray("card_group")) {
+                    val album = item2.asJsonObject
+                    if (album["card_type"].asInt == 8) {
+                        val containerId = Uri.parse(album["scheme"].asString).getQueryParameter("containerid")!!
+                        val title = album["title_sub"].asString
+                        val num = album["desc1"].asString
+                        val time = album["desc2"].asString
+                        val pic = album["pic"].asString
+                        albums += WeiboAlbum(containerId, title, num, time, pic)
+                    }
+                }
+            }
+        }
+        albums
+    }
+    catch (_: Exception) { mutableListOf() }
+
+    fun extractWeiboUserAlbumPics(containerId: String, page: Int, limit: Int, count: IntRef): List<RachelPreview> = try {
+        val url = "https://m.weibo.cn/api/container/getSecond?containerid=${containerId}&count=${limit}&page=${page}"
+        val json = Net.get(url).asJsonObject
+        val data = json.getAsJsonObject("data")
+        val cards = data.getAsJsonArray("cards")
+        val pics = mutableListOf<RachelPreview>()
+        for (item1 in cards) {
+            val card = item1.asJsonObject
+            for (item2 in card.getAsJsonArray("pics")) {
+                val pic = item2.asJsonObject
+                pics += RachelPreview(pic["pic_middle"].asString, pic["pic_ori"].asString)
+            }
+        }
+        count.element = data["count"].asInt
+        pics.take(limit)
+    }
+    catch (_: Exception) { mutableListOf() }
+
+    private fun extractWeiboComment(card: JsonObject): WeiboComment {
         // 提取名称和头像
         val user = card.getAsJsonObject("user")
         val userId = user["id"].asString
@@ -174,17 +215,17 @@ object WeiboAPI {
         val location = if (card.has("source")) card["source"].asString.removePrefix("来自") else "IP未知"
         // 提取内容
         val text = card["text"].asString
-        return WeiboComment(WeiboUser(userId, userName, avatar, location), formattedTime, text)
+        return WeiboComment(WeiboCommentUser(userId, userName, avatar, location), formattedTime, text)
     }
 
-    fun getDetails(id: String, array: WeiboCommentList) {
+    fun extractWeiboDetails(id: String, array: WeiboCommentList) {
         try {
             val url = "https://m.weibo.cn/comments/hotflow?id=${id}&mid=${id}"
             val json = Net.get(url).asJsonObject
             val cards = json.getAsJsonObject("data").getAsJsonArray("data")
             for (item in cards) {
                 val card = item.asJsonObject
-                val comment = extractComment(card)
+                val comment = extractWeiboComment(card)
                 // 带图片
                 if (card.has("pic")) {
                     val pic = card.getAsJsonObject("pic")
@@ -194,7 +235,7 @@ object WeiboAPI {
                 val comments = card["comments"]
                 if (comments.isJsonArray) {
                     val subComments = mutableListOf<WeiboComment>()
-                    for (subCard in comments.asJsonArray) subComments += extractComment(subCard.asJsonObject)
+                    for (subCard in comments.asJsonArray) subComments += extractWeiboComment(subCard.asJsonObject)
                     comment.subComments = subComments
                 }
                 array += comment
@@ -203,9 +244,9 @@ object WeiboAPI {
         catch (_: Exception) { }
     }
 
-    fun getChaohua(sinceId: Long, array: WeiboList): Long {
+    fun extractChaohua(sinceId: Long, array: WeiboList): Long {
         try {
-            val url = "https://m.weibo.cn/api/container/getIndex?containerid=10080848e33cc4065cd57c5503c2419cdea983_-_sort_time&type=uid&value=2266537042&since_id=${sinceId}"
+            val url = "https://m.weibo.cn/api/container/getIndex?containerid=${WeiboContainer.CHAOHUA}&type=uid&value=2266537042&since_id=${sinceId}"
             val json = Net.get(url).asJsonObject
             val data = json.getAsJsonObject("data")
             val pageInfo = data.getAsJsonObject("pageInfo")

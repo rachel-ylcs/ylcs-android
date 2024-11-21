@@ -47,7 +47,7 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
         lifecycleScope.launch {
             v.state.showLoading()
             adapter.clearSource()
-            withContext(Dispatchers.IO) { WeiboAPI.getAllWeibo(Config.weibo_users, adapter.items) }
+            withContext(Dispatchers.IO) { WeiboAPI.extractAllUserWeibo(Config.weibo_users, adapter.items) }
             if (adapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) v.container.finishRefresh()

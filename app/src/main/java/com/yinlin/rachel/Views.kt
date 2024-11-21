@@ -114,28 +114,6 @@ val Paint.baseLine: Float get() = -(this.fontMetrics.descent + this.fontMetrics.
 
 /*---------    ImageView    --------*/
 
-fun ImageView.load(loader: RachelImageLoader, @RawRes @DrawableRes resourceId: Int) {
-    loader.glide.load(resourceId).apply(loader.options).into(this)
-}
-
-fun ImageView.load(loader: RachelImageLoader, path: String) {
-    loader.glide.load(path).apply(loader.options).into(this)
-}
-
-fun ImageView.load(loader: RachelImageLoader, path: String, sign: Any) {
-    loader.glide.load(path).signature(ObjectKey(sign)).apply(loader.options).into(this)
-}
-
-fun ImageView.load(loader: RachelImageLoader, file: File) {
-    loader.glide.load(file).apply(loader.options).into(this)
-}
-
-fun ImageView.load(loader: RachelImageLoader, file: File, sign: Any) {
-    loader.glide.load(file).signature(ObjectKey(sign)).apply(loader.options).into(this)
-}
-
-fun ImageView.clear(loader: RachelImageLoader) = loader.glide.clear(this)
-
 var ImageView.pureColor: Int
     get() = (drawable as? ColorDrawable)?.color ?: Color.TRANSPARENT
     set(value) { setImageDrawable(if (value == Color.TRANSPARENT) null else ColorDrawable(value)) }

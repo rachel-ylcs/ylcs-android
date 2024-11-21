@@ -1,35 +1,25 @@
 package com.yinlin.rachel.fragment
 
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Net
-import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.databinding.FragmentPhotoPreviewBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.loadBlack
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) : RachelFragment<FragmentPhotoPreviewBinding>(main) {
     override fun bindingClass() = FragmentPhotoPreviewBinding::class.java
-
-    private val ril = RachelImageLoader(main, RequestOptions()
-        .placeholder(ColorDrawable(main.getColor(R.color.black)))
-        .diskCacheStrategy(DiskCacheStrategy.ALL))
 
     private val simpleDownLoadMediaListener = object : Net.DownLoadMediaListener {
         override fun onCancel() { }
@@ -40,7 +30,7 @@ class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) :
     }
 
     override fun init() {
-        v.pic.load(ril, pic.mImageUrl)
+        v.pic.loadBlack(pic.mImageUrl)
 
         v.downloadHd.rachelClick {
             val user = Config.loginUser

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/RachelCard"
+    android:layout_marginBottom="5dp"
+    app:cardCornerRadius="0dp" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <ImageView
+            android:id="@+id/pic"
+            style="@style/RachelCircleImage"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title"
+            app:layout_constraintBottom_toBottomOf="@id/num" />
+        <TextView
+            android:id="@+id/title"
+            style="@style/RachelText.X0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/pic"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginHorizontal="10dp"
+            android:textSize="@dimen/base"
+            android:textColor="@color/steel_blue" />
+        <TextView
+            android:id="@+id/num"
+            style="@style/RachelText.X0"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintLeft_toLeftOf="@id/title"
+            app:layout_constraintRight_toLeftOf="@id/time"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp" />
+        <TextView
+            android:id="@+id/time"
+            style="@style/RachelText"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintRight_toRightOf="@id/title"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/xs" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

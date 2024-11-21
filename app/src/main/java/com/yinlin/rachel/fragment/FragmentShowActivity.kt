@@ -6,6 +6,7 @@ import com.yinlin.rachel.data.activity.ShowActivity
 import com.yinlin.rachel.databinding.FragmentShowActivityBinding
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelFragment
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
 
@@ -36,6 +37,7 @@ class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) :
         v.title.text = show.title
         v.content.text = show.content
         v.pics.images = RachelPreview.fromSingleUri(show.pics) { show.picPath(it) }
+        v.pics.loadImageFunc = { iv, path -> iv.load(path) }
         v.pics.listener = { pos, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, pos)) }
     }
 

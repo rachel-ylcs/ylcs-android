@@ -1,7 +1,6 @@
 package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.haibin.calendarview.Calendar
 import com.yinlin.rachel.Config
 import com.yinlin.rachel.MainActivity
@@ -15,11 +14,10 @@ import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentMeBinding
 import com.yinlin.rachel.date
 import com.yinlin.rachel.dialog.BottomDialogUserCard
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.view.ActivityCalendarView
@@ -28,8 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  {
-    private val rilNet = RachelImageLoader(main, R.drawable.placeholder_pic, DiskCacheStrategy.ALL)
-
     private val bottomDialogUserCard = BottomDialogUserCard(this)
 
     override fun bindingClass() = FragmentMeBinding::class.java
@@ -160,8 +156,8 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
             v.signature.text = user.signature
             v.level.text = user.level.toString()
             v.coin.text = user.coin.toString()
-            v.avatar.load(rilNet, user.avatarPath, Config.cache_key_avatar)
-            v.wall.load(rilNet, user.wallPath, Config.cache_key_wall)
+            v.avatar.load(user.avatarPath, Config.cache_key_avatar)
+            v.wall.load(user.wallPath, Config.cache_key_wall)
         }
         else {
             v.name.text = main.rs(R.string.default_name)

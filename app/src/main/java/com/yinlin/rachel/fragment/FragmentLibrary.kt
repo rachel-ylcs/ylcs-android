@@ -11,13 +11,11 @@ import com.yinlin.rachel.data.music.MusicInfoPreviewList
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.databinding.FragmentLibraryBinding
 import com.yinlin.rachel.databinding.ItemMusicBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
-import com.yinlin.rachel.model.RachelEnum
 import com.yinlin.rachel.model.RachelFragment
+import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.tip
 import com.yinlin.rachel.visible
 
 
@@ -44,7 +42,7 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
             v.name.text = item.name // 歌名
             v.singer.text = item.singer
             v.version.text = item.version // 版本
-            v.pic.load(main.ril, item.recordPath) // 封面
+            v.pic.load(item.recordPath) // 封面
             v.singer.backgroundColor = if (isManageMode && item.selected) selectedColor else 0
         }
 

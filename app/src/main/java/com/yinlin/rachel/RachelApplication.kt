@@ -51,6 +51,8 @@ class RachelApplication : Application() {
         MMKV.initialize(this)
         Config.kv = MMKV.defaultMMKV()
 
+        Config.cache_daily_pic = currentDateInteger
+
         // 补丁
     }
 

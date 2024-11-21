@@ -4,7 +4,7 @@ import com.yinlin.rachel.model.RachelPreview
 
 data class Weibo(
     var id: String, // 编号
-    val user: WeiboUser, // 用户
+    val user: WeiboCommentUser, // 用户
     var time: String, // 时间
     var text: String, // 内容
     val commentNum: Int, // 评论数

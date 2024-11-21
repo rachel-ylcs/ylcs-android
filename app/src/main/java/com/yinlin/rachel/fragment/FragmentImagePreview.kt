@@ -1,24 +1,18 @@
 package com.yinlin.rachel.fragment
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.luck.picture.lib.photoview.PhotoView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Net
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.databinding.FragmentImagePreviewBinding
-import com.yinlin.rachel.load
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.model.RachelImageLoader.loadBlack
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.RotateYTransformer
@@ -29,10 +23,6 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
     class ViewHolder(pic: PhotoView) : RecyclerView.ViewHolder(pic)
 
     class Adapter(context: Context, pics: List<RachelPreview>) : BannerAdapter<RachelPreview, ViewHolder>(pics) {
-        private val ril = RachelImageLoader(context, RequestOptions()
-            .placeholder(ColorDrawable(Color.BLACK))
-            .diskCacheStrategy(DiskCacheStrategy.ALL))
-
         override fun onCreateHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val pic = PhotoView(parent.context)
             pic.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -41,7 +31,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
 
         override fun onBindView(holder: ViewHolder, item: RachelPreview, position: Int, size: Int) {
             val pic = holder.itemView as PhotoView
-            pic.load(ril, item.mImageUrl)
+            pic.loadBlack(item.mImageUrl)
         }
     }
 
