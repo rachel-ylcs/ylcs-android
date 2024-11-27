@@ -72,7 +72,7 @@ dependencies {
     implementation("com.haibin:calendarview:3.7.1")
 
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.13.0-alpha08")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
@@ -81,6 +81,7 @@ dependencies {
     implementation("com.github.forJrking:KLuban:1.1.0")
     implementation("com.github.gturedi:stateful-layout:1.2.1")
     implementation("com.github.jenly1314:zxing-lite:3.2.0")
+    implementation("com.github.rtugeek:colorseekbar:2.0.3")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 

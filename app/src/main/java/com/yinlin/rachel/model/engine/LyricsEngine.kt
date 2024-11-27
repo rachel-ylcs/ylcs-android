@@ -2,6 +2,7 @@ package com.yinlin.rachel.model.engine
 
 import android.graphics.SurfaceTexture
 import android.view.TextureView
+import com.yinlin.rachel.data.music.MusicInfo
 
 
 interface LyricsEngine {

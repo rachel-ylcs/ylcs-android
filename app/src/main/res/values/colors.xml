@@ -105,4 +105,15 @@
     <color name="calendar_now">#429589</color>
     <color name="calendar_weekend">#F4ABCC</color>
     <color name="calendar_activity">#55A7EB</color>
+    
+    <color name="music_res_unknown">#9E9E9E</color>
+    <color name="music_res_info">#FFC107</color>
+    <color name="music_res_audio">#E91E63</color>
+    <color name="music_res_record">#673AB7</color>
+    <color name="music_res_bgs">#03A9F4</color>
+    <color name="music_res_default_lrc">#009688</color>
+    <color name="music_res_video">#4CAF50</color>
+    <color name="music_res_bgd">#FF9800</color>
+    <color name="music_res_lrc">#FF5722</color>
+    <color name="music_res_pag">#3F51B5</color>
 </resources>

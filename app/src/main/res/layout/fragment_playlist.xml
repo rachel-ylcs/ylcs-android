@@ -21,18 +21,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
         android:gravity="end"
         app:ButtonGroupIcon1="@drawable/icon_add_blue"
         app:ButtonGroupIcon2="@drawable/icon_play_blue"
         app:ButtonGroupIcon3="@drawable/icon_edit_blue"
         app:ButtonGroupIcon4="@drawable/icon_delete_blue" />
-    <com.yinlin.rachel.view.TabView
+    <com.yinlin.rachel.view.NavigationView
         android:id="@+id/tab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <com.yinlin.rachel.view.LineView
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
+        android:layout_height="wrap_content"
+        android:icon="@drawable/icon_star_colorful"
+        android:textSize="@dimen/base" />
     <com.gturedi.views.StatefulLayout
         android:id="@+id/state"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         app:stfInAnimation="@anim/anim_fade_in"
         app:stfOutAnimation="@anim/anim_fade_out" >
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@id/list"
+            android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.gturedi.views.StatefulLayout>

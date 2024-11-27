@@ -20,6 +20,7 @@ import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.databinding.ActivityMainBinding
 import com.yinlin.rachel.fragment.FragmentImportMod
+import com.yinlin.rachel.fragment.FragmentImportNetEaseCloud
 import com.yinlin.rachel.fragment.FragmentLogin
 import com.yinlin.rachel.fragment.FragmentProfile
 import com.yinlin.rachel.model.RachelActivity
@@ -55,6 +56,10 @@ class MainActivity : RachelActivity() {
             insets
         }
         createPages()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
         initPages()
     }
 
@@ -75,21 +80,23 @@ class MainActivity : RachelActivity() {
             // 3. 更新 Token
             val token = Config.token
             if (token.isNotEmpty()) {
-                val result = withContext(Dispatchers.IO) {
-                    withTimeoutOrNull(5000) { API.UserAPI.updateToken(token) } ?: API.errResult()
-                }
-                when (result.code) {
-                    API.Code.SUCCESS -> Config.token = result.data.token
-                    API.Code.UNAUTHORIZED -> {
-                        tip(Tip.WARNING, result.msg)
-                        Config.token = ""
-                        Config.user = null
-                        sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
-                        navigate(FragmentLogin(this@MainActivity))
+                if (Config.token_daily != currentDateInteger) {
+                    val result = withContext(Dispatchers.IO) {
+                        withTimeoutOrNull(5000) { API.UserAPI.updateToken(token) } ?: API.errResult()
+                    }
+                    when (result.code) {
+                        API.Code.SUCCESS -> Config.token = result.data.token
+                        API.Code.UNAUTHORIZED -> {
+                            tip(Tip.WARNING, result.msg)
+                            Config.token = ""
+                            Config.user = null
+                            sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
+                            navigate(FragmentLogin(this@MainActivity))
+                        }
                     }
                 }
             }
-
+            
             loadingDialog.dismiss()
         }
     }
@@ -226,6 +233,8 @@ class MainActivity : RachelActivity() {
         }
     }
 
+    private fun processActionMain() { }
+
     private fun processActionView(uri: Uri) {
         val args = HashMap<String, String>()
         for (name in uri.queryParameterNames) uri.getQueryParameter(name)?.let { args[name] = it }
@@ -235,7 +244,21 @@ class MainActivity : RachelActivity() {
         }
     }
 
-    private fun processActionMain() { }
+    private fun processSendText(title: String, text: String) {
+        when (title) {
+            "网易云音乐" -> navigate(FragmentImportNetEaseCloud(this@MainActivity, text, true))
+        }
+    }
+
+    private fun processActionSend(type: String, bundle: Bundle) {
+        when (type) {
+            "text/plain" -> {
+                val title = bundle.getString(Intent.EXTRA_TITLE)
+                val text = bundle.getString(Intent.EXTRA_TEXT)
+                if (title != null && text != null) processSendText(title, text)
+            }
+        }
+    }
 
     fun processUri(uri: Uri) {
         val args = HashMap<String, String>()
@@ -247,10 +270,12 @@ class MainActivity : RachelActivity() {
         try {
             when (intent.action) {
                 Intent.ACTION_MAIN -> processActionMain()
-                Intent.ACTION_VIEW -> {
-                    intent.data?.let { processActionView(it) }
+                Intent.ACTION_VIEW -> { intent.data?.let { processActionView(it) } }
+                Intent.ACTION_SEND -> {
+                    val bundle = intent.extras
+                    val type = intent.type
+                    if (bundle != null && type != null) processActionSend(type, bundle)
                 }
-                Intent.ACTION_SEND -> { }
             }
         }
         catch (_: Exception) { }
@@ -258,7 +283,7 @@ class MainActivity : RachelActivity() {
 
     fun isForeground(tab: RachelTab): Boolean = isMain && currentMainIndex == tab.index
 
-    val loading: RachelDialog.Companion.DialogLoading get() = RachelDialog.loading(this)
+    val loading: RachelDialog.Companion.DialogLoading get() = RachelDialog.loading(this, handler)
 
     // 资源
     fun rs(@StringRes id: Int) = getString(id)

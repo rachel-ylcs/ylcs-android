@@ -1,7 +1,10 @@
 package com.yinlin.rachel.fragment
 
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +14,7 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.common.DialogMediaDownloadListener
 import com.yinlin.rachel.data.sys.DevelopState
 import com.yinlin.rachel.databinding.FragmentUpdateBinding
 import com.yinlin.rachel.databinding.ItemDevelopStateBinding
@@ -18,7 +22,6 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,31 +47,10 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
 
     override fun init() {
         v.targetVersion.rachelClick {
-            if (downloadUrl == null) {
-                tip(Tip.WARNING, "未获取到服务器最新安装包")
-                return@rachelClick
-            }
-            if (!isNeedUpdate) {
-                tip(Tip.SUCCESS, "当前已经是最新版本")
-                return@rachelClick
-            }
-            Net.downloadFile(main, downloadUrl!!, object : Net.DownLoadMediaListener {
-                override fun onCancel() { }
-                override fun onDownloadComplete(status: Boolean, uri: Uri?) {
-                    try {
-                        if (status && uri != null) {
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.setDataAndType(uri, "application/vnd.android.package-archive")
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(intent)
-                            return
-                        }
-                    }
-                    catch (_: Exception) { }
-                    tip(Tip.ERROR, "下载失败")
-                }
-            })
+            val url = downloadUrl
+            if (url == null) tip(Tip.WARNING, "未获取到服务器最新安装包")
+            else if (!isNeedUpdate) tip(Tip.SUCCESS, "当前已经是最新版本")
+            else downloadAPK(url)
         }
 
         v.list.apply {
@@ -111,6 +93,42 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
             else {
                 main.pop()
                 tip(Tip.ERROR, result.msg)
+            }
+        }
+    }
+
+    // 下载最新安装包
+    @NewThread
+    private fun downloadAPK(url: String) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Net.download(url, listener = object : DialogMediaDownloadListener(main) {
+                    override fun makeMediaUri(url: String, values: ContentValues): Uri {
+                        values.put(MediaStore.MediaColumns.DISPLAY_NAME, url.substringAfterLast('/'))
+                        values.put(MediaStore.Images.Media.MIME_TYPE, "application/vnd.android.package-archive")
+                        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                        return MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                    }
+
+                    override suspend fun onCompleted() {
+                        withContext(Dispatchers.Main) {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.setDataAndType(uri, "application/vnd.android.package-archive")
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                            }
+                            catch (_: Exception) {
+                                tip(Tip.ERROR, "打开安装包失败, 请手动在下载目录安装")
+                            }
+                        }
+                    }
+
+                    override suspend fun onFailed() {
+                        withContext(Dispatchers.Main) { tip(Tip.ERROR, "下载失败") }
+                    }
+                })
             }
         }
     }

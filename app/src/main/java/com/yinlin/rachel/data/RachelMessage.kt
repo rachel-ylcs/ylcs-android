@@ -10,10 +10,11 @@ enum class RachelMessage {
     MUSIC_CREATE_PLAYLIST,  // String -> Boolean
     MUSIC_RENAME_PLAYLIST,  // String, String -> Boolean
     MUSIC_DELETE_PLAYLIST,  // String
-    MUSIC_UPDATE_PLAYLIST, // String, LoadMusicPreviewList
+    MUSIC_UPDATE_PLAYLIST, // String, List<LoadMusicPreview>
     MUSIC_RELOAD_PLAYLIST,
     MUSIC_DELETE_MUSIC_FROM_PLAYLIST,  // String, String
     MUSIC_ADD_MUSIC_INTO_PLAYLIST,  // Playlist, List<String> -> Int
+    MUSIC_GET_MUSIC_INFO, // String -> MusicInfo
     MUSIC_GET_MUSIC_INFO_PREVIEW, // String? -> MusicInfoPreviewList
     MUSIC_DELETE_MUSIC,  // MusicInfoPreviewList
     MUSIC_GOTO_MUSIC,  // String
@@ -21,6 +22,11 @@ enum class RachelMessage {
 
     MUSIC_USE_LYRICS_ENGINE,  // String, String
 
+    MUSIC_UPDATE_LYRICS_SETTINGS,
+
+
+    // FragmentLibrary
+    LIBRARY_UPDATE_MUSIC_INFO, // MusicInfo
 
     // FragmentMe
     ME_UPDATE_USER_INFO, // User?

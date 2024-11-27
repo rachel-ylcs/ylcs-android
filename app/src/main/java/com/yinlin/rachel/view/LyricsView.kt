@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture
 import android.util.AttributeSet
 import android.view.TextureView
 import android.widget.FrameLayout
+import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.div
 import com.yinlin.rachel.model.engine.LyricsEngine
@@ -14,15 +15,15 @@ import com.yinlin.rachel.pathMusic
 class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : FrameLayout(context, attrs, defStyleAttr), TextureView.SurfaceTextureListener {
     private var lyricsEngine: LyricsEngine? = null
-    private var lyricsFileName: String = ""
+    private var lyricsFileName: String? = null
+    private var musicInfo: MusicInfo? = null
     private var isEngineLoad: Boolean = false
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-        lyricsEngine?.let {
-            if (childCount != 0) {
-                if (it.load(getChildAt(0) as TextureView, surface, width, height, lyricsFileName)) isEngineLoad = true
-                else releaseEngine()
-            }
+        if (lyricsEngine != null && lyricsFileName != null && musicInfo != null && childCount != 0) {
+            if (lyricsEngine!!.load(getChildAt(0) as TextureView, surface,
+                    width, height, lyricsFileName!!)) isEngineLoad = true
+            else releaseEngine()
         }
     }
 
@@ -42,6 +43,7 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // 加载歌词引擎
+    @NewThread
     fun loadEngine(musicInfo: MusicInfo): Boolean {
         val lyrics = musicInfo.lyrics
         // 先检查当前歌词引擎是否合适
@@ -59,16 +61,18 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 }
             }
         }
-        if (lyricsEngine == null) return false
-        else {
-            val firstLyrics = lyrics[lyricsEngine?.name]?.first() ?: ""
-            lyricsFileName = (pathMusic / "${musicInfo.id}${if(firstLyrics.isEmpty()) "" else "_"}${firstLyrics}${lyricsEngine?.ext}").absolutePath
+        lyricsEngine?.let {
+            val firstLyrics = lyrics[it.name]?.first() ?: ""
+            lyricsFileName = (pathMusic / "${musicInfo.id}${if(firstLyrics.isEmpty()) "" else "_"}${firstLyrics}${it.ext}").absolutePath
+            this.musicInfo = musicInfo
             addTexture()
             return true
         }
+        return false
     }
 
     // 切换歌词引擎
+    @NewThread
     fun switchEngine(musicInfo: MusicInfo, engineName: String, name: String): Boolean {
         // 先检查当前歌词引擎是否合适
         if (lyricsEngine != null) {
@@ -80,6 +84,7 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (lyricsEngine == null) return false
         else {
             lyricsFileName = (pathMusic / "${musicInfo.id}${if(name.isEmpty()) "" else "_"}${name}${lyricsEngine?.ext}").absolutePath
+            this.musicInfo = musicInfo
             addTexture()
             return true
         }
@@ -89,8 +94,9 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (lyricsEngine != null) {
             lyricsEngine?.release()
             lyricsEngine = null
+            lyricsFileName = null
+            musicInfo = null
             isEngineLoad = false
-            lyricsFileName = ""
             removeAllViews()
         }
     }

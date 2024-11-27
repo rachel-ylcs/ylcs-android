@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:orientation="vertical"
+    tools:context=".sheet.SheetLyricsSettings" >
+    <TextView
+        style="@style/RachelText.X"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center"
+        android:textColor="@color/steel_blue"
+        android:textStyle="bold"
+        android:textSize="@dimen/base"
+        android:text="歌词设置" />
+    <com.yinlin.rachel.view.SettingsItem
+        android:id="@+id/floating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="状态栏歌词" >
+        <ImageView
+            android:id="@+id/iv_floating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/icon_no" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="横向偏移"
+        app:HasArrow="false"
+        android:clipChildren="false" >
+        <com.google.android.material.slider.Slider
+            android:id="@+id/itemOffsetX"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="纵向偏移"
+        app:HasArrow="false" >
+        <com.google.android.material.slider.Slider
+            android:id="@+id/itemOffsetY"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="歌词宽度"
+        app:HasArrow="false" >
+        <com.google.android.material.slider.Slider
+            android:id="@+id/itemWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="字体颜色"
+        app:HasArrow="false" >
+        <com.rtugeek.android.colorseekbar.ColorSeekBar
+            android:id="@+id/itemTextColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="背景颜色"
+        app:HasArrow="false" >
+        <com.rtugeek.android.colorseekbar.ColorSeekBar
+            android:id="@+id/itemBackgroundColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="背景透明"
+        app:HasArrow="false" >
+        <com.rtugeek.android.colorseekbar.AlphaSeekBar
+            android:id="@+id/itemBackgroundAlpha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/test_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <View
+            android:id="@+id/test_placeholder1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/test_surface"
+            app:layout_constraintBottom_toBottomOf="@id/test_surface"
+            android:background="@color/black" />
+        <TextView
+            android:id="@+id/test_surface"
+            style="@style/RachelText.X0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/test_placeholder1"
+            android:text="这是一条测试歌词"
+            android:textStyle="bold" />
+        <View
+            android:id="@+id/test_placeholder2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toRightOf="@id/test_surface"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/test_surface"
+            app:layout_constraintBottom_toBottomOf="@id/test_surface"
+            android:background="@color/gray" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -76,7 +76,7 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
         }
 
         v.next.rachelClick {
-            if (maxNum == -1 || current < maxNum) requestAlbum(current + 1)
+            if ((maxNum == -1 || current < maxNum) && current < PIC_MAX_LIMIT - 1) requestAlbum(current + 1)
             else tip(Tip.WARNING, "已经是最后一页啦")
         }
 
@@ -88,13 +88,13 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
     @NewThread @SuppressLint("NotifyDataSetChanged")
     private fun requestAlbum(page: Int) {
         lifecycleScope.launch {
-            val loading = main.loading
             if (album[page - 1] == null) { // 无缓存
                 val picCount = IntRef()
+                v.title.loading = true
                 val pagePics = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserAlbumPics(containerId, page, PIC_LIMIT, picCount) }
+                v.title.loading = false
                 if (pagePics.isNotEmpty()) album[page - 1] = AlbumCache(picCount.element, pagePics)
             }
-            loading.dismiss()
             val currentAlbum = album[page - 1]
             if (currentAlbum != null) {
                 v.title.text = "共 ${currentAlbum.count} 张"

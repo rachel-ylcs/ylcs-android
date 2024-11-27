@@ -82,7 +82,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
     @NewThread
     private fun loadWeiboUserStorage() {
         lifecycleScope.launch {
-            val loading = main.loading
+            v.state.showLoading()
             val users = Config.weibo_users
             val correctUsers = mutableListOf<WeiboUserStorage>()
             var isNeedUpdate = false
@@ -98,31 +98,34 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
                 }
                 else correctUsers += user
             }
-            loading.dismiss()
             if (isNeedUpdate) Config.weibo_users = users
-            v.title.text = main.rs(R.string.weibo_user_list_like)
-            adapter.isManagerMode = true
-            adapter.setSource(correctUsers)
-            adapter.notifySource()
+            if (correctUsers.isEmpty()) v.state.showEmpty()
+            else {
+                v.title.text = main.rs(R.string.weibo_user_list_like)
+                adapter.isManagerMode = true
+                adapter.setSource(correctUsers)
+                adapter.notifySource()
+                v.state.showContent()
+            }
         }
     }
 
     @NewThread
     private fun searchWeiboUser(name: String) {
         lifecycleScope.launch {
-            val loading = main.loading
+            v.state.showLoading()
             val result = withContext(Dispatchers.IO) { WeiboAPI.searchUser(name) }
-            loading.dismiss()
             if (result != null) {
                 if (result.isNotEmpty()) {
                     v.title.text = main.rs(R.string.weibo_user_list_search)
                     adapter.isManagerMode = false
                     adapter.setSource(result)
                     adapter.notifySource()
+                    v.state.showContent()
                 }
-                else tip(Tip.WARNING, "未搜索到满足的微博用户")
+                else v.state.showEmpty()
             }
-            else tip(Tip.ERROR, "网络异常")
+            else v.state.showOffline { searchWeiboUser(name) }
         }
     }
 }

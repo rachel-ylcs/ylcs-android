@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".dialog.BottomDialogCurrentPlaylist" >
+    tools:context=".sheet.SheetCurrentPlaylist" >
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -24,7 +24,7 @@
             android:layout_gravity="center_vertical"
             android:text="播放列表"
             android:textColor="@color/steel_blue"
-            android:textSize="@dimen/xl"
+            android:textSize="@dimen/base"
             android:textStyle="bold" />
     </FrameLayout>
     <com.yinlin.rachel.view.LineView

@@ -4,6 +4,8 @@
     <attr name="BorderColor" format="color" />
     <attr name="TitleColor" format="color" />
     <attr name="ValueColor" format="color" />
+    <attr name="NormalColor" format="color" />
+    <attr name="ActiveColor" format="color" />
 
     <attr name="BorderWidth" format="dimension" />
     <attr name="Gap" format="dimension" />
@@ -29,7 +31,9 @@
 
     <attr name="Bold" format="boolean" />
     <attr name="Expanded" format="boolean" />
+    <attr name="Loading" format="boolean" />
     <attr name="HasArrow" format="boolean" />
+    <attr name="HasDivider" format="boolean" />
 
     <attr name="Icon" format="reference" />
 
@@ -100,8 +104,27 @@
         <attr name="android:inputType" />
         <attr name="android:textSize" />
     </declare-styleable>
+    <declare-styleable name="LoadingTextView" >
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="android:text" />
+        <attr name="android:gravity" />
+        <attr name="Bold" />
+        <attr name="Gap" />
+        <attr name="Loading" />
+    </declare-styleable>
     <declare-styleable name="LineView" >
         <attr name="android:color" />
+    </declare-styleable>
+    <declare-styleable name="NavigationView" >
+        <attr name="android:textSize" />
+        <attr name="android:icon" />
+        <attr name="NormalColor" />
+        <attr name="ActiveColor" />
+        <attr name="Gap" />
+        <attr name="BorderColor" />
+        <attr name="BorderWidth" />
+        <attr name="HasDivider" />
     </declare-styleable>
     <declare-styleable name="NineGridView" >
         <attr name="Gap" />

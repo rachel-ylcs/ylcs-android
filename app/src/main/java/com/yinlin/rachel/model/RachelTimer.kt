@@ -3,41 +3,57 @@ package com.yinlin.rachel.model
 import android.os.CountDownTimer
 
 class RachelTimer {
-    interface Listener {
-        fun onStart()
-        fun onStop()
-        fun onTick(remain: Long)
+    fun interface Listener {
+        fun onStart() { }
+        fun onStop() { }
+        fun onTick(remain: Long) { }
         fun onFinish()
     }
 
     private var mTimer: CountDownTimer? = null
-    private var mListener: Listener? = null
-
+    private val mListeners = mutableListOf<Listener>()
+    private val mLock = Any()
     val isStart: Boolean get() = mTimer != null
 
-    fun start(duration: Long, tick: Long, listener: Listener) {
+    fun start(duration: Long, tick: Long, listener: Listener? = null) {
         mTimer?.cancel()
-        mListener = listener
+        listener?.let { mListeners.add(it) }
         mTimer = object : CountDownTimer(duration, tick) {
             override fun onTick(millisUntilFinished: Long) {
-                mListener?.onTick(millisUntilFinished)
+                synchronized(mLock) {
+                    for (item in mListeners) item.onTick(millisUntilFinished)
+                }
             }
-            override fun onFinish() {
-                mListener?.onStop()
-                mListener?.onFinish()
-                mTimer = null
-                mListener = null
-            }
+            override fun onFinish() { stop(true) }
         }.let {
-            mListener?.onStart()
+            synchronized(mLock) {
+                for (item in mListeners) item.onStart()
+            }
             it.start()
         }
     }
 
     fun cancel() {
         mTimer?.cancel()
-        mListener?.onStop()
+        stop(false)
+    }
+
+    fun addListener(listener: Listener) {
+        synchronized(mLock) { mListeners.add(listener) }
+    }
+
+    fun removeListener(listener: Listener) {
+        synchronized(mLock) { mListeners.remove(listener) }
+    }
+
+    private fun stop(isFinish: Boolean) {
+        synchronized(mLock) {
+            for (item in mListeners) item.onStop()
+            if (isFinish) {
+                for (item in mListeners) item.onFinish()
+            }
+            mListeners.clear()
+        }
         mTimer = null
-        mListener = null
     }
 }

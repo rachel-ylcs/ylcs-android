@@ -1,26 +1,21 @@
-package com.yinlin.rachel.dialog
+package com.yinlin.rachel.sheet
 
 import com.yinlin.rachel.RachelApplication
-import com.yinlin.rachel.databinding.BottomDialogCrashLogBinding
+import com.yinlin.rachel.databinding.SheetCrashLogBinding
 import com.yinlin.rachel.fragment.FragmentSettings
 import com.yinlin.rachel.interceptScroll
-import com.yinlin.rachel.model.RachelBottomDialog
+import com.yinlin.rachel.model.RachelSheet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BottomDialogCrashLog(fragment: FragmentSettings) : RachelBottomDialog<BottomDialogCrashLogBinding, FragmentSettings>(
-    fragment, 0.9f, BottomDialogCrashLogBinding::class.java) {
+class SheetCrashLog(fragment: FragmentSettings) : RachelSheet<SheetCrashLogBinding, FragmentSettings>(fragment, 0.7f) {
+    override fun bindingClass() = SheetCrashLogBinding::class.java
 
     override fun init() {
         v.log.interceptScroll()
-    }
-
-    fun update(): BottomDialogCrashLog {
         lifecycleScope.launch {
-            v.root.smoothScrollTo(0, 0)
             v.log.text = withContext(Dispatchers.IO) { RachelApplication.crashHandler.getCrashLog() }
         }
-        return this
     }
 }

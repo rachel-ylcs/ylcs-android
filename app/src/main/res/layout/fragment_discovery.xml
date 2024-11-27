@@ -26,12 +26,13 @@
             android:orientation="horizontal"
             android:padding="5dp"
             android:gravity="center" >
-            <com.yinlin.rachel.view.TabView
+            <com.yinlin.rachel.view.NavigationView
                 android:id="@+id/tab"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/base" />
+                android:textSize="@dimen/base"
+                android:icon="@drawable/icon_star_colorful" />
             <ImageView
                 android:id="@+id/button_add"
                 android:layout_width="wrap_content"

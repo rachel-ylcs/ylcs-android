@@ -17,6 +17,7 @@ import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.view.NavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,13 +63,14 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
     override fun bindingClass() = FragmentDiscoveryBinding::class.java
 
     override fun init() {
-        v.tab.addTabEx("最新")
-        v.tab.addTabEx("热门")
-        v.tab.selectTabEx(0)
-        v.tab.listener = { position, _ ->
-            when (position) {
-                TAB_LATEST, TAB_HOT -> requestNewData()
-                else -> { }
+        v.tab.simpleItems = listOf("最新", "热门")
+        // 加载时不需要刷新数据 直到 start 调用
+        v.tab.listener = object : NavigationView.Listener {
+            override fun onSelected(position: Int, title: String, obj: Any?) {
+                when (position) {
+                    TAB_LATEST, TAB_HOT -> requestNewData()
+                    else -> { }
+                }
             }
         }
 

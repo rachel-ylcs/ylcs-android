@@ -7,7 +7,7 @@ import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.databinding.PageWeiboBinding
 import com.yinlin.rachel.fragment.FragmentMsg
 import com.yinlin.rachel.model.RachelViewPage
-import com.yinlin.rachel.page.common.WeiboAdapter
+import com.yinlin.rachel.common.WeiboAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

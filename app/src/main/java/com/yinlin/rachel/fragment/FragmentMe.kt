@@ -13,21 +13,19 @@ import com.yinlin.rachel.data.activity.ShowActivity
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentMeBinding
 import com.yinlin.rachel.date
-import com.yinlin.rachel.dialog.BottomDialogUserCard
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.sheet.SheetUserCard
 import com.yinlin.rachel.view.ActivityCalendarView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  {
-    private val bottomDialogUserCard = BottomDialogUserCard(this)
-
     override fun bindingClass() = FragmentMeBinding::class.java
 
     override fun init() {
@@ -44,7 +42,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
         // 名片
         v.buttonProfile.rachelClick {
             val user = Config.loginUser
-            if (user != null) bottomDialogUserCard.update(user).show()
+            if (user != null) SheetUserCard(this, user).show()
             else {
                 tip(Tip.WARNING, "请先登录")
                 main.navigate(FragmentLogin(main))
@@ -136,10 +134,6 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
         updateUserInfo(Config.user)
     }
 
-    override fun quit() {
-        bottomDialogUserCard.release()
-    }
-
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {
             RachelMessage.ME_UPDATE_USER_INFO -> updateUserInfo(args[0] as User?)
@@ -195,9 +189,9 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     @NewThread
     private fun getActivities(showLoading: Boolean) {
         lifecycleScope.launch {
-            val loading = if (showLoading) main.loading else null
+            if (showLoading) v.calendarMonth.loading = true
             val result = withContext(Dispatchers.IO) { API.UserAPI.getActivities() }
-            loading?.dismiss()
+            if (showLoading) v.calendarMonth.loading = false
             if (result.success) {
                 v.calendar.setActivities(result.data)
                 v.calendar.scrollToCurrent(true)
@@ -211,9 +205,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
             val loading = main.loading
             val result = withContext(Dispatchers.IO) { API.UserAPI.getActivityInfo(calendar.date) }
             loading.dismiss()
-            if (result.success) {
-                main.navigate(FragmentShowActivity(main, result.data))
-            }
+            if (result.success) main.navigate(FragmentShowActivity(main, result.data))
             else tip(Tip.ERROR, result.msg)
         }
     }

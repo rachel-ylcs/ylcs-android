@@ -15,7 +15,7 @@ import com.yinlin.rachel.databinding.ItemWeiboAlbumBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
-import com.yinlin.rachel.page.common.WeiboAdapter
+import com.yinlin.rachel.common.WeiboAdapter
 import com.yinlin.rachel.rachelClick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,8 +61,6 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
             adapter = weiboAdapter
         }
 
-        v.albumState.showLoading()
-        v.weiboState.showLoading()
         requestUserInfo()
     }
 
@@ -71,9 +69,9 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
     @NewThread
     fun requestUserInfo() {
         lifecycleScope.launch {
-            val loading = main.loading
+            v.name.loading = true
             val userInfo = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUser(weiboUserId) }
-            loading.dismiss()
+            v.name.loading = false
             if (userInfo != null) {
                 v.name.text = userInfo.name
                 v.avatar.loadDaily(userInfo.avatar)
@@ -82,18 +80,26 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
                 v.follow.text = "关注 ${userInfo.followNum}"
                 v.fans.text = "粉丝 ${userInfo.fansNum}"
 
-                val albums = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserAlbum(weiboUserId) }
-                albumAdapter.setSource(albums)
-                albumAdapter.notifySource()
-                if (albums.isEmpty()) v.albumState.showEmpty()
-                else v.albumState.showContent()
+                lifecycleScope.launch {
+                    v.loadingAlbum.loading = true
+                    val albums = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserAlbum(weiboUserId) }
+                    v.loadingAlbum.loading = false
+                    if (albums.isNotEmpty()) {
+                        albumAdapter.setSource(albums)
+                        albumAdapter.notifySource()
+                    }
+                }
 
-                val weibos = mutableListOf<Weibo>()
-                withContext(Dispatchers.IO) { WeiboAPI.extractAllWeibo(weiboUserId, weibos) }
-                weiboAdapter.setSource(weibos)
-                weiboAdapter.notifySource()
-                if (albums.isEmpty()) v.weiboState.showEmpty()
-                else v.weiboState.showContent()
+                lifecycleScope.launch {
+                    v.loadingWeibo.loading = true
+                    val weibos = mutableListOf<Weibo>()
+                    withContext(Dispatchers.IO) { WeiboAPI.extractAllWeibo(weiboUserId, weibos) }
+                    v.loadingWeibo.loading = false
+                    if (weibos.isNotEmpty()) {
+                        weiboAdapter.setSource(weibos)
+                        weiboAdapter.notifySource()
+                    }
+                }
             }
             else {
                 main.pop()

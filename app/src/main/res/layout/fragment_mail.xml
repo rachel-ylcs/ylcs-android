@@ -19,11 +19,10 @@
         android:padding="10dp" >
         <TextView
             style="@style/RachelText.X"
-            android:layout_margin="10dp"
             android:gravity="center"
             android:text="邮箱"
             android:textColor="@color/steel_blue"
-            android:textSize="@dimen/xxl"
+            android:textSize="@dimen/xl"
             android:textStyle="bold" />
         <com.gturedi.views.StatefulLayout
             android:id="@+id/state"

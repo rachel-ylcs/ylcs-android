@@ -1,15 +1,15 @@
 package com.yinlin.rachel.model
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.annotation.AnyRes
-import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.StyleableRes
+import com.yinlin.rachel.R
 import com.yinlin.rachel.toDP
 
 class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableRes ids: IntArray) : AutoCloseable {
@@ -33,6 +33,15 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
         return attr?.getColor(id, value) ?: value
     }
 
+    fun colorList(@StyleableRes id: Int, default: ColorStateList): ColorStateList {
+        val resId = attr?.getResourceId(id, -1) ?: -1
+        if (resId != -1) {
+            val colors = context.getColorStateList(resId)
+            if (colors.isStateful) return colors
+        }
+        return default
+    }
+
     fun dp(@StyleableRes id: Int, default: Int): Int {
         val value = if (default <= 0) default else default.toDP(context)
         return attr?.getDimensionPixelSize(id, value) ?: value
@@ -54,9 +63,14 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
         else color(attr?.getColor(id, 0) ?: 0)
     }
 
-    fun ref(@StyleableRes id: Int, @AnyRes default: Int) = attr?.getResourceId(id, default) ?: default
+    fun ref(@StyleableRes id: Int, @AnyRes default: Int = -1) = attr?.getResourceId(id, default) ?: default
 
-    override fun close() {
-        attr?.recycle()
+    fun textColor(@StyleableRes id: Int) = try {
+        val resId = attr?.getResourceId(id, -1) ?: -1
+        if (resId == -1) throw Exception()
+        context.getColorStateList(resId)
     }
+    catch (_: Exception) { ColorStateList.valueOf(context.getColor(R.color.steel_blue)) }
+
+    override fun close() { attr?.recycle() }
 }

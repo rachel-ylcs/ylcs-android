@@ -1,5 +1,8 @@
 package com.yinlin.rachel.fragment
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.yinlin.rachel.Config
@@ -11,7 +14,6 @@ import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentSettingsBinding
-import com.yinlin.rachel.dialog.BottomDialogCrashLog
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
@@ -19,16 +21,20 @@ import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.pureColor
 import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.sheet.SheetCrashLog
+import com.yinlin.rachel.sheet.SheetLyricsSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBinding>(main) {
-    private val bottomDialogCrashLog = BottomDialogCrashLog(this)
+    lateinit var registerFloatingPermission: ActivityResultLauncher<Intent>
 
     override fun bindingClass() = FragmentSettingsBinding::class.java
 
     override fun init() {
+        registerFloatingPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+
         /*    ----    账号设置    ----    */
 
         // 更换头像
@@ -77,8 +83,12 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
         /*    ----    听歌设置    ----    */
 
+        // 音频焦点
         v.switchMusicFocus.isChecked = Config.music_focus
         v.switchMusicFocus.setOnCheckedChangeListener { _, isChecked -> Config.music_focus = isChecked }
+
+        // 状态栏歌词
+        v.lyricsSettings.rachelClick { SheetLyricsSettings(this).show() }
 
         // 歌单云备份
         v.buttonUploadPlaylist.rachelClick {
@@ -104,14 +114,14 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
         v.clearCache.rachelClick {
             lifecycleScope.launch {
-                val loading = main.loading
+                v.clearCache.isEnabled = false
                 withContext(Dispatchers.IO) { Glide.get(main).clearDiskCache() }
-                loading.dismiss()
+                v.clearCache.isEnabled = true
                 tip(Tip.SUCCESS, "清理缓存成功")
             }
         }
 
-        v.crashLog.rachelClick { bottomDialogCrashLog.update().show() }
+        v.crashLog.rachelClick { SheetCrashLog(this).show() }
 
         v.version.text = main.appVersionName(main.appVersion)
         v.checkUpdate.rachelClick { main.navigate(FragmentUpdate(main)) }
@@ -119,15 +129,11 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         v.about.rachelClick { main.navigate(FragmentAbout(main)) }
 
         v.feedback.rachelClick {
-            if (Config.isLogin) RachelDialog.input(main, "请给出您宝贵的建议! 被采纳后将赠送银币!", 256, 10) { sendFeedback(it) }
+            if (Config.isLogin) RachelDialog.input(main, "悉听良计, 赠以银币!", 256, 10) { sendFeedback(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
         updateInfo()
-    }
-
-    override fun quit() {
-        bottomDialogCrashLog.release()
     }
 
     override fun back(): Boolean = true

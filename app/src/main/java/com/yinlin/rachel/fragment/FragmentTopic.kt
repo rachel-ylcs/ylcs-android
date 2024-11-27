@@ -61,6 +61,8 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
                     if (menuList.isNotEmpty()) RachelPopMenu.showDown(it, menuList)
                 }
             }
+
+            requestTopic()
         }
 
         override fun init(holder: RachelItemViewHolder<ItemCommentBinding>, v: ItemCommentBinding) {
@@ -95,6 +97,34 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
             v.content.text = item.content
             v.userLabel.setLabel(item.label, item.level)
             v.top.visible = item.isTop
+        }
+
+        @NewThread
+        fun requestTopic() {
+            fragment.lifecycleScope.launch {
+                val loading = main.loading
+                val result = withContext(Dispatchers.IO) { API.UserAPI.getTopic(fragment.tid) }
+                loading.dismiss()
+                if (result.success) {
+                    val topic = result.data
+                    fragment.topic = topic
+                    header.apply {
+                        name.text = topic.name
+                        time.text = topic.ts
+                        avatar.loadDaily(topic.avatarPath)
+                        title.text = topic.title
+                        content.text = topic.content
+                        userLabel.setLabel(topic.label, topic.level)
+                        pics.images = RachelPreview.fromSingleUri(topic.pics) { topic.picPath(it) }
+                    }
+                    setSource(topic.comments)
+                    notifySourceEx()
+                }
+                else {
+                    main.pop()
+                    fragment.tip(Tip.ERROR, "主题不存在")
+                }
+            }
         }
     }
 
@@ -144,8 +174,6 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
             }
             else tip(Tip.WARNING, "请先登录")
         }
-
-        requestTopic(tid)
     }
 
     override fun back(): Boolean {
@@ -164,33 +192,6 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
     private fun closeCommentCard() {
         v.comment.text = ""
         v.commentCard.visible = false
-    }
-
-    @NewThread
-    fun requestTopic(topicId: Int) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getTopic(topicId) }
-            loading.dismiss()
-            if (result.success) {
-                topic = result.data
-                adapter.header.apply {
-                    name.text = topic.name
-                    time.text = topic.ts
-                    avatar.loadDaily(topic.avatarPath)
-                    title.text = topic.title
-                    content.text = topic.content
-                    userLabel.setLabel(topic.label, topic.level)
-                    pics.images = RachelPreview.fromSingleUri(topic.pics) { topic.picPath(it) }
-                }
-                adapter.setSource(topic.comments)
-                adapter.notifySourceEx()
-            }
-            else {
-                main.pop()
-                tip(Tip.ERROR, "主题不存在")
-            }
-        }
     }
 
     @NewThread

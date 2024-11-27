@@ -23,7 +23,7 @@ class ActivityCalendarView @JvmOverloads constructor(context: Context, attrs: At
         private val colorWeekend = context.getColor(R.color.calendar_weekend)
         private val colorActivity = context.getColor(R.color.calendar_activity)
         private var showStar = run {
-            val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.icon_calendar_star)!!).mutate()
+            val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.icon_star_colorful)!!).mutate()
             val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
@@ -116,14 +116,16 @@ class ActivityCalendarView @JvmOverloads constructor(context: Context, attrs: At
         }
         setRange(minYear, minMonth, 1, maxYear, maxMonth, -1)
         setOnCalendarSelectListener(object : OnCalendarSelectListener {
-            override fun onCalendarOutOfRange(p0: Calendar) { }
-            override fun onCalendarSelect(p0: Calendar, p1: Boolean) { listener?.onClick(p0) }
+            override fun onCalendarOutOfRange(calendar: Calendar) { }
+            override fun onCalendarSelect(calendar: Calendar, isClick: Boolean) {
+                if (isClick) listener?.onClick(calendar)
+            }
         })
         setOnCalendarLongClickListener(object : OnCalendarLongClickListener {
-            override fun onCalendarLongClickOutOfRange(p0: Calendar) { }
-            override fun onCalendarLongClick(p0: Calendar) { listener?.onLongClick(p0) }
+            override fun onCalendarLongClickOutOfRange(calendar: Calendar) { }
+            override fun onCalendarLongClick(calendar: Calendar) { listener?.onLongClick(calendar) }
         }, true)
-        setOnMonthChangeListener { p0, p1 -> listener?.onMonthChanged(p0, p1) }
+        setOnMonthChangeListener { year, month -> listener?.onMonthChanged(year, month) }
     }
 
     fun setActivities(activities: ShowActivityPreviewList) = setSchemeDate(

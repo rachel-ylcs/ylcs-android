@@ -74,13 +74,16 @@ class SettingsItem @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        val child = children.toList()
+        val subViews = children.toList()
         removeAllViews()
-        for (c in child) contentView.addView(c)
         addView(iconView)
         addView(textView)
         addView(contentView)
         addView(arrowView)
-        requestLayout()
+        for (child in subViews) contentView.addView(child)
     }
+
+    var textColor: Int
+        get() = textView.textColor
+        set(value) { textView.textColor = value }
 }

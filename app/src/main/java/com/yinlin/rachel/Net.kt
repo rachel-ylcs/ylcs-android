@@ -1,19 +1,7 @@
 package com.yinlin.rachel
 
-import android.content.ContentValues
-import android.content.Context
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
-import com.yinlin.rachel.annotation.NewThread
-import com.yinlin.rachel.model.RachelDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -21,7 +9,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.io.File
+import java.io.OutputStream
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
 
@@ -46,12 +36,18 @@ object Net {
         .connectTimeout(5, TimeUnit.SECONDS)
         .build()
 
+    fun <R> get(url: String, headers: Map<String, String>? = null, block: (Response) -> R): R? = try {
+        val builder = Request.Builder().url(url)
+        headers?.let { builder.headers(it.toHeaders()) }
+        client.newCall(builder.build()).execute().use(block)
+    }
+    catch (_: Exception) { null }
+
     fun get(url: String, headers: Map<String, String>? = null): JsonElement = try {
         val builder = Request.Builder().url(url)
         headers?.let { builder.headers(it.toHeaders()) }
         client.newCall(builder.build()).execute().use { it.body?.string().parseJson }
-    }
-    catch (_: Exception) { JsonNull.INSTANCE }
+    } catch (_: Exception) { JsonNull.INSTANCE }
 
     fun post(url: String, data: JsonElement = JsonNull.INSTANCE, headers: Map<String, String>? = null): JsonElement = try {
         val builder = Request.Builder().url(url)
@@ -75,129 +71,102 @@ object Net {
     }
     catch (_: Exception) { JsonNull.INSTANCE }
 
-    interface DownLoadMediaListener {
-        fun onCancel()
-        fun onDownloadComplete(status: Boolean, uri: Uri?)
+    interface DownLoadListener {
+        // 开始下载
+        suspend fun onStart()
+        // 准备输出流 url 是下载链接
+        suspend fun onPrepare(url: String): OutputStream?
+        // totalSize 是下载总字节数
+        suspend fun onSize(totalSize: Long)
+        // size 是已经下载的字节数, 若返回 true 则提前取消下载
+        suspend fun onDownloadTick(size: Long)
+        // 结束下载
+        suspend fun onStop()
+        // 是否取消
+        suspend fun isCancel(): Boolean
+        // 取消下载
+        suspend fun onCancel()
+        // 下载成功
+        suspend fun onCompleted()
+        // 下载失败
+        suspend fun onFailed()
     }
 
-    @NewThread
-    private fun downloadMedia(context: Context, url: String, mediaUri: Uri, values: ContentValues, callback: DownLoadMediaListener?) {
-        (context as? LifecycleOwner)?.lifecycleScope?.launch {
-            val dialog = RachelDialog.progress(context, "下载中...")
-            var status = false
-            var uri: Uri? = null
-            try {
-                uri = context.contentResolver.insert(mediaUri, values) ?: return@launch
-                withContext(Dispatchers.IO) {
-                    context.contentResolver.openOutputStream(uri).use { outputStream ->
-                        if (outputStream == null) return@withContext
-                        downloadClient.newCall(Request.Builder().url(url).build()).execute().use { response ->
-                            val body = response.body ?: return@withContext
-                            val inputStream = body.byteStream()
-                            val totalSize = body.contentLength()
-                            if (totalSize <= 0) return@withContext
-                            withContext(Dispatchers.Main) { dialog.maxProgress = (totalSize / 1024).toInt() }
+    suspend fun download(url: String, headers: Map<String, String>? = null, listener: DownLoadListener): Boolean {
+        var isSuccess = true
+        var isCancel = false
+        listener.onStart()
+        try {
+            val builder = Request.Builder().url(url)
+            headers?.let { builder.headers(it.toHeaders()) }
+            downloadClient.newCall(builder.build()).execute().use { response ->
+                response.body!!.let { body ->
+                    body.byteStream().use { inputStream ->
+                        listener.onPrepare(url)!!.use { outputStream ->
+                            listener.onSize(body.contentLength())
                             val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
                             var bytesRead: Int
-                            var bytesReadTotal = 0
+                            var bytesReadTotal = 0L
                             while ((inputStream.read(buffer).also { bytesRead = it }) != -1) {
-                                if (dialog.isCancel) break
+                                if (listener.isCancel()) {
+                                    isCancel = true
+                                    break
+                                }
                                 outputStream.write(buffer, 0, bytesRead)
                                 bytesReadTotal += bytesRead
-                                withContext(Dispatchers.Main) { dialog.progress = bytesReadTotal / 1024 }
+                                listener.onDownloadTick(bytesReadTotal)
                             }
                             outputStream.flush()
-                            if (!dialog.isCancel) status = true
                         }
                     }
                 }
             }
-            catch (_: Exception) { }
-            val isCancel = dialog.isCancel
-            dialog.dismiss()
-            if (isCancel) {
-                uri?.let { context.contentResolver.delete(it, null, null) }
-                callback?.onCancel()
-            }
-            else callback?.onDownloadComplete(status, uri)
         }
+        catch (_: Exception) { isSuccess = false }
+        listener.onStop()
+        if (isCancel) listener.onCancel()
+        else if (isSuccess) listener.onCompleted()
+        else listener.onFailed()
+        return !isCancel && isSuccess
     }
 
-    @NewThread
-    fun downloadFile(context: Context, url: String, callback: DownLoadMediaListener) {
-        val values = ContentValues()
-        values.put(MediaStore.MediaColumns.DISPLAY_NAME, url.substringAfterLast('/'))
-        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-        downloadMedia(context, url, MediaStore.Downloads.EXTERNAL_CONTENT_URI, values, callback)
-    }
-
-    @NewThread
-    fun downloadPicture(context: Context, url: String, callback: DownLoadMediaListener) {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, url.substringAfterLast('/'))
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/webp")
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        downloadMedia(context, url, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values, callback)
-    }
-
-
-    @NewThread
-    fun downloadPictures(context: Context, urls: List<String>, callback: DownLoadMediaListener) {
-        if (urls.isEmpty()) return
-        (context as? LifecycleOwner)?.lifecycleScope?.launch {
-            val dialog = RachelDialog.progress(context, "下载中...")
-            dialog.progress = urls.size
-            var status = false
-            var uri: Uri? = null
-            try {
-                withContext(Dispatchers.IO) {
-                    urls.forEachIndexed { currentIndex, url ->
-                        val values = ContentValues()
-                        values.put(MediaStore.Images.Media.DISPLAY_NAME, url.substringAfterLast('/'))
-                        values.put(MediaStore.Images.Media.MIME_TYPE, "image/webp")
-                        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                        uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                        uri?.let { saveUri ->
-                            context.contentResolver.openOutputStream(saveUri).use { outputStream ->
-                                if (outputStream == null) return@withContext
-                                downloadClient.newCall(Request.Builder().url(url).build()).execute().use { response ->
-                                    val body = response.body ?: return@withContext
-                                    val inputStream = body.byteStream()
-                                    if (body.contentLength() <= 0) return@withContext
-                                    val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
-                                    var bytesRead: Int
-                                    var bytesReadTotal = 0
-                                    withContext(Dispatchers.Main) { dialog.progress = currentIndex + 1 }
-                                    while ((inputStream.read(buffer).also { bytesRead = it }) != -1) {
-                                        if (dialog.isCancel) break
-                                        outputStream.write(buffer, 0, bytesRead)
-                                        bytesReadTotal += bytesRead
+    suspend fun downloadAll(urls: List<String>, headers: Map<String, String>? = null, listener: DownLoadListener): Boolean {
+        if (urls.isEmpty()) return false
+        var isSuccess = true
+        var isCancel = false
+        listener.onStart()
+        listener.onSize(urls.size.toLong())
+        try {
+            for ((currentIndex, url) in urls.withIndex()) {
+                if (isCancel) break
+                val builder = Request.Builder().url(url)
+                headers?.let { builder.headers(it.toHeaders()) }
+                downloadClient.newCall(builder.build()).execute().use { response ->
+                    response.body!!.let { body ->
+                        body.byteStream().use { inputStream ->
+                            listener.onPrepare(url)!!.use { outputStream ->
+                                val buffer = ByteArray(DOWNLOAD_BUFFER_SIZE)
+                                var bytesRead: Int
+                                while ((inputStream.read(buffer).also { bytesRead = it }) != -1) {
+                                    if (listener.isCancel()) {
+                                        isCancel = true
+                                        break
                                     }
-                                    outputStream.flush()
-                                    if (!dialog.isCancel) status = true
+                                    outputStream.write(buffer, 0, bytesRead)
                                 }
+                                outputStream.flush()
+                                listener.onDownloadTick(currentIndex + 1L)
                             }
                         }
                     }
                 }
             }
-            catch (_: Exception) { }
-            val isCancel = dialog.isCancel
-            dialog.dismiss()
-            if (isCancel) {
-                uri?.let { context.contentResolver.delete(it, null, null) }
-                callback.onCancel()
-            }
-            else callback.onDownloadComplete(status, uri)
         }
-    }
-
-    @NewThread
-    fun downloadVideo(context: Context, url: String, callback: DownLoadMediaListener) {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, url.substringAfterLast('/'))
-        values.put(MediaStore.Images.Media.MIME_TYPE, "video/mp4")
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        downloadMedia(context, url, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values, callback)
+        catch (_: Exception) { isSuccess = false }
+        listener.onStop()
+        if (isCancel) listener.onCancel()
+        else if (isSuccess) listener.onCompleted()
+        else listener.onFailed()
+        return !isCancel && isSuccess
     }
 }

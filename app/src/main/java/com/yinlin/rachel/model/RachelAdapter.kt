@@ -65,23 +65,23 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
     inline fun mapSource(action: (Item) -> Unit) = items.forEach(action)
     inline fun allSource(predicate: (Item) -> Boolean) = items.all(predicate)
     inline fun filterSource(predicate: (Item) -> Boolean) = items.filter(predicate)
+
     @SuppressLint("NotifyDataSetChanged")
     fun notifySource() = notifyDataSetChanged()
 
-
     interface ListTouch<Item> {
         fun onMove(item1: Item, position1: Int, item2: Item, position2: Int) { }
-        fun onMoved()
-        fun onRemove(item: Item, position: Int)
+        fun onMoved() { }
+        fun onRemove(item: Item, position: Int) { }
     }
 
-    fun setListTouch(view: RecyclerView, callback: ListTouch<Item>) {
+    fun setListTouch(view: RecyclerView, canDrag: Boolean = true, canSwipe: Boolean = true, callback: ListTouch<Item>) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             var startPos: Int = -1
             var endPos: Int = -1
 
-            override fun isLongPressDragEnabled() = true
-            override fun isItemViewSwipeEnabled() = true
+            override fun isLongPressDragEnabled() = canDrag
+            override fun isItemViewSwipeEnabled() = canSwipe
             override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder) = 0.75f
             override fun getMovementFlags(view: RecyclerView, holder: RecyclerView.ViewHolder) =
                 makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT)

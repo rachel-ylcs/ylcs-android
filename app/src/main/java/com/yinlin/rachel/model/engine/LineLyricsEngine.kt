@@ -8,17 +8,16 @@ import android.graphics.Paint
 import android.graphics.SurfaceTexture
 import android.view.TextureView
 import com.yinlin.rachel.R
+import com.yinlin.rachel.data.music.LrcData
+import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.readText
 import com.yinlin.rachel.textHeight
 import com.yinlin.rachel.toDP
 import java.io.File
-import java.util.regex.Pattern
 
 
 // 多行文本歌词引擎
 class LineLyricsEngine(context: Context) : LyricsEngine {
-    data class LineItem(val position: Long, val text: String)
-
     class TextPaints(context: Context) {
         private var canvasWidth: Float = 512f
         private var canvasHeight: Float = 512f
@@ -88,25 +87,24 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
     private val paints = TextPaints(context)
     private var currentIndex: Int = -1
     private var texture: TextureView? = null
-    private val items = ArrayList<LineItem>()
+    private var lrcData: LrcData? = null
 
     override fun load(texture: TextureView, surface: SurfaceTexture, width: Int, height: Int, file: String): Boolean {
+        // 检查是否已经解析过音频的LRC歌词
+        lrcData = null
+        this.texture = texture
+        currentIndex = -1
         try {
-            items.clear()
-            this.texture = texture
-            currentIndex = -1
-            val maxLengthText = parseLrcText(File(file).readText())
-            if (items.isNotEmpty()) {
-                paints.adjustPaint(texture.measuredWidth.toFloat(), texture.measuredHeight.toFloat(), maxLengthText)
-                return true
-            }
+            lrcData = LrcData.parseLrcData(File(file).readText())
+            paints.adjustPaint(texture.measuredWidth.toFloat(), texture.measuredHeight.toFloat(), lrcData!!.maxLengthText)
+            return true
         }
         catch (_: Exception) { clear() }
         return false
     }
 
     override fun clear() {
-        items.clear()
+        lrcData = null
         texture = null
         currentIndex = -1
     }
@@ -114,8 +112,8 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
     override fun release() = clear()
 
     override fun needUpdate(position: Long): Boolean {
-        if (items.isNotEmpty()) {
-            val index = findIndex(position)
+        lrcData?.data?.let {
+            val index = findIndex(it, position)
             if (index != currentIndex) {
                 currentIndex = index
                 return true
@@ -128,7 +126,8 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         if (currentIndex >= 2) {
             texture?.let {
                 val canvas = it.lockCanvas()
-                if (canvas != null) {
+                val items = lrcData?.data
+                if (canvas != null && items != null) {
                     val item1 = items[currentIndex - 2]
                     val item2 = items[currentIndex - 1]
                     val item3 = items[currentIndex]
@@ -141,46 +140,7 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         }
     }
 
-    private fun parseLrcText(source: String): String {
-        try {
-            var maxLengthText = ""
-            // 解析歌词文件
-            val lines = source.split("\\r?\\n".toRegex())
-            val pattern: Pattern = Pattern.compile("\\[(\\d{2}):(\\d{2}).(\\d{2})](.*)")
-            // 前三空行
-            items += LineItem(-3, "")
-            items += LineItem(-2, "")
-            items += LineItem(-1, "")
-            for (item in lines) {
-                val line = item.trim()
-                if (line.isEmpty()) continue
-                val matcher = pattern.matcher(line)
-                if (matcher.matches()) {
-                    val minutes = matcher.group(1)!!.toLong()
-                    val seconds = matcher.group(2)!!.toLong()
-                    val milliseconds = matcher.group(3)!!.toLong() * 10
-                    val position = (minutes * 60 + seconds) * 1000 + milliseconds
-                    val text: String = matcher.group(4)!!.trim()
-                    if (text.isNotEmpty()) {
-                        if (text.length > maxLengthText.length) maxLengthText = text
-                        items += LineItem(position, text)
-                    }
-                }
-            }
-            // 后二空行
-            items += LineItem(Long.MAX_VALUE - 1, "")
-            items += LineItem(Long.MAX_VALUE, "")
-            // 排序歌词时间顺序
-            if (items.size < 11) throw Exception()
-            items.sortWith { o1, o2 -> o1.position.compareTo(o2.position) }
-            return maxLengthText
-        } catch (e: Exception) {
-            items.clear()
-            return ""
-        }
-    }
-
-    private fun searchIndex(position: Long): Int {
+    private fun searchIndex(items: List<LrcData.LineItem>, position: Long): Int {
         var index = 0
         val len = items.size - 1
         while (index < len) {
@@ -192,12 +152,12 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         return 2
     }
 
-    private fun findIndex(position: Long): Int {
+    private fun findIndex(items: List<LrcData.LineItem>, position: Long): Int {
         if (currentIndex == -1) return 2
         else {
             val currentItem = items[currentIndex]
             val nextItem = items[currentIndex + 1]
-            return if (currentItem.position <= position && nextItem.position > position) currentIndex else searchIndex(position)
+            return if (currentItem.position <= position && nextItem.position > position) currentIndex else searchIndex(items, position)
         }
     }
 }

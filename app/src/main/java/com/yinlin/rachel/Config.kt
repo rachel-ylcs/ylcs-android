@@ -2,6 +2,7 @@ package com.yinlin.rachel
 
 import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV
+import com.yinlin.rachel.data.music.LyricsSettings
 import com.yinlin.rachel.data.music.MusicPlayMode
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.data.music.PlaylistMap
@@ -85,6 +86,11 @@ object Config {
         get() = token_meta.get()
         set(value) { token_meta.set(value) }
 
+    //
+    private val token_daily_meta = DailyCacheKeyMeta()
+    var token_daily get() = token_daily_meta.get()
+        set(value) { token_daily_meta.set(value) }
+
     private val user_meta = JsonMeta<User?>("user/20241115", "null", object : TypeToken<User?>(){}.type)
     var user: User?
         get() = user_meta.get()
@@ -102,6 +108,12 @@ object Config {
     var music_focus: Boolean
         get() = music_focus_meta.get()
         set(value) { music_focus_meta.set(value) }
+
+    private val music_lyrics_settings_meta = JsonMeta<LyricsSettings>("music_lyrics_settings/20241128", LyricsSettings().jsonString,
+        object : TypeToken<LyricsSettings>(){}.type)
+    var music_lyrics_settings: LyricsSettings
+        get() = music_lyrics_settings_meta.get()
+        set(value) { music_lyrics_settings_meta.set(value) }
 
     // 歌单
     private val playlist_meta = JsonMeta<PlaylistMap>("playlist", "{}",

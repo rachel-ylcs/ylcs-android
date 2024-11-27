@@ -5,7 +5,7 @@
     style="@style/RachelCard"
     app:cardCornerRadius="0dp"
     app:contentPadding="0dp"
-    android:layout_marginVertical="3dp" >
+    android:layout_margin="3dp" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

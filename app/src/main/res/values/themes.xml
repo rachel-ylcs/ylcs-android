@@ -103,6 +103,17 @@
         <item name="trackTint">@color/selector_switch_track</item>
     </style>
 
+    <style name="Theme.RachelSlide" parent="Widget.Material3.Slider.Legacy" >
+        <item name="labelBehavior">gone</item>
+        <item name="haloColor">@color/micro_gray</item>
+        <item name="haloRadius">10dp</item>
+        <item name="thumbColor">@color/steel_blue</item>
+        <item name="thumbRadius">8dp</item>
+        <item name="trackColorActive">@color/steel_blue</item>
+        <item name="trackColorInactive">@color/light_gray</item>
+        <item name="trackHeight">4dp</item>
+    </style>
+
     <style name="RachelScrollView">
         <item name="android:scrollbars">none</item>
     </style>
@@ -129,5 +140,6 @@
         <item name="android:scrollViewStyle">@style/RachelScrollView</item>
         <item name="switchStyle">@style/Theme.RachelSwitch</item>
         <item name="tabStyle">@style/Theme.RachelTabLayout</item>
+        <item name="sliderStyle">@style/Theme.RachelSlide</item>
     </style>
 </resources>

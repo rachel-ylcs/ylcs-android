@@ -175,10 +175,9 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
     @NewThread
     private fun loadMail() {
         lifecycleScope.launch {
-            val loading = main.loading
+            v.state.showLoading()
             val result = withContext(Dispatchers.IO) { API.UserAPI.getMail(Config.token) }
             if (v.container.isRefreshing) v.container.finishRefresh()
-            loading.dismiss()
             when (result.code) {
                 API.Code.SUCCESS -> {
                     val mails = result.data

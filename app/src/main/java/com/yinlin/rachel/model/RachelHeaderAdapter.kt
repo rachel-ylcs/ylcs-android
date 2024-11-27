@@ -109,7 +109,11 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
     fun swapItem(src: Int, des: Int) = Collections.swap(items, src, des)
 
     fun setSource(items: List<Item>) = this.items.clearAddAll(items)
+    fun addSource(items: List<Item>) = this.items.addAll(items)
     fun clearSource() = items.clear()
+    inline fun mapSource(action: (Item) -> Unit) = items.forEach(action)
+    inline fun allSource(predicate: (Item) -> Boolean) = items.all(predicate)
+    inline fun filterSource(predicate: (Item) -> Boolean) = items.filter(predicate)
 
     fun notifySourceEx() {
         if (items.size > 0) notifyItemRangeChanged(1, items.size)

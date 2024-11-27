@@ -6,9 +6,10 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.data.music.MusicInfoPreview
+import com.yinlin.rachel.data.music.MusicInfoPreview.Companion.preview
 import com.yinlin.rachel.data.music.MusicInfoPreviewList
-import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.databinding.FragmentLibraryBinding
 import com.yinlin.rachel.databinding.ItemMusicBinding
 import com.yinlin.rachel.model.RachelAdapter
@@ -51,9 +52,10 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
                 item.selected = !item.selected
                 if (allSource { !it.selected }) isManageMode = false
                 else notifyItemChanged(position)
-            } else {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, Playlist(main.rs(R.string.default_playlist_name), item.id))
-                main.pop()
+            }
+            else {
+                val musicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO, item.id)
+                musicInfo?.let { main.navigate(FragmentMusicInfo(main, musicInfo)) }
             }
         }
 
@@ -94,11 +96,13 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
                     val newItems = main.sendMessageForResult<MusicInfoPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO_PREVIEW, it)!!
                     adapter.setSource(newItems)
                     adapter.notifySource()
+                    v.list.smoothScrollToPosition(0)
                 }
                 GROUP_REFRESH -> {
                     val newItems = main.sendMessageForResult<MusicInfoPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_MUSIC_INFO_PREVIEW, null)!!
                     adapter.setSource(newItems)
                     adapter.notifySource()
+                    v.list.smoothScrollToPosition(0)
                 }
             } }
         }
@@ -129,6 +133,20 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
             return false
         }
         return true
+    }
+
+    override fun message(msg: RachelMessage, vararg args: Any?) {
+        when (msg) {
+            RachelMessage.LIBRARY_UPDATE_MUSIC_INFO -> {
+                val musicInfo = args[0] as MusicInfo
+                val pos = adapter.items.indexOfFirst { it.id == musicInfo.id }
+                if (pos != -1) {
+                    adapter.items[pos] = musicInfo.preview
+                    adapter.notifyItemChanged(pos)
+                }
+            }
+            else -> { }
+        }
     }
 
     private fun setManageButtonStatus(status: Boolean) {

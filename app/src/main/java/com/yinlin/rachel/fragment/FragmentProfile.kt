@@ -24,11 +24,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
-    class Adapter(fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
+    class Adapter(private val fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
         private val main = fragment.main
 
         override fun bindingHeaderClass() = HeaderProfileBinding::class.java
         override fun bindingItemClass() = ItemTopicBinding::class.java
+
+        override fun initHeader(v: HeaderProfileBinding) {
+            requestUserProfile()
+        }
 
         override fun update(v: ItemTopicBinding, item: TopicPreview, position: Int) {
             if (item.pic == null) v.pic.pureColor = 0
@@ -41,6 +45,41 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
 
         override fun onItemClicked(v: ItemTopicBinding, item: TopicPreview, position: Int) {
             main.navigate(FragmentTopic(main, item.tid))
+        }
+
+        // 请求用户资料卡
+        @NewThread
+        private fun requestUserProfile() {
+            fragment.lifecycleScope.launch {
+                val loading = main.loading
+                val result = withContext(Dispatchers.IO) { API.UserAPI.getProfile(fragment.profileUid) }
+                loading.dismiss()
+                if (result.success) {
+                    val profile = result.data
+                    header.apply {
+                        name.text = profile.name
+                        label.setLabel(profile.label, profile.level)
+                        signature.text = profile.signature
+                        level.text = profile.level.toString()
+                        coin.text = profile.coin.toString()
+                        val user = Config.user
+                        if (user != null && fragment.profileUid == user.uid) {
+                            avatar.load(profile.avatarPath, Config.cache_key_avatar)
+                            wall.load(profile.wallPath, Config.cache_key_wall)
+                        }
+                        else {
+                            avatar.loadDaily(profile.avatarPath)
+                            wall.loadDaily(profile.wallPath)
+                        }
+                    }
+                    setSource(profile.topics)
+                    notifySourceEx()
+                }
+                else {
+                    main.pop()
+                    fragment.tip(Tip.ERROR, "用户不存在")
+                }
+            }
         }
     }
 
@@ -56,8 +95,6 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
             setItemViewCacheSize(4)
             adapter = this@FragmentProfile.adapter
         }
-
-        requestUserProfile()
     }
 
     override fun back() = true
@@ -89,41 +126,6 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
                 }
             }
             else -> { }
-        }
-    }
-
-    // 请求用户资料卡
-    @NewThread
-    private fun requestUserProfile() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getProfile(profileUid) }
-            loading.dismiss()
-            if (result.success) {
-                val profile = result.data
-                adapter.header.apply {
-                    name.text = profile.name
-                    label.setLabel(profile.label, profile.level)
-                    signature.text = profile.signature
-                    level.text = profile.level.toString()
-                    coin.text = profile.coin.toString()
-                    val user = Config.user
-                    if (user != null && profileUid == user.uid) {
-                        avatar.load(profile.avatarPath, Config.cache_key_avatar)
-                        avatar.load(profile.wallPath, Config.cache_key_wall)
-                    }
-                    else {
-                        avatar.loadDaily(profile.avatarPath)
-                        wall.loadDaily(profile.wallPath)
-                    }
-                }
-                adapter.setSource(profile.topics)
-                adapter.notifySourceEx()
-            }
-            else {
-                main.pop()
-                tip(Tip.ERROR, "用户不存在")
-            }
         }
     }
 }

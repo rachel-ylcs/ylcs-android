@@ -39,7 +39,7 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
                 val oldSize = items.size
                 val position = holder.bindingAdapterPosition
                 if (position != oldSize - 1) {
-                    for (i in (position + 1)..< oldSize) items.removeLast()
+                    for (i in (position + 1)..< oldSize) items.removeAt(items.size - 1)
                     notifyDataSetChanged()
                     rv.listener(oldSize - 1, position, items[position])
                 }
@@ -101,7 +101,7 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
         val items = mAdapter.items
         val oldSize = items.size
         if (oldSize > 1) {
-            items.removeLast()
+            items.removeAt(items.size - 1)
             mAdapter.notifyDataSetChanged()
             listener(oldSize - 1, oldSize - 2, items[oldSize - 2])
         }

@@ -1,4 +1,4 @@
-package com.yinlin.rachel.dialog
+package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
@@ -6,21 +6,21 @@ import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LoadMusicPreview
 import com.yinlin.rachel.data.music.LoadMusicPreviewList
-import com.yinlin.rachel.databinding.BottomDialogCurrentPlaylistBinding
 import com.yinlin.rachel.databinding.ItemMusicLineBinding
+import com.yinlin.rachel.databinding.SheetCurrentPlaylistBinding
 import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
-import com.yinlin.rachel.model.RachelBottomDialog
+import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.strikethrough
 import com.yinlin.rachel.textColor
 
-class BottomDialogCurrentPlaylist(fragment: FragmentMusic) : RachelBottomDialog<BottomDialogCurrentPlaylistBinding, FragmentMusic>(
-    fragment, 0.6f, BottomDialogCurrentPlaylistBinding::class.java) {
-    class Adapter(private val dialog: BottomDialogCurrentPlaylist) : RachelAdapter<ItemMusicLineBinding, LoadMusicPreview>() {
-        private val main = dialog.root.main
+class SheetCurrentPlaylist(fragment: FragmentMusic, private val data: LoadMusicPreviewList)
+    : RachelSheet<SheetCurrentPlaylistBinding, FragmentMusic>(fragment, 0.6f) {
+    class Adapter(private val sheet: SheetCurrentPlaylist) : RachelAdapter<ItemMusicLineBinding, LoadMusicPreview>() {
+        private val main = sheet.fragment.main
         private val normalColor = main.rc(R.color.black)
         private val playingColor = main.rc(R.color.steel_blue)
         private val deletedColor = main.rc(R.color.red)
@@ -33,50 +33,45 @@ class BottomDialogCurrentPlaylist(fragment: FragmentMusic) : RachelBottomDialog<
                 text = item.name
                 textColor = if (item.isDeleted) deletedColor else if (item.isPlaying) playingColor else normalColor
                 strikethrough = item.isDeleted
+                paint.isFakeBoldText = item.isPlaying
             }
             v.singer.apply {
                 text = item.singer
                 textColor = if (item.isPlaying) playingColor else normalSingerColor
+                paint.isFakeBoldText = item.isPlaying
             }
         }
 
         override fun onItemClicked(v: ItemMusicLineBinding, item: LoadMusicPreview, position: Int) {
             if (!item.isDeleted) {
-                dialog.hide()
+                sheet.dismiss()
                 main.sendMessage(RachelTab.music, RachelMessage.MUSIC_GOTO_MUSIC, item.id)
             }
-            else dialog.tip(Tip.WARNING, main.rs(R.string.no_audio_source))
+            else sheet.tip(Tip.WARNING, main.rs(R.string.no_audio_source))
         }
     }
 
-    private var adapter = Adapter(this)
+    override fun bindingClass() = SheetCurrentPlaylistBinding::class.java
 
     override fun init() {
         v.buttonStop.rachelClick {
-            hide()
-            root.main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
+            dismiss()
+            fragment.main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
         }
 
         v.list.apply {
-            layoutManager = LinearLayoutManager(root.main)
+            layoutManager = LinearLayoutManager(context)
             recycledViewPool.setMaxRecycledViews(0, 15)
-            adapter = this@BottomDialogCurrentPlaylist.adapter
+            adapter = Adapter(this@SheetCurrentPlaylist).apply {
+                setSource(data.items)
+                notifySource()
+            }
             interceptScroll()
         }
-    }
 
-    fun update(name: String, items: LoadMusicPreviewList): BottomDialogCurrentPlaylist {
-        v.title.text = name
-        adapter.setSource(items)
-        adapter.notifySource()
-        var currentIndex = 0
-        for ((index, item) in items.withIndex()) {
-            if (item.isPlaying) {
-                currentIndex = index
-                break
-            }
-        }
-        v.list.scrollToPosition(currentIndex)
-        return this
+        val items = data.items
+        v.title.text = "${data.name} / ${items.size}首"
+        val currentIndex = items.indexOfFirst { it.isPlaying }
+        if (currentIndex != -1) v.list.scrollToPosition(currentIndex)
     }
 }

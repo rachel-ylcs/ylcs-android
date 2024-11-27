@@ -7,5 +7,3 @@ data class LoadMusicPreview(
     val isDeleted: Boolean = false,
     val isPlaying: Boolean = false,
 )
-
-typealias LoadMusicPreviewList = List<LoadMusicPreview>

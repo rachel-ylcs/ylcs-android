@@ -6,16 +6,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".dialog.BottomDialogSleepMode" >
+    tools:context=".sheet.SheetSleepMode" >
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
         <ImageView
-            android:id="@+id/start"
+            android:id="@+id/stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/icon_start_blue"
+            android:src="@drawable/icon_stop_blue"
             android:elevation="1dp" />
         <TextView
             style="@style/RachelText.X"

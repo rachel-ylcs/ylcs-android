@@ -3,6 +3,7 @@ package com.yinlin.rachel.model
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -140,8 +141,10 @@ abstract class RachelDialog<T : ViewBinding> (
             var maxProgress: Int
                 get() = v.progress.max
                 set(value) {
-                    v.progress.max = value
-                    v.tvProgress.text = "${v.progress.progress * 100 / value} %"
+                    if (value > 0) {
+                        v.progress.max = value
+                        v.tvProgress.text = "${v.progress.progress * 100 / value} %"
+                    }
                 }
             var isCancel: Boolean = false
 
@@ -160,15 +163,64 @@ abstract class RachelDialog<T : ViewBinding> (
             return dialog
         }
 
-        class DialogLoading(context: Context, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class.java, false, false) {
+        class DialogLoading(context: Context, private val handler: Handler, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class.java, false, false) {
+            // 加载等待框 防抖设计
+            // 延迟时间与显示时间默认为 500毫秒
+            companion object {
+                const val MIN_DELAY = 500L
+                const val MIN_SHOW = 500L
+            }
+
+            private var startTime = -1L
+            private var postedHide = false
+            private var postedShow = false
+            private var isDismiss = false
+
+            private val delayHide = Runnable {
+                postedHide = false
+                startTime = -1
+                super.dismiss()
+            }
+
+            private val delayShow = Runnable {
+                postedShow = false
+                if (!isDismiss) {
+                    startTime = System.currentTimeMillis()
+                    super.show()
+                }
+            }
+
             override fun init(v: DialogLoadingBinding) {
                 v.title.text = title
                 v.pic.load(R.drawable.img_dialog_loading_rachel)
             }
+
+            override fun show() {
+                startTime = -1
+                isDismiss = false
+                handler.removeCallbacks(delayHide)
+                postedHide = false
+                if (!postedShow) {
+                    handler.postDelayed(delayShow, MIN_DELAY)
+                    postedShow = true
+                }
+            }
+
+            override fun dismiss() {
+                isDismiss = true
+                handler.removeCallbacks(delayShow)
+                postedShow = false
+                val diff = System.currentTimeMillis() - startTime
+                if (diff >= MIN_SHOW || startTime == -1L) super.dismiss()
+                else if (!postedHide) {
+                    handler.postDelayed(delayHide, MIN_SHOW - diff)
+                    postedHide = true
+                }
+            }
         }
 
-        fun loading(context: Context, title: String = "正在加载中..."): DialogLoading {
-            val dialog = DialogLoading(context, title)
+        fun loading(context: Context, handler: Handler, title: String = "正在加载中..."): DialogLoading {
+            val dialog = DialogLoading(context, handler, title)
             dialog.show()
             return dialog
         }

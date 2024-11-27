@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
         <TextView
-            android:id="@+id/tv_account"
             style="@style/RachelText.X"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
@@ -89,7 +88,6 @@
             android:elevation="3dp" />
 
         <TextView
-            android:id="@+id/tv_theme"
             style="@style/RachelText.X"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
@@ -99,7 +97,6 @@
             android:text="个性化设置" />
 
         <TextView
-            android:id="@+id/tv_msg"
             style="@style/RachelText.X"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
@@ -115,7 +112,6 @@
             android:elevation="3dp" />
 
         <TextView
-            android:id="@+id/tv_music"
             style="@style/RachelText.X"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
@@ -133,6 +129,13 @@
                 android:id="@+id/switch_music_focus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+        </com.yinlin.rachel.view.SettingsItem>
+        <com.yinlin.rachel.view.SettingsItem
+            android:id="@+id/lyrics_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="歌词设置"
+            android:elevation="3dp" >
         </com.yinlin.rachel.view.SettingsItem>
         <com.yinlin.rachel.view.SettingsItem
             android:layout_width="match_parent"
@@ -155,7 +158,6 @@
         </com.yinlin.rachel.view.SettingsItem>
 
         <TextView
-            android:id="@+id/tv_other"
             style="@style/RachelText.X"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"

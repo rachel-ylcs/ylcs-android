@@ -1,4 +1,4 @@
-package com.yinlin.rachel.page.common
+package com.yinlin.rachel.common
 
 import android.content.Intent
 import com.yinlin.rachel.MainActivity

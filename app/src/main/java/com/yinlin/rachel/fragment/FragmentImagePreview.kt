@@ -1,12 +1,13 @@
 package com.yinlin.rachel.fragment
 
-import android.net.Uri
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.luck.picture.lib.photoview.PhotoView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.Net
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.common.SimpleImageDownloadListener
 import com.yinlin.rachel.databinding.FragmentImagePreviewBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadBlack
@@ -15,6 +16,9 @@ import com.yinlin.rachel.rachelClick
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.RotateYTransformer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPreview>, private val position: Int)
     : RachelFragment<FragmentImagePreviewBinding>(main) {
@@ -34,14 +38,6 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
         }
     }
 
-    private val downLoadMediaListener = object : Net.DownLoadMediaListener {
-        override fun onCancel() { }
-        override fun onDownloadComplete(status: Boolean, uri: Uri?) {
-            if (status) tip(Tip.SUCCESS, "下载成功")
-            else tip(Tip.ERROR, "下载失败")
-        }
-    }
-
     constructor(main: MainActivity, pic: RachelPreview) : this(main, listOf(pic), 0)
 
     override fun bindingClass() = FragmentImagePreviewBinding::class.java
@@ -54,9 +50,9 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
             setAdapter(Adapter(pics), true)
         }
 
-        v.downloadImage.rachelClick { Net.downloadPicture(main, pics[getFuckIndex(v.list.currentItem)].mImageUrl, downLoadMediaListener) }
-        v.downloadSource.rachelClick { Net.downloadPicture(main, pics[getFuckIndex(v.list.currentItem)].mSourceUrl, downLoadMediaListener) }
-        v.downloadAll.rachelClick { Net.downloadPictures(main, pics.filter { it.isImage }.map { it.mSourceUrl }, downLoadMediaListener) }
+        v.downloadImage.rachelClick { downloadPicture(pics[getFuckIndex(v.list.currentItem)].mImageUrl) }
+        v.downloadSource.rachelClick { downloadPicture(pics[getFuckIndex(v.list.currentItem)].mSourceUrl) }
+        v.downloadAll.rachelClick { downloadPictures(pics.filter { it.isImage }.map { it.mSourceUrl }) }
     }
 
     override fun back() = true
@@ -66,4 +62,22 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
 
     // What Fuck Bug? When Can It Be Fixed?
     private fun getFuckIndex(index: Int) = if (v.list.realCount > 1) index - 1 else index
+
+    @NewThread
+    private fun downloadPicture(url: String) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Net.download(url, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
+            }
+        }
+    }
+
+    @NewThread
+    private fun downloadPictures(urls: List<String>) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Net.downloadAll(urls, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
+            }
+        }
+    }
 }

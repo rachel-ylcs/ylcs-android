@@ -1,25 +1,23 @@
-package com.yinlin.rachel.dialog
+package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
 import com.yinlin.rachel.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LyricsInfo
-import com.yinlin.rachel.data.music.LyricsInfoList
-import com.yinlin.rachel.databinding.BottomDialogLyricsInfoBinding
 import com.yinlin.rachel.databinding.ItemLyricsInfoBinding
+import com.yinlin.rachel.databinding.SheetLyricsInfoBinding
 import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
-import com.yinlin.rachel.model.RachelBottomDialog
+import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.textColor
 
-
-class BottomDialogLyricsInfo(fragment: FragmentMusic) : RachelBottomDialog<BottomDialogLyricsInfoBinding, FragmentMusic>(
-    fragment, 0.5f, BottomDialogLyricsInfoBinding::class.java) {
-    class Adapter(private val dialog: BottomDialogLyricsInfo) : RachelAdapter<ItemLyricsInfoBinding, LyricsInfo>() {
-        private val main = dialog.root.main
+class SheetLyricsInfo(fragment: FragmentMusic, private val infos: List<LyricsInfo>)
+    : RachelSheet<SheetLyricsInfoBinding, FragmentMusic>(fragment, 0.6f) {
+    class Adapter(private val sheet: SheetLyricsInfo) : RachelAdapter<ItemLyricsInfoBinding, LyricsInfo>() {
+        private val main = sheet.fragment.main
         private val unlockedString = main.rs(R.string.unlocked)
         private val lockedString = main.rs(R.string.locked)
         private val unlockedColor = main.rc(R.color.sea_green)
@@ -40,26 +38,22 @@ class BottomDialogLyricsInfo(fragment: FragmentMusic) : RachelBottomDialog<Botto
         }
 
         override fun onItemClicked(v: ItemLyricsInfoBinding, item: LyricsInfo, position: Int) {
-            dialog.hide()
+            sheet.dismiss()
             if (item.available) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_USE_LYRICS_ENGINE, item.engineName, item.name)
-            else dialog.tip(Tip.WARNING, "未解锁该歌词引擎")
+            else sheet.tip(Tip.WARNING, "未解锁该歌词引擎")
         }
     }
 
-    private val adapter = Adapter(this)
+    override fun bindingClass() = SheetLyricsInfoBinding::class.java
 
     override fun init() {
         v.list.apply {
-            layoutManager = LinearLayoutManager(root.main)
-            adapter = this@BottomDialogLyricsInfo.adapter
+            layoutManager = LinearLayoutManager(context)
+            adapter = Adapter(this@SheetLyricsInfo).apply {
+                setSource(infos)
+                notifySource()
+            }
             interceptScroll()
         }
-    }
-
-    fun update(engineNames: LyricsInfoList): BottomDialogLyricsInfo {
-        v.list.scrollToPosition(0)
-        adapter.setSource(engineNames)
-        adapter.notifySource()
-        return this
     }
 }

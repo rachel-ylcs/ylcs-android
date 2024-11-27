@@ -1,7 +1,11 @@
 package com.yinlin.rachel
 
+import android.content.Context
+import android.graphics.Color
+import androidx.annotation.RawRes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
@@ -45,7 +49,12 @@ val gson: Gson = GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:
     .create()
 
 inline fun <reified T> JsonElement?.fetch(): T = gson.fromJson(this, object : TypeToken<T>(){}.type)
-val String?.parseJson: JsonElement get() = if (this == null) JsonNull.INSTANCE else gson.fromJson(this, JsonElement::class.java)
+val Any?.parseJson: JsonElement get() =
+    if (this == null) JsonNull.INSTANCE
+    else if (this is String) gson.fromJson(this, JsonElement::class.java)
+    else gson.toJsonTree(this)
+val Any.parseJsonObject: JsonObject get() = this.parseJson.asJsonObject
+val Any.parseJsonArray: JsonArray get() = this.parseJson.asJsonArray
 inline fun <reified T> String.parseJsonFetch(): T = gson.fromJson(this, object : TypeToken<T>(){}.type)
 inline val <reified T> T?.jsonString: String get() = gson.toJson(this, object : TypeToken<T>(){}.type)
 fun jsonMap(vararg pairs: Pair<String, Any?>): JsonObject = gson.toJsonTree(mapOf(*pairs)).asJsonObject
@@ -105,6 +114,19 @@ inline fun <reified T> File.readJson(): T = readText().parseJsonFetch()
 
 fun File.writeJson(obj: Any) = writeText(obj.jsonString)
 
+fun File.writeRes(context: Context, @RawRes id: Int) = try {
+    context.resources.openRawResource(id).use { inputStream ->
+        FileOutputStream(this).use { outputStream ->
+            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+            var read: Int
+            while ((inputStream.read(buffer, 0, DEFAULT_BUFFER_SIZE).also { read = it }) >= 0)
+                outputStream.write(buffer, 0, read)
+            true
+        }
+    }
+}
+catch (_: Exception) { false }
+
 fun File.create(data: ByteArray) {
     if (!exists()) write(data)
 }
@@ -124,6 +146,15 @@ fun File.deleteFilter(delName: String) {
     }
 }
 
+val File.fileSizeString: String get() = try {
+    val fileSize = this.length()
+    if (fileSize < 1024) "$fileSize B"
+    else if (fileSize < 1024 * 1024) "${fileSize / 1024} KB"
+    else if (fileSize < 1024 * 1024 * 1024) "${fileSize / (1024 * 1024)} MB"
+    else "${fileSize / (1024 * 1024 * 1024)} GB"
+}
+catch (_: Exception) { "0 B" }
+
 
 /*---------    ValueGetter    --------*/
 
@@ -136,8 +167,15 @@ val Long.timeString: String get() {
     val hours = (this / (1000 * 60 * 60)).toInt()
     val minutes = (this % (1000 * 60 * 60) / (1000 * 60)).toInt()
     val seconds = (this % (1000 * 60) / 1000).toInt()
-    return if (hours > 0) String.format(Locale.ENGLISH,"%02d:%02d:%02d", hours, minutes, seconds)
-        else String.format(Locale.ENGLISH,"%02d:%02d", minutes, seconds)
+    return if (hours > 0) String.format(Locale.SIMPLIFIED_CHINESE,"%02d:%02d:%02d", hours, minutes, seconds)
+        else String.format(Locale.SIMPLIFIED_CHINESE,"%02d:%02d", minutes, seconds)
+}
+
+val Long.timeStringWithHour: String get() {
+    val hours = (this / (1000 * 60 * 60)).toInt()
+    val minutes = (this % (1000 * 60 * 60) / (1000 * 60)).toInt()
+    val seconds = (this % (1000 * 60) / 1000).toInt()
+    return String.format(Locale.SIMPLIFIED_CHINESE,"%02d:%02d:%02d", hours, minutes, seconds)
 }
 
 val currentDateInteger: Int get() = try {
@@ -160,6 +198,17 @@ val String.md5: String get() = try {
     hexString.toString()
 }
 catch (_: Exception) { "" }
+
+fun Int.attachAlpha(alpha: Int) = Color.argb(alpha, Color.red(this), Color.green(this), Color.blue(this))
+
+fun Int.detachAlpha(): Int {
+    val red = Color.red(this)
+    val green = Color.green(this)
+    val blue = Color.blue(this)
+    return Color.rgb(red, green, blue)
+}
+
+fun Int.getAlpha() = Color.alpha(this)
 
 /*---------    Container    --------*/
 

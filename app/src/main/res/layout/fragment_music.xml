@@ -110,9 +110,7 @@
                 app:ButtonGroupIcon1="@drawable/icon_an_off"
                 app:ButtonGroupIcon2="@drawable/icon_mv_off"
                 app:ButtonGroupIcon3="@drawable/icon_lyrics"
-                app:ButtonGroupIcon4="@drawable/icon_music_comment"
-                app:ButtonGroupIcon5="@drawable/icon_share_white"
-                app:ButtonGroupIcon6="@drawable/icon_info" />
+                app:ButtonGroupIcon4="@drawable/icon_music_comment" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </FrameLayout>

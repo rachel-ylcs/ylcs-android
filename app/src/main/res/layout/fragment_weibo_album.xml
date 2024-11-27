@@ -8,14 +8,13 @@
     android:padding="10dp"
     android:background="@color/ghost_white"
     tools:context=".fragment.FragmentWeiboAlbum" >
-    <TextView
+    <com.yinlin.rachel.view.LoadingTextView
         android:id="@+id/title"
         style="@style/RachelText.X"
         android:gravity="center"
         android:text="共 0 张"
         android:textColor="@color/steel_blue"
-        android:textSize="@dimen/base"
-        android:textStyle="bold" />
+        android:textSize="@dimen/base" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -40,7 +39,8 @@
             android:layout_weight="1"
             android:layout_marginHorizontal="20dp"
             android:gravity="center"
-            android:text="第 0 页" />
+            android:text="第 0 页"
+            android:textSize="@dimen/base" />
         <ImageView
             android:id="@+id/next"
             android:layout_width="wrap_content"

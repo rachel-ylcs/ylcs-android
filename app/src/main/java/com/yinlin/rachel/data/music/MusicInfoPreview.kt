@@ -1,7 +1,6 @@
 package com.yinlin.rachel.data.music
 
 import com.yinlin.rachel.div
-import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.pathMusic
 
 data class MusicInfoPreview(
@@ -11,7 +10,11 @@ data class MusicInfoPreview(
     val singer: String,
     var selected: Boolean = false,
 ) {
-    val recordPath get() = pathMusic / (id + RachelMod.RES_RECORD)
+    val recordPath get() = pathMusic / (id + MusicRes.RECORD_NAME)
+
+    companion object {
+        val MusicInfo.preview get() = MusicInfoPreview(version, id, name, singer, false)
+    }
 }
 
 typealias MusicInfoPreviewList = List<MusicInfoPreview>

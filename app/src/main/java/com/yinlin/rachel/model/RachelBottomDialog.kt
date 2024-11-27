@@ -22,23 +22,25 @@ abstract class RachelBottomDialog<Binding : ViewBinding, F : RachelFragment<*>>
         val method = cls.getMethod("inflate", LayoutInflater::class.java)
         @Suppress("UNCHECKED_CAST")
         v = method.invoke(null, LayoutInflater.from(context)) as Binding
-        v.root.setBackgroundResource(R.drawable.bg_dialog_white)
+        v.root.setBackgroundResource(R.drawable.bg_sheet_white)
     }
 
-    protected open fun init() { }
     protected open fun hidden() { }
     protected open fun quit() { }
 
-    fun show() {
+    protected fun checkInit(block: () -> Unit) {
         if (!isInit) {
             isInit = true
-            init()
+            block()
         }
+    }
+
+    protected fun show() {
         dialog = BottomSheetDialog(context, R.style.Theme_RachelBottomDialog)
         dialog?.setContentView(v.root)
         dialog?.setOnDismissListener {
-            hidden()
             (v.root.parent as ViewGroup).removeView(v.root)
+            hidden()
             dialog = null
         }
         dialog?.behavior?.apply {

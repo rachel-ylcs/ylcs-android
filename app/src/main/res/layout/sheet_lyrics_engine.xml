@@ -6,11 +6,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".dialog.BottomDialogLyricsInfo" >
+    tools:context=".sheet.SheetLyricsEngine" >
     <TextView
         style="@style/RachelText.X"
         android:gravity="center"
-        android:text="歌词"
+        android:text="歌词引擎"
         android:textColor="@color/steel_blue"
         android:textSize="@dimen/xl"
         android:textStyle="bold" />
@@ -22,6 +22,5 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="5dp"
         android:layout_weight="1" />
 </LinearLayout>

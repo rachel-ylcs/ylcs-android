@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.SurfaceTexture
 import android.view.TextureView
 import com.yinlin.rachel.R
+import com.yinlin.rachel.data.music.MusicInfo
 import org.libpag.PAGFile
 import org.libpag.PAGPlayer
 import org.libpag.PAGScaleMode

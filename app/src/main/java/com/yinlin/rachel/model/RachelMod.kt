@@ -3,6 +3,7 @@ package com.yinlin.rachel.model
 import com.yinlin.rachel.data.mod.MusicItem
 import com.yinlin.rachel.data.mod.Metadata
 import com.yinlin.rachel.data.music.MusicInfo
+import com.yinlin.rachel.data.music.MusicRes
 import com.yinlin.rachel.div
 import com.yinlin.rachel.jsonString
 import com.yinlin.rachel.parseJsonFetch
@@ -25,14 +26,6 @@ object RachelMod {
     const val MOD_VERSION = 3
     val MOD_MAGIC = "RACHEL".toByteArray()
     const val MOD_BUFFER_SIZE = 1024 * 64
-
-    const val RES_INFO = ".json"
-    const val RES_AUDIO = ".flac"
-    const val RES_RECORD = "_record.webp"
-    const val RES_VIDEO = ".mp4"
-    const val RES_BGS = "_bgs.webp"
-    const val RES_BGD = "_bgd.webp"
-    const val RES_DEFAULT_LRC = ".lrc"
 
     fun interface MetaListener {
         fun onError(id: String, res: String)
@@ -103,7 +96,7 @@ object RachelMod {
             if (!folder.isDirectory) return metadata
             // 统计
             for (id in ids) {
-                val infoFile = folder / (id + RES_INFO)
+                val infoFile = folder / (id + MusicRes.INFO_NAME)
                 if (!infoFile.exists()) continue
                 val musicInfo: MusicInfo = infoFile.readJson()
                 if (!musicInfo.isCorrect || musicInfo.id != id) {
@@ -113,7 +106,7 @@ object RachelMod {
                 metadata.items[id] = MusicItem(musicInfo.name, musicInfo.version)
             }
             // 遍历
-            val files = folder.listFiles { obj: File -> obj.isFile }
+            val files = folder.listFiles { file: File -> file.isFile }
             if (files == null) {
                 metadata.items.clear()
                 return metadata
@@ -135,28 +128,28 @@ object RachelMod {
             // 至少存在一个音乐基础信息不足
             for (meta in metadata.items) {
                 val resList: List<String> = meta.value.resList
-                if (!resList.contains(RES_INFO)) {
-                    listener?.onError(meta.key, RES_INFO)
+                if (!resList.contains(MusicRes.INFO_NAME)) {
+                    listener?.onError(meta.key, MusicRes.INFO_NAME)
                     metadata.items.clear()
                     break
                 }
-                if (!resList.contains(RES_AUDIO)) {
-                    listener?.onError(meta.key, RES_AUDIO)
+                if (!resList.contains(MusicRes.AUDIO_NAME)) {
+                    listener?.onError(meta.key, MusicRes.AUDIO_NAME)
                     metadata.items.clear()
                     break
                 }
-                if (!resList.contains(RES_RECORD)) {
-                    listener?.onError(meta.key, RES_RECORD)
+                if (!resList.contains(MusicRes.RECORD_NAME)) {
+                    listener?.onError(meta.key, MusicRes.RECORD_NAME)
                     metadata.items.clear()
                     break
                 }
-                if (!resList.contains(RES_BGS)) {
-                    listener?.onError(meta.key, RES_BGS)
+                if (!resList.contains(MusicRes.BGS_NAME)) {
+                    listener?.onError(meta.key, MusicRes.BGS_NAME)
                     metadata.items.clear()
                     break
                 }
-                if (!resList.contains(RES_DEFAULT_LRC)) {
-                    listener?.onError(meta.key, RES_DEFAULT_LRC)
+                if (!resList.contains(MusicRes.DEFAULT_LRC_NAME)) {
+                    listener?.onError(meta.key, MusicRes.DEFAULT_LRC_NAME)
                     metadata.items.clear()
                     break
                 }

@@ -11,129 +11,111 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-        <com.google.android.material.card.MaterialCardView
-            style="@style/RachelCard"
-            app:cardCornerRadius="0dp"
-            app:contentPadding="0dp" >
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="150dp"
+            android:background="@color/white"
+            android:elevation="5dp" >
+            <ImageView
+                android:id="@+id/bg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:scaleType="centerCrop"
+                android:src="@color/micro_gray"
+                android:alpha="0.5" />
+            <com.yinlin.rachel.view.AvatarView
+                android:id="@+id/avatar"
+                style="@style/RachelCircleImage"
+                app:layout_constraintLeft_toLeftOf="@id/signature"
+                app:layout_constraintTop_toTopOf="@id/name"
+                app:layout_constraintBottom_toBottomOf="@id/follow"
+                android:layout_gravity="center"
+                android:src="@color/white"
+                app:BorderWidth="1dp"
+                app:BorderColor="@color/light_gray" />
+            <com.yinlin.rachel.view.LoadingTextView
+                android:id="@+id/name"
+                style="@style/RachelText.X0"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/avatar"
+                app:layout_constraintRight_toLeftOf="@id/add"
+                android:gravity="center"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:text="未知用户"
+                android:textSize="@dimen/base"
+                android:textColor="@color/steel_blue" />
+            <ImageView
+                android:id="@+id/add"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="150dp" >
-                <ImageView
-                    android:id="@+id/bg"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:scaleType="centerCrop"
-                    android:src="@color/micro_gray"
-                    android:alpha="0.5" />
-                <com.yinlin.rachel.view.AvatarView
-                    android:id="@+id/avatar"
-                    style="@style/RachelCircleImage"
-                    app:layout_constraintLeft_toLeftOf="@id/signature"
-                    app:layout_constraintTop_toTopOf="@id/name"
-                    app:layout_constraintBottom_toBottomOf="@id/follow"
-                    android:layout_gravity="center"
-                    android:src="@color/white"
-                    app:BorderWidth="1dp"
-                    app:BorderColor="@color/light_gray" />
-                <TextView
-                    android:id="@+id/name"
-                    style="@style/RachelText.X0"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/avatar"
-                    app:layout_constraintRight_toLeftOf="@id/add"
-                    android:gravity="center"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="10dp"
-                    android:text="未知用户"
-                    android:textSize="@dimen/base"
-                    android:textColor="@color/steel_blue"
-                    android:textStyle="bold" />
-                <ImageView
-                    android:id="@+id/add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/icon_add_blue" />
-                <TextView
-                    android:id="@+id/follow"
-                    style="@style/RachelText.X0"
-                    app:layout_constraintLeft_toLeftOf="@id/name"
-                    app:layout_constraintRight_toLeftOf="@id/fans"
-                    app:layout_constraintTop_toBottomOf="@id/name"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="关注 12" />
-                <TextView
-                    android:id="@+id/fans"
-                    style="@style/RachelText.X0"
-                    app:layout_constraintLeft_toRightOf="@id/follow"
-                    app:layout_constraintRight_toRightOf="@id/name"
-                    app:layout_constraintTop_toBottomOf="@id/name"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="粉丝 11" />
-                <TextView
-                    android:id="@+id/signature"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/follow"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="top"
-                    android:text="个性签名" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <TextView
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/icon_add_blue" />
+            <TextView
+                android:id="@+id/follow"
+                style="@style/RachelText.X0"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintRight_toLeftOf="@id/fans"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="关注 12" />
+            <TextView
+                android:id="@+id/fans"
+                style="@style/RachelText.X0"
+                app:layout_constraintLeft_toRightOf="@id/follow"
+                app:layout_constraintRight_toRightOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="粉丝 11" />
+            <TextView
+                android:id="@+id/signature"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/follow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="top"
+                android:text="个性签名" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.yinlin.rachel.view.LoadingTextView
+            android:id="@+id/loading_album"
             style="@style/RachelText"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="5dp"
             android:text="相册"
             android:textColor="@color/steel_blue"
-            android:textSize="@dimen/base"
-            android:textStyle="bold" />
-        <com.gturedi.views.StatefulLayout
-            android:id="@+id/album_state"
+            android:textSize="@dimen/base" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/album_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:stfInAnimation="@anim/anim_fade_in"
-            app:stfOutAnimation="@anim/anim_fade_out" >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/album_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="120dp" />
-        </com.gturedi.views.StatefulLayout>
-        <TextView
+            android:minHeight="120dp" />
+        <com.yinlin.rachel.view.LoadingTextView
+            android:id="@+id/loading_weibo"
             style="@style/RachelText"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="5dp"
             android:text="微博"
             android:textColor="@color/steel_blue"
-            android:textSize="@dimen/base"
-            android:textStyle="bold" />
-        <com.gturedi.views.StatefulLayout
-            android:id="@+id/weibo_state"
+            android:textSize="@dimen/base" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/weibo_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:stfInAnimation="@anim/anim_fade_in"
-            app:stfOutAnimation="@anim/anim_fade_out" >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/weibo_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="120dp" />
-        </com.gturedi.views.StatefulLayout>
+            android:minHeight="120dp" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

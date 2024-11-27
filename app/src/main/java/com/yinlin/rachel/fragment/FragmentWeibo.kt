@@ -1,5 +1,7 @@
 package com.yinlin.rachel.fragment
 
+import android.view.Gravity
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
@@ -17,6 +19,8 @@ import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.toDP
+import com.yinlin.rachel.view.LoadingTextView
 import com.yinlin.rachel.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +48,7 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
         }
     }
 
-    class Adapter(fragment: FragmentWeibo) : RachelHeaderAdapter<ItemWeiboBinding, ItemWeiboCommentBinding, WeiboComment>() {
+    class Adapter(private val fragment: FragmentWeibo) : RachelHeaderAdapter<ItemWeiboBinding, ItemWeiboCommentBinding, WeiboComment>() {
         private val main = fragment.main
         private val weibo = fragment.weibo
 
@@ -52,6 +56,13 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
         override fun bindingItemClass() = ItemWeiboCommentBinding::class.java
 
         override fun initHeader(v: ItemWeiboBinding) {
+            val loading = LoadingTextView(v.contentContainer.context).apply {
+                layoutParams = MarginLayoutParams(MarginLayoutParams.MATCH_PARENT, MarginLayoutParams.WRAP_CONTENT).apply {
+                    setMargins(0, 5.toDP(context), 0, 0)
+                }
+                gravity = Gravity.CENTER
+            }
+            v.contentContainer.addView(loading)
             v.avatar.rachelClick { main.navigate(FragmentWeiboUser(main, weibo.user.userId)) }
             v.avatar.loadDaily(weibo.user.avatar)
             v.name.text = weibo.user.name
@@ -64,6 +75,8 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
             v.like.text = weibo.likeNum.toString()
             v.comment.text = weibo.commentNum.toString()
             v.repost.text = weibo.repostNum.toString()
+
+            requestComment(loading)
         }
 
         override fun init(holder: RachelItemViewHolder<ItemWeiboCommentBinding>, v: ItemWeiboCommentBinding) {
@@ -99,6 +112,20 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
             }
             v.list.visible = item.subComments != null
         }
+
+        @NewThread
+        private fun requestComment(loading: LoadingTextView) {
+            fragment.lifecycleScope.launch {
+                loading.loading = true
+                val comments = mutableListOf<WeiboComment>()
+                withContext(Dispatchers.IO) { WeiboAPI.extractWeiboDetails(weibo.id, comments) }
+                loading.loading = false
+                if (comments.isNotEmpty()) {
+                    setSource(comments)
+                    notifySourceEx()
+                }
+            }
+        }
     }
 
     private val mAdapter = Adapter(this)
@@ -111,22 +138,7 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
             recycledViewPool.setMaxRecycledViews(0, 10)
             adapter = mAdapter
         }
-
-        requestComment()
     }
 
     override fun back() = true
-
-    // 刷新评论
-    @NewThread
-    fun requestComment() {
-        lifecycleScope.launch {
-            val comments = mutableListOf<WeiboComment>()
-            withContext(Dispatchers.IO) { WeiboAPI.extractWeiboDetails(weibo.id, comments) }
-            if (comments.isNotEmpty()) {
-                mAdapter.setSource(comments)
-                mAdapter.notifySourceEx()
-            }
-        }
-    }
 }
