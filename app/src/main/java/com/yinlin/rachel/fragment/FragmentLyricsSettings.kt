@@ -1,83 +1,80 @@
-package com.yinlin.rachel.sheet
+package com.yinlin.rachel.fragment
 
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.yinlin.rachel.Config
+import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.attachAlpha
 import com.yinlin.rachel.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.databinding.SheetLyricsSettingsBinding
+import com.yinlin.rachel.databinding.FragmentLyricsSettingsBinding
 import com.yinlin.rachel.detachAlpha
-import com.yinlin.rachel.fragment.FragmentSettings
 import com.yinlin.rachel.getAlpha
+import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
-import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
 import com.yinlin.rachel.textColor
+import com.yinlin.rachel.textSizePx
 
-class SheetLyricsSettings(fragment: FragmentSettings) : RachelSheet<SheetLyricsSettingsBinding, FragmentSettings>(fragment, 0.8f) {
+class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyricsSettingsBinding>(main) {
+    private lateinit var registerFloatingPermission: ActivityResultLauncher<Intent>
+
     private val canShow: Boolean get() = Settings.canDrawOverlays(context)
 
     private val lyricsSettings = Config.music_lyrics_settings
 
-    override fun bindingClass() = SheetLyricsSettingsBinding::class.java
+    override fun bindingClass() = FragmentLyricsSettingsBinding::class.java
 
     override fun init() {
+        registerFloatingPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            updateFloatingIconStatus()
+        }
+
         updateFloatingIconStatus()
         v.floating.rachelClick {
-            updateFloatingIconStatus()
             if (!canShow) {
                 try {
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                    intent.setData(Uri.fromParts("package", fragment.main.packageName, null))
-                    fragment.registerFloatingPermission.launch(intent)
+                    intent.setData(Uri.fromParts("package", main.packageName, null))
+                    registerFloatingPermission.launch(intent)
                 }
                 catch (_: Exception) { }
             }
         }
 
-        v.itemOffsetX.value = lyricsSettings.offsetX
-        v.testPlaceholder1.setWidthPercent(lyricsSettings.offsetX)
-
-        v.itemOffsetY.value = lyricsSettings.offsetY
-        setOffsetY(lyricsSettings.offsetY)
-
-        v.itemWidth.value = lyricsSettings.width
-        v.testSurface.setWidthPercent(lyricsSettings.width)
-
-        v.itemTextColor.color = lyricsSettings.textColor
-        v.testSurface.textColor = lyricsSettings.textColor
-
-        val backgroundColor = lyricsSettings.backgroundColor
-
-        v.itemBackgroundColor.color = backgroundColor.detachAlpha()
-        v.itemBackgroundAlpha.alphaValue = backgroundColor.getAlpha()
-        v.testSurface.backgroundColor = backgroundColor
-
-        v.itemOffsetX.addOnChangeListener { _, value, _ ->
-            v.testPlaceholder1.setWidthPercent(value)
-            v.testSurface.text = "这是一条测试歌词"
-        }
-
-        v.itemOffsetX.setOnTouchListener { _, event ->
+        v.itemOffsetLeft.value = lyricsSettings.offsetLeft
+        v.testGuideline1.setGuidelinePercent(lyricsSettings.offsetLeft)
+        v.itemOffsetLeft.addOnChangeListener { _, value, _ -> v.testGuideline1.setGuidelinePercent(value) }
+        v.itemOffsetLeft.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
-                lyricsSettings.offsetX = v.itemOffsetX.value
+                lyricsSettings.offsetLeft = v.itemOffsetLeft.value
                 updateSettings()
             }
             false
         }
 
-        v.itemOffsetY.addOnChangeListener { _, value, _ ->
-            setOffsetY(value)
-            v.testSurface.text = "这是一条测试歌词"
+        v.itemOffsetRight.value = lyricsSettings.offsetRight
+        v.testGuideline2.setGuidelinePercent(lyricsSettings.offsetRight)
+        v.itemOffsetRight.addOnChangeListener { _, value, _ -> v.testGuideline2.setGuidelinePercent(value) }
+        v.itemOffsetRight.setOnTouchListener { _, event ->
+            if (event.action == KeyEvent.ACTION_UP) {
+                lyricsSettings.offsetRight = v.itemOffsetRight.value
+                updateSettings()
+            }
+            false
         }
 
+        v.itemOffsetY.value = lyricsSettings.offsetY
+        setOffsetY(lyricsSettings.offsetY)
+        v.itemOffsetY.addOnChangeListener { _, value, _ -> setOffsetY(value) }
         v.itemOffsetY.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
                 lyricsSettings.offsetY = v.itemOffsetY.value
@@ -86,23 +83,20 @@ class SheetLyricsSettings(fragment: FragmentSettings) : RachelSheet<SheetLyricsS
             false
         }
 
-        v.itemWidth.addOnChangeListener { _, value, _ ->
-            v.testSurface.setWidthPercent(value)
-            v.testSurface.text = "这是一条测试歌词"
-        }
-
-        v.itemWidth.setOnTouchListener { _, event ->
+        v.itemTextSize.value = lyricsSettings.textSize
+        v.testSurface.textSizePx = lyricsSettings.textSize * main.rd(R.dimen.sm)
+        v.itemTextSize.addOnChangeListener { _, value, _ -> v.testSurface.textSizePx = value * main.rd(R.dimen.sm) }
+        v.itemTextSize.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
-                lyricsSettings.width = v.itemWidth.value
+                lyricsSettings.textSize = v.itemTextSize.value
                 updateSettings()
             }
             false
         }
 
-        v.itemTextColor.setOnColorChangeListener { _, color ->
-            v.testSurface.textColor = color
-        }
-
+        v.itemTextColor.color = lyricsSettings.textColor
+        v.testSurface.textColor = lyricsSettings.textColor
+        v.itemTextColor.setOnColorChangeListener { _, color -> v.testSurface.textColor = color }
         v.itemTextColor.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
                 lyricsSettings.textColor = v.itemTextColor.color
@@ -111,11 +105,14 @@ class SheetLyricsSettings(fragment: FragmentSettings) : RachelSheet<SheetLyricsS
             false
         }
 
+        val backgroundColor = lyricsSettings.backgroundColor
+        v.itemBackgroundColor.color = backgroundColor.detachAlpha()
+        v.itemBackgroundAlpha.alphaValue = backgroundColor.getAlpha()
+        v.testSurface.backgroundColor = backgroundColor
         v.itemBackgroundColor.setOnColorChangeListener { _, color ->
             val alpha = lyricsSettings.backgroundColor.getAlpha()
             v.testSurface.backgroundColor = color.detachAlpha().attachAlpha(alpha)
         }
-
         v.itemBackgroundColor.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
                 val alpha = lyricsSettings.backgroundColor.getAlpha()
@@ -124,12 +121,10 @@ class SheetLyricsSettings(fragment: FragmentSettings) : RachelSheet<SheetLyricsS
             }
             false
         }
-
         v.itemBackgroundAlpha.setOnAlphaChangeListener { _, alpha ->
             val rgb = lyricsSettings.backgroundColor.detachAlpha()
             v.testSurface.backgroundColor = rgb.attachAlpha(alpha)
         }
-
         v.itemBackgroundAlpha.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
                 val rgb = lyricsSettings.backgroundColor.detachAlpha()
@@ -140,22 +135,18 @@ class SheetLyricsSettings(fragment: FragmentSettings) : RachelSheet<SheetLyricsS
         }
     }
 
+    override fun back() = true
+
     private fun updateFloatingIconStatus() {
         v.ivFloating.load(if (canShow) R.drawable.icon_yes else R.drawable.icon_no)
     }
 
-    private fun View.setWidthPercent(value: Float) {
-        layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
-            matchConstraintPercentWidth = value
-        }
-    }
-
     private fun setOffsetY(value: Float) {
-        v.testContainer.setPadding(0, (value * 100).toInt(), 0, 0)
+        v.testContainer.setPadding(0, (value * 150).toInt(), 0, 0)
     }
 
     private fun updateSettings() {
         Config.music_lyrics_settings = lyricsSettings
-        fragment.main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_LYRICS_SETTINGS)
+        main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_LYRICS_SETTINGS)
     }
 }

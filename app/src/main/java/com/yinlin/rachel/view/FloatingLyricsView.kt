@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.yinlin.rachel.R
 import com.yinlin.rachel.backgroundColor
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.LyricsSettings
 import com.yinlin.rachel.databinding.FloatingLyricsBinding
 import com.yinlin.rachel.textColor
+import com.yinlin.rachel.textSizePx
 
 class FloatingLyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : FrameLayout(context, attrs, defStyleAttr) {
@@ -83,19 +85,14 @@ class FloatingLyricsView @JvmOverloads constructor(context: Context, attrs: Attr
 
     fun updateSettings(settings: LyricsSettings): FloatingLyricsView {
         v.surface.apply {
+            textSizePx = settings.textSize * context.resources.getDimensionPixelSize(R.dimen.sm)
             textColor = settings.textColor
             backgroundColor = settings.backgroundColor
         }
         setOffsetY(settings.offsetY)
-        v.placeholder1.setWidthPercent(settings.offsetX)
-        v.surface.setWidthPercent(settings.width)
+        v.guideline1.setGuidelinePercent(settings.offsetLeft)
+        v.guideline2.setGuidelinePercent(settings.offsetRight)
         return this
-    }
-
-    private fun View.setWidthPercent(value: Float) {
-        layoutParams = (layoutParams as ConstraintLayout.LayoutParams).apply {
-            matchConstraintPercentWidth = value
-        }
     }
 
     private fun setOffsetY(value: Float) {

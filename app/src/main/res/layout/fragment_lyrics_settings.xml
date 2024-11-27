@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingVertical="10dp"
     android:orientation="vertical"
-    tools:context=".sheet.SheetLyricsSettings" >
+    tools:context=".fragment.FragmentLyricsSettings" >
     <TextView
         style="@style/RachelText.X"
         android:layout_marginHorizontal="20dp"
@@ -28,16 +28,67 @@
             android:scaleType="center"
             android:src="@drawable/icon_no" />
     </com.yinlin.rachel.view.SettingsItem>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/test_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/test_guideline1"
+            style="@style/Guideline.Y"
+            app:layout_constraintGuide_percent="0" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/test_guideline1"
+            app:layout_constraintTop_toTopOf="@id/test_surface"
+            app:layout_constraintBottom_toBottomOf="@id/test_surface"
+            android:background="@color/black" />
+        <TextView
+            android:id="@+id/test_surface"
+            style="@style/RachelText.X0.Overflow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/test_guideline1"
+            app:layout_constraintRight_toLeftOf="@id/test_guideline2"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="这是一条测试歌词"
+            android:textStyle="bold" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/test_guideline2"
+            style="@style/Guideline.Y"
+            app:layout_constraintGuide_percent="1" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toRightOf="@id/test_guideline2"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/test_surface"
+            app:layout_constraintBottom_toBottomOf="@id/test_surface"
+            android:background="@color/gray" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.yinlin.rachel.view.SettingsItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="横向偏移"
+        android:text="左侧偏移"
         app:HasArrow="false"
         android:clipChildren="false" >
         <com.google.android.material.slider.Slider
-            android:id="@+id/itemOffsetX"
+            android:id="@+id/itemOffsetLeft"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+    </com.yinlin.rachel.view.SettingsItem>
+    <com.yinlin.rachel.view.SettingsItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="右侧偏移"
+        app:HasArrow="false" >
+        <com.google.android.material.slider.Slider
+            android:id="@+id/itemOffsetRight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1" />
     </com.yinlin.rachel.view.SettingsItem>
     <com.yinlin.rachel.view.SettingsItem
         android:layout_width="match_parent"
@@ -47,17 +98,23 @@
         <com.google.android.material.slider.Slider
             android:id="@+id/itemOffsetY"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:valueFrom="0"
+            android:valueTo="2"
+            android:value="0" />
     </com.yinlin.rachel.view.SettingsItem>
     <com.yinlin.rachel.view.SettingsItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="歌词宽度"
+        android:text="字体大小"
         app:HasArrow="false" >
         <com.google.android.material.slider.Slider
-            android:id="@+id/itemWidth"
+            android:id="@+id/itemTextSize"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:valueFrom="0.75"
+            android:valueTo="1.5"
+            android:value="1" />
     </com.yinlin.rachel.view.SettingsItem>
     <com.yinlin.rachel.view.SettingsItem
         android:layout_width="match_parent"
@@ -89,34 +146,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.yinlin.rachel.view.SettingsItem>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/test_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        <View
-            android:id="@+id/test_placeholder1"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/test_surface"
-            app:layout_constraintBottom_toBottomOf="@id/test_surface"
-            android:background="@color/black" />
-        <TextView
-            android:id="@+id/test_surface"
-            style="@style/RachelText.X0"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/test_placeholder1"
-            android:text="这是一条测试歌词"
-            android:textStyle="bold" />
-        <View
-            android:id="@+id/test_placeholder2"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintLeft_toRightOf="@id/test_surface"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/test_surface"
-            app:layout_constraintBottom_toBottomOf="@id/test_surface"
-            android:background="@color/gray" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

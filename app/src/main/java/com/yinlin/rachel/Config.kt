@@ -109,7 +109,7 @@ object Config {
         get() = music_focus_meta.get()
         set(value) { music_focus_meta.set(value) }
 
-    private val music_lyrics_settings_meta = JsonMeta<LyricsSettings>("music_lyrics_settings/20241128", LyricsSettings().jsonString,
+    private val music_lyrics_settings_meta = JsonMeta<LyricsSettings>("music_lyrics_settings/20241130", LyricsSettings().jsonString,
         object : TypeToken<LyricsSettings>(){}.type)
     var music_lyrics_settings: LyricsSettings
         get() = music_lyrics_settings_meta.get()
