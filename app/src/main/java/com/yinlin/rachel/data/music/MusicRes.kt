@@ -10,9 +10,10 @@ data class MusicRes(
     val name: String,
     val ext: String,
     val description: String,
-    val isBasic: Boolean,
+    val canDelete: Boolean,
+    val canEdit: Boolean,
     @ColorRes val color: Int,
-    val fileSize: String = "0 B",
+    var fileSize: String = "0B",
 ) {
     enum class Type {
         UNKNOWN, // 未知资源
@@ -36,16 +37,26 @@ data class MusicRes(
         const val VIDEO_NAME = ".mp4"
         const val BGD_NAME = "_bgd.webp"
 
-        private val Unknown = MusicRes(Type.UNKNOWN, "", "", "未知资源", false, R.color.music_res_unknown)
-        private val Info = MusicRes(Type.INFO, INFO_NAME, "json", "元数据信息", true, R.color.music_res_info)
-        private val Audio = MusicRes(Type.AUDIO, AUDIO_NAME, "flac", "音频", true, R.color.music_res_audio)
-        private val Record = MusicRes(Type.RECORD, RECORD_NAME, "webp", "封面", true, R.color.music_res_record)
-        private val Bgs = MusicRes(Type.BGS, BGS_NAME, "webp", "静态壁纸", true, R.color.music_res_bgs)
-        private val DefaultLrc = MusicRes(Type.DEFAULT_LRC, DEFAULT_LRC_NAME, "lrc", "默认歌词", true, R.color.music_res_default_lrc)
-        private val Video = MusicRes(Type.VIDEO, VIDEO_NAME, "mp4", "视频/PV", false, R.color.music_res_video)
-        private val Bgd = MusicRes(Type.BGD, BGD_NAME, "webp", "动画壁纸", false, R.color.music_res_bgd)
-        private val Lrc = MusicRes(Type.LRC, "", "lrc", "逐行歌词", false, R.color.music_res_lrc)
-        private val Pag = MusicRes(Type.PAG, "", "pag", "动态歌词", false, R.color.music_res_pag)
+        private val Unknown = MusicRes(Type.UNKNOWN, "", "", "未知资源",
+            canDelete = true, canEdit = true, R.color.music_res_unknown)
+        private val Info = MusicRes(Type.INFO, INFO_NAME, "json", "元数据信息",
+            canDelete = false, canEdit = false, R.color.music_res_info)
+        private val Audio = MusicRes(Type.AUDIO, AUDIO_NAME, "flac", "音频",
+            canDelete = false, canEdit = true, R.color.music_res_audio)
+        private val Record = MusicRes(Type.RECORD, RECORD_NAME, "webp", "封面",
+            canDelete = false, canEdit = true, R.color.music_res_record)
+        private val Bgs = MusicRes(Type.BGS, BGS_NAME, "webp", "静态壁纸",
+            canDelete = false, canEdit = true, R.color.music_res_bgs)
+        private val DefaultLrc = MusicRes(Type.DEFAULT_LRC, DEFAULT_LRC_NAME, "lrc", "默认歌词",
+            canDelete = false, canEdit = true, R.color.music_res_default_lrc)
+        private val Video = MusicRes(Type.VIDEO, VIDEO_NAME, "mp4", "视频/PV",
+            canDelete = true, canEdit = true, R.color.music_res_video)
+        private val Bgd = MusicRes(Type.BGD, BGD_NAME, "webp", "动画壁纸",
+            canDelete = true, canEdit = true, R.color.music_res_bgd)
+        private val Lrc = MusicRes(Type.LRC, "", "lrc", "逐行歌词",
+            canDelete = true, canEdit = true, R.color.music_res_lrc)
+        private val Pag = MusicRes(Type.PAG, "", "pag", "动态歌词",
+            canDelete = true, canEdit = true, R.color.music_res_pag)
 
         private val RES_KNOWN_MAP = mapOf(
             Info.name to Info,
@@ -79,9 +90,9 @@ data class MusicRes(
             val resBasicInfo = RES_KNOWN_MAP[name]
             if (resBasicInfo != null) return resBasicInfo.clone(fs)
             val resInfo = RES_EXT_MAP[ext] ?: Unknown
-            return MusicRes(resInfo.id, name, ext, resInfo.description, resInfo.isBasic, resInfo.color, fs)
+            return MusicRes(resInfo.id, name, ext, resInfo.description, resInfo.canDelete, resInfo.canEdit, resInfo.color, fs)
         }
     }
 
-    fun clone(fs: String) = MusicRes(id, name, ext, description, isBasic, color, fs)
+    fun clone(fs: String) = MusicRes(id, name, ext, description, canDelete, canEdit, color, fs)
 }

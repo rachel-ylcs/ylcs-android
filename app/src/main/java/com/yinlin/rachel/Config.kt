@@ -86,11 +86,12 @@ object Config {
         get() = token_meta.get()
         set(value) { token_meta.set(value) }
 
-    //
+    // 更新 Token
     private val token_daily_meta = DailyCacheKeyMeta()
     var token_daily get() = token_daily_meta.get()
         set(value) { token_daily_meta.set(value) }
 
+    // 用户信息
     private val user_meta = JsonMeta<User?>("user/20241115", "null", object : TypeToken<User?>(){}.type)
     var user: User?
         get() = user_meta.get()
@@ -98,17 +99,30 @@ object Config {
     val isLogin: Boolean get() = !token_meta.isDefault && user != null
     val loginUser: User? get() = if (!token_meta.isDefault) user else null
 
-    // 音频相关
+    // 上一次播放列表
+    private val music_last_playlist_meta = StringMeta("music_last_playlist/20241128", "")
+    var music_last_playlist: String
+        get() = music_last_playlist_meta.get()
+        set(value) { music_last_playlist_meta.set(value) }
+
+    private val music_last_music_meta = StringMeta("music_last_music/20241128", "")
+    var music_last_music: String
+        get() = music_last_music_meta.get()
+        set(value) { music_last_music_meta.set(value) }
+
+    // 播放模式
     private val music_play_mode_meta = EnumMeta("music_play_mode/20241115", MusicPlayMode.ORDER)
     var music_play_mode: MusicPlayMode
         get() = MusicPlayMode(music_play_mode_meta.get().ordinal)
         set(value) { music_play_mode_meta.set(value) }
 
+    // 禁止音频焦点
     private val music_focus_meta = BooleanMeta("music_focus/20241115", false)
     var music_focus: Boolean
         get() = music_focus_meta.get()
         set(value) { music_focus_meta.set(value) }
 
+    // 歌词设置
     private val music_lyrics_settings_meta = JsonMeta<LyricsSettings>("music_lyrics_settings/20241130", LyricsSettings().jsonString,
         object : TypeToken<LyricsSettings>(){}.type)
     var music_lyrics_settings: LyricsSettings
@@ -129,14 +143,16 @@ object Config {
         get() = weibo_users_meta.get()
         set(value) { weibo_users_meta.set(value) }
 
-    // 图片缓存键
+    // 图片缓存
     private val cache_daily_pic_meta = DailyCacheKeyMeta()
     var cache_daily_pic get() = cache_daily_pic_meta.get()
         set(value) { cache_daily_pic_meta.set(value) }
 
+    // 头像缓存
     val cache_key_avatar_meta = CacheKeyMeta("cache_key_avatar/20241115")
     val cache_key_avatar get() = cache_key_avatar_meta.get()
 
+    // 背景墙缓存
     val cache_key_wall_meta = CacheKeyMeta("cache_key_wall/20241115")
     val cache_key_wall get() = cache_key_wall_meta.get()
 }

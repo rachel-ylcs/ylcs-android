@@ -9,6 +9,7 @@
     android:background="@color/ghost_white"
     tools:context=".fragment.FragmentWorld" >
     <TextView
+        android:id="@+id/world"
         style="@style/RachelText.X"
         android:layout_margin="20dp"
         android:gravity="center"

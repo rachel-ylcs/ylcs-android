@@ -4,10 +4,7 @@ import android.content.Context
 import android.provider.Settings
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.yinlin.rachel.R
 import com.yinlin.rachel.backgroundColor
 import com.yinlin.rachel.data.music.LrcData
@@ -28,8 +25,20 @@ class FloatingLyricsView @JvmOverloads constructor(context: Context, attrs: Attr
 
     var showState: Boolean = false
 
-    init {
-        layoutParams = ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+    fun updateSettings(settings: LyricsSettings): FloatingLyricsView {
+        v.surface.apply {
+            textSizePx = settings.textSize * context.resources.getDimensionPixelSize(R.dimen.sm)
+            textColor = settings.textColor
+            backgroundColor = settings.backgroundColor
+        }
+        setOffsetY(settings.offsetY)
+        v.guideline1.setGuidelinePercent(settings.offsetLeft)
+        v.guideline2.setGuidelinePercent(settings.offsetRight)
+        return this
+    }
+
+    private fun setOffsetY(value: Float) {
+        setPadding(0, (value * 150).toInt(), 0, 0)
     }
 
     fun load(data: LrcData?) {
@@ -81,21 +90,5 @@ class FloatingLyricsView @JvmOverloads constructor(context: Context, attrs: Attr
             val nextItem = items[currentIndex + 1]
             return if (currentItem.position <= position && nextItem.position > position) currentIndex else searchIndex(items, position)
         }
-    }
-
-    fun updateSettings(settings: LyricsSettings): FloatingLyricsView {
-        v.surface.apply {
-            textSizePx = settings.textSize * context.resources.getDimensionPixelSize(R.dimen.sm)
-            textColor = settings.textColor
-            backgroundColor = settings.backgroundColor
-        }
-        setOffsetY(settings.offsetY)
-        v.guideline1.setGuidelinePercent(settings.offsetLeft)
-        v.guideline2.setGuidelinePercent(settings.offsetRight)
-        return this
-    }
-
-    private fun setOffsetY(value: Float) {
-        v.root.setPadding(0, (value * 150).toInt(), 0, 0)
     }
 }

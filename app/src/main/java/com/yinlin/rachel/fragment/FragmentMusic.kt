@@ -143,15 +143,11 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         isPlayerInit = false
     }
 
-    override fun start() {
-        // 加载曲库
+    // 加载曲库
+    private fun prepareLibrary() {
         lifecycleScope.launch {
-            val loading = main.loading
             withContext(Dispatchers.IO) {
-                val files = pathMusic.listFiles { file ->
-                    file.isFile && file.name.lowercase().endsWith(MusicRes.INFO_NAME)
-                }
-                files?.let {
+                pathMusic.listFiles { file -> file.isFile && file.name.lowercase().endsWith(MusicRes.INFO_NAME) }?.let {
                     for (file in it) {
                         try {
                             val info: MusicInfo = file.readJson()
@@ -161,7 +157,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                     }
                 }
             }
-            loading.dismiss()
+            // 恢复上次播放
+            resumePlayer()
         }
     }
 
@@ -190,15 +187,11 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     private fun preparePlayer(controller: RachelPlayer) {
         player = controller
         isPlayerInit = true
-        player.addListener(this)
-        updatePlayMode(Config.music_play_mode)
 
         // 更新播放进度回调
         onTimeUpdate = object : Runnable {
             override fun run() {
-                val position = player.currentPosition
-                v.progress.updateProgress(position, false) // 更新进度条
-                v.lyrics.update(position) // 更新歌词
+                updateProgress(player.currentPosition)
                 postDelay(UPDATE_FREQUENCY, this) // 更新消息
             }
         }
@@ -248,6 +241,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 }
             }
         } }
+
         v.toolContainer.listener = { pos -> when (pos) {
             GROUP_TOOL_AN -> currentMusic?.let {
                 if (it.bgd) {
@@ -276,13 +270,28 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             }
             GROUP_TOOL_COMMENT -> tip(Tip.INFO, "即将开放, 敬请期待新版本!")
         } }
+
+        // 播放监听
+        player.addListener(this)
+        // 播放模式
+        updatePlayMode(Config.music_play_mode)
+        // 加载曲库
+        prepareLibrary()
     }
 
-    override fun update() {
+    override fun start() {
         if (isPlayerInit) {
             // 进入前台时需要更新
             updateForeground()
             // 进入前台如果播放器是播放状态则启动更新回调
+            if (player.isPlaying) startTimeUpdate()
+            else updateProgress(0, true)
+        }
+    }
+
+    override fun update() {
+        if (isPlayerInit) {
+            updateForeground()
             if (player.isPlaying) startTimeUpdate()
         }
     }
@@ -507,6 +516,10 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 prepareFlowLyrics(it)
             }
 
+            // 更新上次播放记录
+            Config.music_last_playlist = currentPlaylist?.name ?: ""
+            Config.music_last_music = musicInfo?.id ?: ""
+
             // 处于前台时更新前台信息
             if (isForeground) updateForeground()
         }
@@ -592,6 +605,31 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             .build()
     }
 
+    // 恢复上次播放
+    private fun resumePlayer() {
+        val playlistName = Config.music_last_playlist
+        val musicId = Config.music_last_music
+        if (playlistName.isNotEmpty()) {
+            playlists[playlistName]?.let { playlist ->
+                loadMusics.clear()
+                val mediaItems = mutableListOf<MediaItem>()
+                for (id in playlist.items) {
+                    musicInfos[id]?.let {
+                        loadMusics += id
+                        mediaItems += buildMusicItem(it)
+                    }
+                }
+                currentPlaylist = playlist // 设置当前播放歌单
+                // 暂停 Player
+                val musicIndex = loadMusics.indexOf(musicId)
+                if (musicIndex == -1) player.setMediaItems(mediaItems, false)
+                else player.setMediaItems(mediaItems, musicIndex, 0L)
+                player.prepare()
+                player.pause()
+            }
+        }
+    }
+
     // 播放歌单
     private fun startPlayer(playlist: Playlist) {
         loadMusics.clear() // 清空已装载音乐信息
@@ -619,6 +657,12 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         }
     }
 
+    // 更新进度
+    private fun updateProgress(position: Long, immediately: Boolean = false) {
+        v.progress.updateProgress(position, immediately) // 更新进度条
+        v.lyrics.update(position) // 更新歌词
+    }
+
     // 更新前台
     private fun updateForeground() {
         // 更新背景
@@ -634,10 +678,10 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.icon_an_off)
             v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.icon_mv_off)
             // 更新已播放进度与进度条
-            v.progress.updateProgress(0L, true)
+            updateProgress(0L, true)
         }
         else {
-            v.progress.updateProgress(player.currentPosition, true)
+            updateProgress(player.currentPosition, true)
             if (info != savedMusic) { // 只有与之前音乐不同才更新
                 savedMusic = info
                 // 更新歌曲信息
@@ -648,7 +692,6 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 v.bg.load(if (info.bgd) info.bgdPath else info.bgsPath)
                 v.toolContainer.setItemImage(GROUP_TOOL_AN, if (info.bgd) R.drawable.icon_an_on else R.drawable.icon_an_off)
                 v.toolContainer.setItemImage(GROUP_TOOL_MV, if (info.video) R.drawable.icon_mv_on else R.drawable.icon_mv_off)
-                // 已播放进度和进度条由onTimeUpdate更新, 不用在此更新
             }
         }
     }

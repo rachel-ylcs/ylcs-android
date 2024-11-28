@@ -19,7 +19,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.reflect.Field
 import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -148,10 +147,10 @@ fun File.deleteFilter(delName: String) {
 
 val File.fileSizeString: String get() = try {
     val fileSize = this.length()
-    if (fileSize < 1024) "$fileSize B"
-    else if (fileSize < 1024 * 1024) "${fileSize / 1024} KB"
-    else if (fileSize < 1024 * 1024 * 1024) "${fileSize / (1024 * 1024)} MB"
-    else "${fileSize / (1024 * 1024 * 1024)} GB"
+    if (fileSize < 1024) "${fileSize}B"
+    else if (fileSize < 1024 * 1024) "${fileSize / 1024}KB"
+    else if (fileSize < 1024 * 1024 * 1024) "${fileSize / (1024 * 1024)}MB"
+    else "${fileSize / (1024 * 1024 * 1024)}GB"
 }
 catch (_: Exception) { "0 B" }
 
@@ -185,19 +184,6 @@ val currentDateInteger: Int get() = try {
     formattedDate.toInt()
 }
 catch (_: Exception) { System.currentTimeMillis().toInt() }
-
-val String.md5: String get() = try {
-    val md = MessageDigest.getInstance("MD5")
-    md.update(this.toByteArray(StandardCharsets.UTF_8))
-    val hexString = StringBuilder()
-    for (b in md.digest()) {
-        val hex = Integer.toHexString(0xff and b.toInt())
-        if (hex.length == 1) hexString.append('0')
-        hexString.append(hex)
-    }
-    hexString.toString()
-}
-catch (_: Exception) { "" }
 
 fun Int.attachAlpha(alpha: Int) = Color.argb(alpha, Color.red(this), Color.green(this), Color.blue(this))
 

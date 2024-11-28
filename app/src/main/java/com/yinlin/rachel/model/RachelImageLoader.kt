@@ -37,7 +37,7 @@ object RachelImageLoader {
     }
 
     fun ImageView.load(file: File) {
-        Glide.with(this).load(file).apply(fileOptions).into(this)
+        Glide.with(this).load(file).apply(fileOptions).signature(ObjectKey(file.lastModified())).into(this)
     }
 
     fun ImageView.load(path: String) {

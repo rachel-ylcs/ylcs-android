@@ -72,6 +72,8 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
     private fun downloadMusic(music: CloudMusic) {
         lifecycleScope.launch {
             val loading = main.loading
+            // 先停止播放器
+            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
             // 生成 Info
             val musicId = "NEC${music.id}"
             val info = MusicInfo("1.0", "网易云音乐", musicId, music.name, music.singer,
@@ -85,13 +87,13 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
                 // 歌词
                 info.defaultLrcPath.writeText(music.lyrics)
                 // 封面
-                Net.download(music.pic, listener = object : SilentDownloadListener() {
+                Net.download(music.pic, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
                     override suspend fun onPrepare(url: String): OutputStream {
                         return FileOutputStream(info.recordPath)
                     }
                 })
                 // 音频
-                Net.download(music.mp3Url, listener = object : SilentDownloadListener() {
+                Net.download(music.mp3Url, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
                     override suspend fun onPrepare(url: String): OutputStream {
                         return FileOutputStream(info.audioPath)
                     }

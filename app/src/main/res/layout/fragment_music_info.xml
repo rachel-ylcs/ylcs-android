@@ -39,7 +39,7 @@
                 app:cardCornerRadius="20dp"
                 app:cardElevation="5dp" >
                 <ImageView
-                    android:id="@+id/pic"
+                    android:id="@+id/record"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </com.google.android.material.card.MaterialCardView>
@@ -65,7 +65,9 @@
                 android:text="未知歌曲"
                 android:textColor="@color/salmon"
                 android:textSize="@dimen/lg"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/icon_edit_black"
+                android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/id"
                 style="@style/RachelText.MultiLine.X0"
@@ -104,7 +106,9 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:text="演唱: 未知"
-                android:textColor="@color/gray" />
+                android:textColor="@color/gray"
+                app:drawableStartCompat="@drawable/icon_edit_black"
+                android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/lyricist"
                 style="@style/RachelText.MultiLine.X0"
@@ -113,7 +117,9 @@
                 app:layout_constraintTop_toBottomOf="@id/singer"
                 android:layout_marginTop="10dp"
                 android:text="作词: 未知"
-                android:textColor="@color/gray" />
+                android:textColor="@color/gray"
+                app:drawableStartCompat="@drawable/icon_edit_black"
+                android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/composer"
                 style="@style/RachelText.MultiLine.X0"
@@ -122,7 +128,9 @@
                 app:layout_constraintTop_toBottomOf="@id/lyricist"
                 android:layout_marginTop="10dp"
                 android:text="作曲: 未知"
-                android:textColor="@color/gray" />
+                android:textColor="@color/gray"
+                app:drawableStartCompat="@drawable/icon_edit_black"
+                android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/album"
                 style="@style/RachelText.MultiLine.X0"
@@ -132,7 +140,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginVertical="10dp"
                 android:text="专辑分类: 未知"
-                android:textColor="@color/gray" />
+                android:textColor="@color/gray"
+                app:drawableStartCompat="@drawable/icon_edit_black"
+                android:drawablePadding="5dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.yinlin.rachel.view.LoadingTextView
             android:id="@+id/loading_lyrics"
@@ -174,6 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
+                android:layout_marginBottom="5dp"
                 app:ButtonGroupIcon1="@drawable/icon_play_blue"
                 app:ButtonGroupIcon2="@drawable/icon_add_blue"
                 app:ButtonGroupIcon3="@drawable/icon_package_blue" />

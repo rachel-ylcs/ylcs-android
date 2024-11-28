@@ -9,12 +9,9 @@ import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentLoginBinding
-import com.yinlin.rachel.md5
-import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,7 +70,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
             lifecycleScope.launch {
                 val loading = main.loading
-                val result1 = withContext(Dispatchers.IO) { API.UserAPI.login(name, pwd.md5) }
+                val result1 = withContext(Dispatchers.IO) { API.UserAPI.login(name, pwd) }
                 if (result1.success) {
                     val token = result1.data.token
                     Config.token = token
@@ -102,7 +99,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
             if (pwd == confirmPwd) {
                 lifecycleScope.launch {
                     val loading = main.loading
-                    val result = withContext(Dispatchers.IO) { API.UserAPI.register(name, pwd.md5, inviterName) }
+                    val result = withContext(Dispatchers.IO) { API.UserAPI.register(name, pwd, inviterName) }
                     loading.dismiss()
                     if (result.success) {
                         tip(Tip.SUCCESS, result.msg)
@@ -123,7 +120,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
             lifecycleScope.launch {
                 val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.forgotPassword(name, pwd.md5) }
+                val result = withContext(Dispatchers.IO) { API.UserAPI.forgotPassword(name, pwd) }
                 loading.dismiss()
                 if (result.success) {
                     tip(Tip.SUCCESS, result.msg)
