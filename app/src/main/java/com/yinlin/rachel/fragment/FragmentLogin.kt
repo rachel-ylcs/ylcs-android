@@ -1,17 +1,18 @@
 package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentLoginBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.rachelClick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,7 +36,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         v.buttonForgotPassword.rachelClick { forgotPassword() }
     }
 
-    override fun back(): Boolean = true
+    override fun back() = BackState.POP
 
     private fun showLogin() {
         v.loginName.text = ""

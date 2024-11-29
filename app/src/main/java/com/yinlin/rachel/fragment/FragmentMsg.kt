@@ -1,9 +1,11 @@
 package com.yinlin.rachel.fragment
 
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentMsgBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelViewPage
+import com.yinlin.rachel.model.RachelViewPage.Adapter.Companion.back
 import com.yinlin.rachel.page.PageChaohua
 import com.yinlin.rachel.page.PagePhoto
 import com.yinlin.rachel.page.PageWeibo
@@ -19,5 +21,5 @@ class FragmentMsg(main: MainActivity) : RachelFragment<FragmentMsgBinding>(main)
         ))
     }
 
-    override fun back(): Boolean = (v.viewpager.adapter as RachelViewPage.Adapter).back(v.viewpager.currentItem)
+    override fun back() = v.viewpager.back()
 }

@@ -7,10 +7,10 @@ import android.view.TextureView
 import android.widget.FrameLayout
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.data.music.MusicInfo
-import com.yinlin.rachel.div
+import com.yinlin.rachel.tool.div
 import com.yinlin.rachel.model.engine.LyricsEngine
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
-import com.yinlin.rachel.pathMusic
+import com.yinlin.rachel.tool.pathMusic
 
 class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : FrameLayout(context, attrs, defStyleAttr), TextureView.SurfaceTextureListener {

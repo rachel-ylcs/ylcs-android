@@ -5,14 +5,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.luck.picture.lib.photoview.PhotoView
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.common.SimpleImageDownloadListener
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentImagePreviewBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadBlack
 import com.yinlin.rachel.model.RachelPreview
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.rachelClick
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.RotateYTransformer
@@ -55,7 +56,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
         v.downloadAll.rachelClick { downloadPictures(pics.filter { it.isImage }.map { it.mSourceUrl }) }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     // What Fuck Bug? When Can It Be Fixed?
     private fun setFuckIndex(index: Int) = index + 1

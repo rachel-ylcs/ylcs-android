@@ -3,7 +3,7 @@ package com.yinlin.rachel.api
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.data.Login
 import com.yinlin.rachel.data.SendComment
 import com.yinlin.rachel.data.SendTopic
@@ -19,8 +19,8 @@ import com.yinlin.rachel.data.topic.TopicPreviewList
 import com.yinlin.rachel.data.user.MailList
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.data.user.UserProfile
-import com.yinlin.rachel.gson
-import com.yinlin.rachel.jsonMap
+import com.yinlin.rachel.tool.gson
+import com.yinlin.rachel.tool.jsonMap
 import java.lang.reflect.Type
 
 

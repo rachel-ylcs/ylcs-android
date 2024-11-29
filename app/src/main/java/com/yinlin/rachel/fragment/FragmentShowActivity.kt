@@ -1,14 +1,15 @@
 package com.yinlin.rachel.fragment
 
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.activity.ShowActivity
 import com.yinlin.rachel.databinding.FragmentShowActivityBinding
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.rachelClick
 
 class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) : RachelFragment<FragmentShowActivityBinding>(main) {
     private val showstartUrl: String? = show.showstart
@@ -41,5 +42,5 @@ class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) :
         v.pics.listener = { pos, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, pos)) }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 }

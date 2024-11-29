@@ -3,12 +3,13 @@ package com.yinlin.rachel.fragment
 import android.text.InputType
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
-import com.yinlin.rachel.compareLatestTime
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.compareLatestTime
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.topic.Comment
 import com.yinlin.rachel.data.topic.Topic
@@ -23,8 +24,8 @@ import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelPopMenu
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -176,12 +177,12 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    override fun back(): Boolean {
+    override fun back(): BackState {
         if (v.commentCard.visible) {
             closeCommentCard()
-            return false
+            return BackState.CANCEL
         }
-        return true
+        return BackState.POP
     }
 
     private fun openCommentCard() {

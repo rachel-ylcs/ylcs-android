@@ -2,23 +2,24 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import com.haibin.calendarview.Calendar
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.activity.ShowActivity
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentMeBinding
-import com.yinlin.rachel.date
+import com.yinlin.rachel.tool.date
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
-import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetUserCard
 import com.yinlin.rachel.view.ActivityCalendarView
 import kotlinx.coroutines.Dispatchers
@@ -133,6 +134,8 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     override fun update() {
         updateUserInfo(Config.user)
     }
+
+    override fun back() = BackState.HOME
 
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {

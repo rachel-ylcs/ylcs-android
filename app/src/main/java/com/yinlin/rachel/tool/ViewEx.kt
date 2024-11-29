@@ -1,4 +1,4 @@
-package com.yinlin.rachel
+package com.yinlin.rachel.tool
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -16,16 +16,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.RawRes
-import com.bumptech.glide.signature.ObjectKey
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import com.haibin.calendarview.Calendar
-import com.yinlin.rachel.Tip.*
-import com.yinlin.rachel.model.RachelImageLoader
+import com.yinlin.rachel.R
+import com.yinlin.rachel.tool.Tip.*
 import com.yinlin.rachel.model.RachelOnClickListener
-import java.io.File
 
 
 /*---------    Pixel Transform    --------*/
@@ -117,6 +114,10 @@ val Paint.baseLine: Float get() = -(this.fontMetrics.descent + this.fontMetrics.
 var ImageView.pureColor: Int
     get() = (drawable as? ColorDrawable)?.color ?: Color.TRANSPARENT
     set(value) { setImageDrawable(if (value == Color.TRANSPARENT) null else ColorDrawable(value)) }
+
+/*---------    RecyclerView    --------*/
+
+val RecyclerView.isTop: Boolean get() = !this.canScrollVertically(-1)
 
 /*---------    Calendar    --------*/
 

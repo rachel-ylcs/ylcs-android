@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
-import com.yinlin.rachel.attachAlpha
-import com.yinlin.rachel.backgroundColor
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.attachAlpha
+import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.MusicInfo
@@ -20,7 +21,7 @@ import com.yinlin.rachel.data.music.MusicRes
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.databinding.FragmentMusicInfoBinding
 import com.yinlin.rachel.databinding.ItemMusicResBinding
-import com.yinlin.rachel.fileSizeString
+import com.yinlin.rachel.tool.fileSizeString
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
@@ -28,10 +29,10 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.pathMusic
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.readText
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.readText
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -181,7 +182,7 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
         }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     private fun editRes(pos: Int, res: MusicRes) = when (res.id) {
         MusicRes.Type.RECORD -> {

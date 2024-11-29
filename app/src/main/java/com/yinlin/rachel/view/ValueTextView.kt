@@ -6,9 +6,9 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import com.yinlin.rachel.R
-import com.yinlin.rachel.baseLine
+import com.yinlin.rachel.tool.baseLine
 import com.yinlin.rachel.model.RachelAttr
-import com.yinlin.rachel.textHeight
+import com.yinlin.rachel.tool.textHeight
 
 class ValueTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : View(context, attrs, defStyleAttr) {

@@ -17,14 +17,13 @@ import com.luck.picture.lib.config.SelectModeConfig
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
-import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelPictureSelector.RachelImageEngine
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.tip
+import com.yinlin.rachel.tool.rachelClick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,7 +70,7 @@ class FragmentScanQRCode(main: MainActivity)
         cameraScan.release()
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     override fun onScanResultCallback(result: AnalyzeResult<Result>) = processQRCode(result.result.text)
 

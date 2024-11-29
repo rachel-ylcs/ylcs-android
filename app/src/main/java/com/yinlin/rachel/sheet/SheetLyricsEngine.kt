@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.databinding.ItemLyricsEngineBinding
 import com.yinlin.rachel.databinding.SheetLyricsEngineBinding
 import com.yinlin.rachel.fragment.FragmentMusic
-import com.yinlin.rachel.interceptScroll
+import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelSheet

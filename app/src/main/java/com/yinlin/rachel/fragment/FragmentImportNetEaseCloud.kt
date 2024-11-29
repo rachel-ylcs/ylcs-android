@@ -2,12 +2,13 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.NetEaseCloudAPI
 import com.yinlin.rachel.common.SilentDownloadListener
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.MusicInfo
@@ -16,9 +17,8 @@ import com.yinlin.rachel.databinding.FragmentImportNeteaseCloudBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.writeRes
-import com.yinlin.rachel.writeText
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.writeRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +39,7 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
         requestMusic(text, isShareUrl)
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     @NewThread
     private fun requestMusic(text: String, isShareUrl: Boolean) {

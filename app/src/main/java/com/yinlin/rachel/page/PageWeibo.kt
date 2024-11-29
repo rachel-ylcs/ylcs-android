@@ -1,13 +1,15 @@
 package com.yinlin.rachel.page
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.databinding.PageWeiboBinding
 import com.yinlin.rachel.fragment.FragmentMsg
 import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.common.WeiboAdapter
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.isTop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,9 +39,12 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
         requestNewData()
     }
 
-    override fun back(): Boolean {
-        v.list.smoothScrollToPosition(0)
-        return false
+    override fun back(): BackState {
+        if (v.list.isTop) return BackState.HOME
+        else {
+            v.list.smoothScrollToPosition(0)
+            return BackState.CANCEL
+        }
     }
 
     @NewThread

@@ -10,7 +10,7 @@ import com.yinlin.rachel.fragment.FragmentWeibo
 import com.yinlin.rachel.fragment.FragmentWeiboUser
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.rachelClick
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
 class WeiboAdapter(private val main: MainActivity) : RachelAdapter<ItemWeiboBinding, Weibo>() {

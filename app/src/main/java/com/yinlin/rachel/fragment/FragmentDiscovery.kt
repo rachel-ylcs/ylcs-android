@@ -2,11 +2,12 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.topic.TopicPreview
 import com.yinlin.rachel.databinding.FragmentDiscoveryBinding
@@ -15,8 +16,9 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelImageLoader.loadLoading
-import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.isTop
+import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.view.NavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,9 +108,12 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
         requestNewData()
     }
 
-    override fun back(): Boolean {
-        v.list.smoothScrollToPosition(0)
-        return false
+    override fun back(): BackState {
+        if (v.list.isTop) return BackState.HOME
+        else {
+            v.list.smoothScrollToPosition(0)
+            return BackState.CANCEL
+        }
     }
 
     override fun message(msg: RachelMessage, vararg args: Any?) {

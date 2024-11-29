@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textColor
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textColor
 import kotlin.math.max
 
 class TagView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)

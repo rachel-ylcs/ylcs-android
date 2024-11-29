@@ -1,10 +1,10 @@
 package com.yinlin.rachel.api
 
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.data.neteasecloud.CloudMusic
 import com.yinlin.rachel.data.neteasecloud.CloudMusicPreview
 import com.yinlin.rachel.data.neteasecloud.CloudMusicPreviewList
-import com.yinlin.rachel.timeString
+import com.yinlin.rachel.tool.timeString
 import java.net.URLEncoder
 
 

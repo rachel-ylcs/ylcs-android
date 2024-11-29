@@ -6,12 +6,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.yinlin.rachel.R
-import com.yinlin.rachel.backgroundColor
+import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.LyricsSettings
 import com.yinlin.rachel.databinding.FloatingLyricsBinding
-import com.yinlin.rachel.textColor
-import com.yinlin.rachel.textSizePx
+import com.yinlin.rachel.tool.textColor
+import com.yinlin.rachel.tool.textSizePx
 
 class FloatingLyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : FrameLayout(context, attrs, defStyleAttr) {

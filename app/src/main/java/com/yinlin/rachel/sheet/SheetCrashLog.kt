@@ -3,7 +3,7 @@ package com.yinlin.rachel.sheet
 import com.yinlin.rachel.RachelApplication
 import com.yinlin.rachel.databinding.SheetCrashLogBinding
 import com.yinlin.rachel.fragment.FragmentSettings
-import com.yinlin.rachel.interceptScroll
+import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelSheet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

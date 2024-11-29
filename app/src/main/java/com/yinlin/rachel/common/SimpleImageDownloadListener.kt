@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.model.RachelFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

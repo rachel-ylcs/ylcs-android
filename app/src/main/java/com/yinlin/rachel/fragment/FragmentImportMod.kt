@@ -8,13 +8,14 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.NewThread
-import com.yinlin.rachel.backgroundColor
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.databinding.FragmentImportModBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.pathMusic
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.rachelClick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,7 +85,7 @@ class FragmentImportMod(main: MainActivity, private val uri: Uri) : RachelFragme
         }
     }
 
-    override fun back() = canCancel
+    override fun back() = if (canCancel) BackState.POP else BackState.HOME
 
     private fun setButtonStatus(text: String, @ColorRes color: Int) {
         v.buttonOk.apply {

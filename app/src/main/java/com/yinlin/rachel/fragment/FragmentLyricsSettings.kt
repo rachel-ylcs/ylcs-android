@@ -4,25 +4,24 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.view.KeyEvent
-import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.attachAlpha
-import com.yinlin.rachel.backgroundColor
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.databinding.FragmentLyricsSettingsBinding
-import com.yinlin.rachel.detachAlpha
-import com.yinlin.rachel.getAlpha
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textColor
-import com.yinlin.rachel.textSizePx
+import com.yinlin.rachel.tool.attachAlpha
+import com.yinlin.rachel.tool.detachAlpha
+import com.yinlin.rachel.tool.getAlpha
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textColor
+import com.yinlin.rachel.tool.textSizePx
 
 class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyricsSettingsBinding>(main) {
     private lateinit var registerFloatingPermission: ActivityResultLauncher<Intent>
@@ -135,7 +134,7 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
         }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     private fun updateFloatingIconStatus() {
         v.ivFloating.load(if (canShow) R.drawable.icon_yes else R.drawable.icon_no)

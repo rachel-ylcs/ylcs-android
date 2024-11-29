@@ -2,7 +2,7 @@ package com.yinlin.rachel.data.music
 
 import androidx.annotation.ColorRes
 import com.yinlin.rachel.R
-import com.yinlin.rachel.fileSizeString
+import com.yinlin.rachel.tool.fileSizeString
 import java.io.File
 
 data class MusicRes(

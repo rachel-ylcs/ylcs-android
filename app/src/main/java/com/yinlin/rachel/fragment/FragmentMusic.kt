@@ -15,12 +15,13 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.activity.VideoActivity
-import com.yinlin.rachel.clearAddAll
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.clearAddAll
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LoadMusicPreview
 import com.yinlin.rachel.data.music.LoadMusicPreviewList
@@ -33,8 +34,6 @@ import com.yinlin.rachel.data.music.MusicPlayMode
 import com.yinlin.rachel.data.music.MusicRes
 import com.yinlin.rachel.data.music.Playlist
 import com.yinlin.rachel.databinding.FragmentMusicBinding
-import com.yinlin.rachel.deleteFilter
-import com.yinlin.rachel.div
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
@@ -42,14 +41,16 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.model.RachelTimer
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
-import com.yinlin.rachel.pathMusic
-import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.readJson
-import com.yinlin.rachel.readText
+import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.sheet.SheetCurrentPlaylist
 import com.yinlin.rachel.sheet.SheetLyricsEngine
 import com.yinlin.rachel.sheet.SheetLyricsInfo
 import com.yinlin.rachel.sheet.SheetSleepMode
+import com.yinlin.rachel.tool.deleteFilter
+import com.yinlin.rachel.tool.div
+import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.readJson
+import com.yinlin.rachel.tool.readText
 import com.yinlin.rachel.view.FloatingLyricsView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -301,6 +302,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         if (isPlayerInit && player.isPlaying) endTimeUpdate()
     }
 
+    override fun back() = BackState.HOME
+
     @Suppress("UNCHECKED_CAST")
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {
@@ -543,6 +546,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             savedMusic = null
             // 停止歌词引擎
             v.lyrics.releaseEngine()
+            floatingLyrics.clear()
         }
     }
 
@@ -653,6 +657,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         if (isLoadMusic) {
             // 清理已装载音乐信息
             player.clearMediaItems()
+            player.stop()
             loadMusics.clear()
         }
     }

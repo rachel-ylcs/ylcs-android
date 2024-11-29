@@ -1,10 +1,10 @@
 package com.yinlin.rachel.data.music
 
-import com.yinlin.rachel.div
 import com.yinlin.rachel.model.engine.LineLyricsEngine
-import com.yinlin.rachel.parseJsonObject
-import com.yinlin.rachel.pathMusic
-import com.yinlin.rachel.writeJson
+import com.yinlin.rachel.tool.div
+import com.yinlin.rachel.tool.parseJsonObject
+import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.writeJson
 
 data class MusicInfo (
     val version: String, // 版本号

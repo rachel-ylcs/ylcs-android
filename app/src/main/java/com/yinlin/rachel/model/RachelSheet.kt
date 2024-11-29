@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 
 abstract class RachelSheet<Binding : ViewBinding, F : RachelFragment<*>>(
     protected val fragment: F,

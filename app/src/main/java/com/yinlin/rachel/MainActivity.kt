@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.databinding.ActivityMainBinding
 import com.yinlin.rachel.fragment.FragmentImportMod
@@ -28,6 +29,11 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.service.MusicService
+import com.yinlin.rachel.tool.Config
+import com.yinlin.rachel.tool.Tip
+import com.yinlin.rachel.tool.currentDateInteger
+import com.yinlin.rachel.tool.tip
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,6 +61,9 @@ class MainActivity : RachelActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        handler = Handler(mainLooper)
+
         createPages()
     }
 
@@ -118,7 +127,11 @@ class MainActivity : RachelActivity() {
 
     @SuppressLint("MissingSuperCall") @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (currentFragment.back()) pop()
+        when (currentFragment.back()) {
+            BackState.HOME -> moveTaskToBack(false)
+            BackState.POP -> pop()
+            else -> { }
+        }
     }
 
     private val isMain: Boolean get() = fragmentStack.isEmpty()
@@ -129,8 +142,6 @@ class MainActivity : RachelActivity() {
     }
 
     private fun createPages() {
-        handler = Handler(mainLooper)
-
         // 初始化页面
         val transaction = manager.beginTransaction()
 
@@ -160,7 +171,11 @@ class MainActivity : RachelActivity() {
 
     fun navigate(des: RachelFragment<*>) {
         fragmentStack += des
-        val transaction = manager.beginTransaction().hide(currentFragment).add(R.id.frame, des).addToBackStack(null)
+        val transaction = manager.beginTransaction()
+            .setCustomAnimations(R.anim.anim_fade_in, R.anim.anim_fade_out, R.anim.anim_fade_in, R.anim.anim_fade_out)
+            .hide(currentFragment)
+            .add(R.id.frame, des)
+            .addToBackStack(null)
         currentFragment = des
         transaction.commit()
     }
@@ -246,7 +261,7 @@ class MainActivity : RachelActivity() {
 
     private fun processSendText(title: String, text: String) {
         when (title) {
-            "网易云音乐" -> navigate(FragmentImportNetEaseCloud(this@MainActivity, text, true))
+            "网易云音乐" -> navigate(FragmentImportNetEaseCloud(this, text, true))
         }
     }
 

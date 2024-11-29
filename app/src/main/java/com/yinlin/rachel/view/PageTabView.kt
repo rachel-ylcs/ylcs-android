@@ -12,8 +12,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.model.RachelViewPage
-import com.yinlin.rachel.selectorColor
-import com.yinlin.rachel.textSizePx
+import com.yinlin.rachel.tool.selectorColor
+import com.yinlin.rachel.tool.textSizePx
 
 class PageTabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : TabLayout(context, attrs, defStyleAttr) {

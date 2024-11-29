@@ -7,11 +7,17 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import androidx.viewpager2.widget.ViewPager2
+import com.yinlin.rachel.data.BackState
 
 abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val fragment: F) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     class Adapter(private val pages: Array<RachelViewPage<*, *>>) : RecyclerView.Adapter<ViewHolder>() {
+        companion object {
+            fun ViewPager2.back(): BackState = (this.adapter as Adapter).pages[this.currentItem].back()
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val page = pages[viewType]
             val cls = page.bindingClass()
@@ -25,8 +31,6 @@ abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val 
         override fun getItemViewType(position: Int) = position
         override fun getItemCount(): Int = pages.size
         override fun onBindViewHolder(holder: ViewHolder, position: Int) { }
-
-        fun back(position: Int): Boolean = pages[position].back()
     }
 
     private var _binding: ViewBinding? = null
@@ -36,7 +40,7 @@ abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val 
     protected abstract fun bindingClass(): Class<Binding>
 
     protected open fun init() { }
-    open fun back(): Boolean = false
+    open fun back(): BackState = BackState.CANCEL
 
     val lifecycleScope: LifecycleCoroutineScope get() = fragment.lifecycleScope
 }

@@ -7,6 +7,8 @@ import com.yinlin.rachel.databinding.PageChaohuaBinding
 import com.yinlin.rachel.fragment.FragmentMsg
 import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.common.WeiboAdapter
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.isTop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,9 +41,12 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
         requestNewData()
     }
 
-    override fun back(): Boolean {
-        v.list.smoothScrollToPosition(0)
-        return false
+    override fun back(): BackState {
+        if (v.list.isTop) return BackState.HOME
+        else {
+            v.list.smoothScrollToPosition(0)
+            return BackState.CANCEL
+        }
     }
 
     @NewThread

@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.viewbinding.ViewBinding
-import com.yinlin.rachel.clearAddAll
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.clearAddAll
+import com.yinlin.rachel.tool.rachelClick
 import java.util.Collections
 
 @Suppress("UNCHECKED_CAST")

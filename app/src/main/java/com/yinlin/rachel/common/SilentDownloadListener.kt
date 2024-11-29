@@ -1,6 +1,6 @@
 package com.yinlin.rachel.common
 
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 
 abstract class SilentDownloadListener : Net.DownLoadListener {
     override suspend fun onStart() { }

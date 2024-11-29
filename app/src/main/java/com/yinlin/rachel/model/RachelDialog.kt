@@ -21,8 +21,8 @@ import com.yinlin.rachel.databinding.DialogInputBinding
 import com.yinlin.rachel.databinding.DialogLoadingBinding
 import com.yinlin.rachel.databinding.DialogProgressBinding
 import com.yinlin.rachel.model.RachelImageLoader.load
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.toDP
 import com.yinlin.rachel.view.InputView
 
 abstract class RachelDialog<T : ViewBinding> (

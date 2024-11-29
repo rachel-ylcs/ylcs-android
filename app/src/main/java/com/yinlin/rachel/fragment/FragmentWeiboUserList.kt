@@ -2,12 +2,12 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.WeiboAPI
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
 import com.yinlin.rachel.databinding.FragmentWeiboUserListBinding
 import com.yinlin.rachel.databinding.ItemWeiboUserBinding
@@ -15,8 +15,8 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,7 +77,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         loadWeiboUserStorage()
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     @NewThread
     private fun loadWeiboUserStorage() {

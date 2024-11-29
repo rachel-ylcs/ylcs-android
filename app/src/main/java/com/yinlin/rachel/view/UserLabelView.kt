@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.yinlin.rachel.R
-import com.yinlin.rachel.baseLine
-import com.yinlin.rachel.textHeight
+import com.yinlin.rachel.tool.baseLine
+import com.yinlin.rachel.tool.textHeight
 
 class UserLabelView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : AppCompatImageView(context, attrs, defStyleAttr) {

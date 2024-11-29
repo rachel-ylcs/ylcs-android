@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.WeiboAPI
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboComment
 import com.yinlin.rachel.databinding.FragmentWeiboBinding
@@ -18,10 +19,10 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.toDP
 import com.yinlin.rachel.view.LoadingTextView
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -140,5 +141,5 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
         }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 }

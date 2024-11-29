@@ -2,12 +2,13 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.topic.TopicPreview
 import com.yinlin.rachel.databinding.FragmentProfileBinding
 import com.yinlin.rachel.databinding.HeaderProfileBinding
@@ -17,8 +18,8 @@ import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelImageLoader.loadLoading
-import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -97,7 +98,7 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
         }
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {

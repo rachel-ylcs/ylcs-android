@@ -2,7 +2,7 @@ package com.yinlin.rachel.api
 
 import android.net.Uri
 import com.google.gson.JsonObject
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboAlbum
 import com.yinlin.rachel.data.weibo.WeiboAlbumList

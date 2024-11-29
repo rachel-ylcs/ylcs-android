@@ -2,17 +2,17 @@ package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LyricsInfo
 import com.yinlin.rachel.databinding.ItemLyricsInfoBinding
 import com.yinlin.rachel.databinding.SheetLyricsInfoBinding
 import com.yinlin.rachel.fragment.FragmentMusic
-import com.yinlin.rachel.interceptScroll
+import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.textColor
+import com.yinlin.rachel.tool.textColor
 
 class SheetLyricsInfo(fragment: FragmentMusic, private val infos: List<LyricsInfo>)
     : RachelSheet<SheetLyricsInfoBinding, FragmentMusic>(fragment, 0.6f) {

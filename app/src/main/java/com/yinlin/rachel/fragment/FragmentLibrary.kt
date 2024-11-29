@@ -3,8 +3,9 @@ package com.yinlin.rachel.fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
-import com.yinlin.rachel.backgroundColor
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.Tip
+import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.data.music.MusicInfoPreview
@@ -17,7 +18,7 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.visible
 
 
 class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicInfoPreviewList)
@@ -127,12 +128,12 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
         else v.state.showContent()
     }
 
-    override fun back(): Boolean {
+    override fun back(): BackState {
         if (adapter.isManageMode) {
             adapter.isManageMode = false
-            return false
+            return BackState.CANCEL
         }
-        return true
+        return BackState.POP
     }
 
     override fun message(msg: RachelMessage, vararg args: Any?) {

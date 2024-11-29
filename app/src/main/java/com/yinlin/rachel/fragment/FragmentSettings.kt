@@ -3,12 +3,13 @@ package com.yinlin.rachel.fragment
 
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.user.User
 import com.yinlin.rachel.databinding.FragmentSettingsBinding
@@ -17,8 +18,8 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.pureColor
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetCrashLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -129,7 +130,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         updateInfo()
     }
 
-    override fun back(): Boolean = true
+    override fun back() = BackState.POP
 
     private fun updateInfo() {
         val user = Config.user

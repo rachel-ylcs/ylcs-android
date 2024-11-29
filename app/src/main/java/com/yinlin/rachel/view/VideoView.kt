@@ -6,12 +6,12 @@ import android.util.AttributeSet
 import com.shuyu.gsyvideoplayer.cache.CacheFactory
 import com.shuyu.gsyvideoplayer.cache.ProxyCacheManager
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.visible
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 
 
 class VideoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null)
@@ -19,14 +19,12 @@ class VideoView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     companion object {
         init {
-            PlayerFactory.setPlayManager(IjkPlayerManager::class.java)
+            PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
             CacheFactory.setCacheManager(ProxyCacheManager::class.java)
             GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_DEFAULT)
             GSYVideoType.setRenderType(GSYVideoType.GLSURFACE)
             GSYVideoType.enableMediaCodec()
             GSYVideoType.enableMediaCodecTexture()
-            GSYVideoType.isMediaCodec()
-            GSYVideoType.isMediaCodecTexture()
         }
     }
 
@@ -52,10 +50,6 @@ class VideoView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 super.onPrepared(url, *objects)
                 if (!isVerticalVideo) mOrientationUtils.resolveByClick()
                 mOrientationUtils.isEnable = false
-            }
-            override fun onPlayError(url: String?, vararg objects: Any?) {
-                super.onPlayError(url, *objects)
-                println(objects[2] as Int)
             }
         })
     }

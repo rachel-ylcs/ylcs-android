@@ -3,7 +3,7 @@ package com.yinlin.rachel.common
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import com.yinlin.rachel.Net.DownLoadListener
+import com.yinlin.rachel.tool.Net.DownLoadListener
 import java.io.OutputStream
 
 abstract class MediaDownloadListener(protected val context: Context) : DownLoadListener {

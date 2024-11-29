@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.R
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.res.ResFile
 import com.yinlin.rachel.data.res.ResFolder
 import com.yinlin.rachel.databinding.ItemPhotoBinding
@@ -15,7 +16,7 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelViewPage
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,9 +82,9 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
         loadRes()
     }
 
-    override fun back(): Boolean {
-        v.tab.backItem()
-        return false
+    override fun back(): BackState {
+        if (v.tab.backItem()) return BackState.CANCEL
+        return BackState.HOME
     }
 
     @NewThread

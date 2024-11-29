@@ -64,19 +64,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.media3:media3-exoplayer:1.3.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
-    implementation("androidx.media3:media3-ui:1.3.1")
-    implementation("androidx.media3:media3-session:1.3.1")
+    implementation(fileTree(mapOf(
+        "dir" to "libs",
+        "include" to listOf("*.aar", "*.jar"),
+    )))
+
+    implementation("androidx.media3:media3-exoplayer:1.5.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.5.0")
+    implementation("androidx.media3:media3-ui:1.5.0")
+    implementation("androidx.media3:media3-session:1.5.0")
 
     implementation("com.haibin:calendarview:3.7.1")
 
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.google.android.material:material:1.13.0-alpha08")
 
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v9.0.0-release-jitpack")
-    implementation("com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-arm64:v9.0.0-release-jitpack")
+    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+    implementation("com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-java:v10.0.0")
+    implementation("com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-exo2:v10.0.0")
 
     implementation("com.github.forJrking:KLuban:1.1.0")
     implementation("com.github.gturedi:stateful-layout:1.2.1")
@@ -88,17 +93,12 @@ dependencies {
     implementation("io.github.lucksiege:pictureselector:v3.11.2")
     implementation("io.github.lucksiege:ucrop:v3.11.2")
     implementation("io.github.sangcomz:StickyTimeLine:1.1.0")
-    implementation("io.github.scwang90:refresh-layout-kernel:2.1.0")
-    implementation("io.github.scwang90:refresh-header-classics:2.1.0")
+    implementation("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
+    implementation("io.github.scwang90:refresh-header-classics:3.0.0-alpha")
     implementation("io.github.youth5201314:banner:2.2.3")
 
-    implementation("com.tencent:mmkv:1.3.9")
+    implementation("com.tencent:mmkv:2.0.1")
     implementation("com.tencent.tav:libpag:4.4.15-harfbuzz")
-
-    implementation(fileTree(mapOf(
-        "dir" to "libs",
-        "include" to listOf("*.aar", "*.jar"),
-    )))
 
     testImplementation("junit:junit:4.13.2")
 }

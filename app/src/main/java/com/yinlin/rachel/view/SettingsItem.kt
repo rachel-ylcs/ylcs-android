@@ -12,10 +12,10 @@ import android.widget.TextView
 import androidx.core.view.children
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
-import com.yinlin.rachel.textColor
-import com.yinlin.rachel.textSizePx
-import com.yinlin.rachel.toDP
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.textColor
+import com.yinlin.rachel.tool.textSizePx
+import com.yinlin.rachel.tool.toDP
+import com.yinlin.rachel.tool.visible
 
 class SettingsItem @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {

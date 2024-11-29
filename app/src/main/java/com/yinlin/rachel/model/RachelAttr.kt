@@ -10,7 +10,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.StyleableRes
 import com.yinlin.rachel.R
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.toDP
 
 class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableRes ids: IntArray) : AutoCloseable {
     val attr: TypedArray? = attrs?.let { context.obtainStyledAttributes(attrs, ids) }

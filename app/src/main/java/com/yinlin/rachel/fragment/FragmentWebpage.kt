@@ -3,6 +3,7 @@ package com.yinlin.rachel.fragment
 import android.annotation.SuppressLint
 import android.webkit.WebViewClient
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentWebpageBinding
 import com.yinlin.rachel.model.RachelFragment
 
@@ -23,11 +24,11 @@ class FragmentWebpage(main: MainActivity, private val url: String) : RachelFragm
         v.web.destroy()
     }
 
-    override fun back(): Boolean {
+    override fun back(): BackState {
         if (v.web.canGoBack()) {
             v.web.goBack()
-            return false
+            return BackState.CANCEL
         }
-        return true
+        return BackState.POP
     }
 }

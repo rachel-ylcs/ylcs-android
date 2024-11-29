@@ -9,19 +9,20 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Net
+import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.common.DialogMediaDownloadListener
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.sys.DevelopState
 import com.yinlin.rachel.databinding.FragmentUpdateBinding
 import com.yinlin.rachel.databinding.ItemDevelopStateBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textColor
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,7 +64,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
         checkUpdate()
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     // 检查更新
     @NewThread

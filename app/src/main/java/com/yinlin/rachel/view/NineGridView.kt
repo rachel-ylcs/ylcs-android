@@ -11,7 +11,7 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.rachelClick
 
 
 class NineGridView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)

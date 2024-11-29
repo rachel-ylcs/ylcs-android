@@ -12,8 +12,8 @@ import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelPreview
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.visible
 import java.io.File
 
 
@@ -100,4 +100,7 @@ class ImageSelectView @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     val images: List<String> get() = mAdapter.items
+    val count: Int get() = mAdapter.items.size
+    val isEmpty: Boolean get() = mAdapter.items.isEmpty()
+    val isNotEmpty: Boolean get() = mAdapter.items.isNotEmpty()
 }

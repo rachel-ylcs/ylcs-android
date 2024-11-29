@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.tip
+import com.yinlin.rachel.tool.tip
 
 abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : Fragment() {
     private var _binding: Binding? = null
@@ -23,7 +24,7 @@ abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : F
     protected open fun update() { }
     protected open fun hidden() { }
     protected open fun quit() { }
-    open fun back(): Boolean = false
+    open fun back(): BackState = BackState.CANCEL
     open fun message(msg: RachelMessage, vararg args: Any?) { }
     open fun messageForResult(msg: RachelMessage, vararg args: Any?): Any? = null
 

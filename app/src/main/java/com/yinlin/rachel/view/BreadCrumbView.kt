@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textColor
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textColor
+import com.yinlin.rachel.tool.toDP
 
 
 @SuppressLint("NotifyDataSetChanged")
@@ -97,14 +97,16 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
         listener(oldSize - 1, oldSize, item)
     }
 
-    fun backItem() {
+    fun backItem(): Boolean {
         val items = mAdapter.items
         val oldSize = items.size
         if (oldSize > 1) {
             items.removeAt(items.size - 1)
             mAdapter.notifyDataSetChanged()
             listener(oldSize - 1, oldSize - 2, items[oldSize - 2])
+            return true
         }
+        return false
     }
 
     fun clearItem() {

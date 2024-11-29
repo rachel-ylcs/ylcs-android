@@ -2,20 +2,20 @@ package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LoadMusicPreview
 import com.yinlin.rachel.data.music.LoadMusicPreviewList
 import com.yinlin.rachel.databinding.ItemMusicLineBinding
 import com.yinlin.rachel.databinding.SheetCurrentPlaylistBinding
 import com.yinlin.rachel.fragment.FragmentMusic
-import com.yinlin.rachel.interceptScroll
+import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.strikethrough
-import com.yinlin.rachel.textColor
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.strikethrough
+import com.yinlin.rachel.tool.textColor
 
 class SheetCurrentPlaylist(fragment: FragmentMusic, private val data: LoadMusicPreviewList)
     : RachelSheet<SheetCurrentPlaylistBinding, FragmentMusic>(fragment, 0.6f) {

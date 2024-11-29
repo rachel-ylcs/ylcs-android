@@ -7,8 +7,8 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTimer
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.timeStringWithHour
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.timeStringWithHour
 
 class SheetSleepMode(fragment: FragmentMusic, private val timer: RachelTimer)
     : RachelSheet<SheetSleepModeBinding, FragmentMusic>(fragment, 0.6f) {

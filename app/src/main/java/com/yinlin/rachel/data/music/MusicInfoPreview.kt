@@ -1,7 +1,7 @@
 package com.yinlin.rachel.data.music
 
-import com.yinlin.rachel.div
-import com.yinlin.rachel.pathMusic
+import com.yinlin.rachel.tool.div
+import com.yinlin.rachel.tool.pathMusic
 
 data class MusicInfoPreview(
     val version: String,

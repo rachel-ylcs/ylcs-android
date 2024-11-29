@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.yinlin.rachel.clearAddAll
-import com.yinlin.rachel.rachelClick
+import com.yinlin.rachel.tool.clearAddAll
+import com.yinlin.rachel.tool.rachelClick
 import java.util.Collections
 
 

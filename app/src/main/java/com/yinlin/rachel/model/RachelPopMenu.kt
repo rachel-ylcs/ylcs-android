@@ -1,19 +1,17 @@
 package com.yinlin.rachel.model
 
 import android.annotation.SuppressLint
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.yinlin.rachel.R
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.toDP
 
 
 object RachelPopMenu {

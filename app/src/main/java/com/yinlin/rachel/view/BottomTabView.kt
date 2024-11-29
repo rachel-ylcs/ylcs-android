@@ -9,7 +9,7 @@ import android.widget.ImageView
 import com.google.android.material.tabs.TabLayout
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.toDP
 
 
 class BottomTabView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)

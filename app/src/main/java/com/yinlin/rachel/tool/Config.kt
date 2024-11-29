@@ -1,4 +1,4 @@
-package com.yinlin.rachel
+package com.yinlin.rachel.tool
 
 import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV

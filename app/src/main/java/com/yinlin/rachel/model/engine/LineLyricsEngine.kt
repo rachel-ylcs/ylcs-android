@@ -9,10 +9,9 @@ import android.graphics.SurfaceTexture
 import android.view.TextureView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.music.LrcData
-import com.yinlin.rachel.data.music.MusicInfo
-import com.yinlin.rachel.readText
-import com.yinlin.rachel.textHeight
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.readText
+import com.yinlin.rachel.tool.textHeight
+import com.yinlin.rachel.tool.toDP
 import java.io.File
 
 

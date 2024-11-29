@@ -9,9 +9,9 @@ import android.view.MotionEvent
 import android.view.View
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelFrequencyCounter
-import com.yinlin.rachel.timeString
-import com.yinlin.rachel.toDP
-import com.yinlin.rachel.toSP
+import com.yinlin.rachel.tool.timeString
+import com.yinlin.rachel.tool.toDP
+import com.yinlin.rachel.tool.toSP
 import kotlin.math.abs
 
 

@@ -7,15 +7,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.WeiboAPI
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentWeiboAlbumBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.toDP
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -83,7 +84,7 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
         requestAlbum(1)
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     @NewThread @SuppressLint("NotifyDataSetChanged")
     private fun requestAlbum(page: Int) {

@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
@@ -12,11 +11,11 @@ import androidx.media3.session.MediaSession
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.buildFfmpegPlayer
 
-@OptIn(UnstableApi::class)
 class MusicService : MediaLibraryService(), MediaLibraryService.MediaLibrarySession.Callback {
     private lateinit var player: ExoPlayer
     private lateinit var session: MediaLibrarySession
 
+    @UnstableApi
     override fun onCreate() {
         super.onCreate()
         player = buildFfmpegPlayer(this)

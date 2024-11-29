@@ -1,6 +1,6 @@
 package com.yinlin.rachel.data.weibo
 
-import com.yinlin.rachel.jsonString
+import com.yinlin.rachel.tool.jsonString
 
 open class WeiboUserStorage(
     val userId: String,

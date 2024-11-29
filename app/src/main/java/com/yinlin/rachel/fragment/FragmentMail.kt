@@ -3,21 +3,22 @@ package com.yinlin.rachel.fragment
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yinlin.rachel.Config
+import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.user.Mail
 import com.yinlin.rachel.databinding.FragmentMailBinding
 import com.yinlin.rachel.databinding.ItemMailBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textColor
-import com.yinlin.rachel.visible
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textColor
+import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -170,7 +171,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
         loadMail()
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 
     @NewThread
     private fun loadMail() {

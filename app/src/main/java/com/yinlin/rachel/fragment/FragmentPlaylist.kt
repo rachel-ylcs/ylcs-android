@@ -4,7 +4,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.Tip
+import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LoadMusicPreview
 import com.yinlin.rachel.data.music.LoadMusicPreviewList
@@ -15,8 +16,8 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.strikethrough
-import com.yinlin.rachel.textColor
+import com.yinlin.rachel.tool.strikethrough
+import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.view.NavigationView
 
 
@@ -126,5 +127,5 @@ class FragmentPlaylist(main: MainActivity, private val playlistNames: List<Strin
         if (playlistNames.isEmpty()) v.state.showEmpty("快去创建一个歌单吧")
     }
 
-    override fun back() = true
+    override fun back() = BackState.POP
 }

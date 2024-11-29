@@ -1,21 +1,21 @@
 package com.yinlin.rachel.view
 
 import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
-import android.view.animation.LinearInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelImageLoader.load
-import com.yinlin.rachel.pureColor
+import com.yinlin.rachel.tool.pureColor
 import java.io.File
 
 class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : ConstraintLayout(context, attrs, defStyleAttr) {
     private val pic = AvatarView(context)
-    private val animator = ObjectAnimator.ofFloat(pic, "rotation", 0f, 360f)
+    private val animator = AnimatorInflater.loadAnimator(context, R.animator.animator_cd) as ObjectAnimator
     private var angle: Float = 0f
 
     init {
@@ -32,10 +32,7 @@ class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
         addView(pic)
 
         animator.apply {
-            duration = 15000
-            interpolator = LinearInterpolator()
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.RESTART
+            target = pic
             addUpdateListener { angle = animatedValue as Float }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) = setFloatValues(angle, angle + 360f)

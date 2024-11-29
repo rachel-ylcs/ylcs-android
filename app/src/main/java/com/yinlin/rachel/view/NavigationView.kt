@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
-import com.yinlin.rachel.rachelClick
-import com.yinlin.rachel.textSizePx
-import com.yinlin.rachel.toDP
+import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.textSizePx
+import com.yinlin.rachel.tool.toDP
 
 
 class NavigationView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
