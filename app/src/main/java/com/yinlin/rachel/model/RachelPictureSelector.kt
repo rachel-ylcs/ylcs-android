@@ -21,11 +21,7 @@ import com.yalantis.ucrop.UCrop
 import com.yinlin.rachel.R
 
 object RachelPictureSelector {
-    class RachelImageEngine : ImageEngine {
-        companion object {
-            val instance = RachelImageEngine()
-        }
-
+    object RachelImageEngine : ImageEngine {
         override fun loadImage(context: Context, url: String, imageView: ImageView) {
             if (ActivityCompatHelper.assertValidRequest(context))
                 Glide.with(context).load(url).into(imageView)
@@ -67,18 +63,28 @@ object RachelPictureSelector {
         fun onSelected(filenames: List<String>)
     }
 
+    @Suppress("DEPRECATION")
+    private val WebpFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        Bitmap.CompressFormat.WEBP_LOSSY else Bitmap.CompressFormat.WEBP
+
+    fun single(context: Context, listener: SingleSelectListener) {
+        PictureSelector.create(context).openGallery(SelectMimeType.ofImage())
+            .setImageEngine(RachelImageEngine)
+            .setSelectionMode(SelectModeConfig.SINGLE)
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: ArrayList<LocalMedia>) {
+                    if (result.size == 1) listener.onSelected(result[0].realPath)
+                }
+                override fun onCancel() {}
+            })
+    }
+
     fun single(context: Context, width: Int, height: Int, isCircle: Boolean, listener: SingleSelectListener) {
         PictureSelector.create(context).openGallery(SelectMimeType.ofImage())
-            .setImageEngine(RachelImageEngine.instance)
+            .setImageEngine(RachelImageEngine)
             .setCropEngine { fragment, srcUri, destinationUri, dataSource, requestCode ->
                 val options = UCrop.Options()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    options.setCompressionFormat(Bitmap.CompressFormat.WEBP_LOSSY)
-                }
-                else {
-                    @Suppress("DEPRECATION")
-                    options.setCompressionFormat(Bitmap.CompressFormat.WEBP)
-                }
+                options.setCompressionFormat(WebpFormat)
                 options.setCompressionQuality(100)
                 options.withAspectRatio(width.toFloat(), height.toFloat())
                 options.withMaxResultSize(width, height)
@@ -96,15 +102,13 @@ object RachelPictureSelector {
 
     fun multiple(context: Context, maxNum: Int, ignoreBy: Int?, quality: Int?, listener: MultipleSelectListener) {
         PictureSelector.create(context).openGallery(SelectMimeType.ofImage())
-            .setImageEngine(RachelImageEngine.instance)
+            .setImageEngine(RachelImageEngine)
             .setSelectionMode(SelectModeConfig.MULTIPLE)
             .setMaxSelectNum(maxNum)
             .setCompressEngine(CompressFileEngine { activity, source, call ->
-                val format = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Bitmap.CompressFormat.WEBP_LOSSY
-                else @Suppress("DEPRECATION") Bitmap.CompressFormat.WEBP
                 val builder = Luban.with(activity as FragmentActivity).load(source)
                     .concurrent(true).useDownSample(true)
-                    .format(format).compressObserver {
+                    .format(WebpFormat).compressObserver {
                         onSuccess = {
                             val count = it.size
                             source.forEachIndexed { index, pic ->

@@ -11,18 +11,13 @@ import com.king.zxing.DecodeConfig
 import com.king.zxing.DecodeFormatManager
 import com.king.zxing.analyze.MultiFormatAnalyzer
 import com.king.zxing.util.CodeUtils
-import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.SelectMimeType
-import com.luck.picture.lib.config.SelectModeConfig
-import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.NewThread
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
 import com.yinlin.rachel.model.RachelFragment
-import com.yinlin.rachel.model.RachelPictureSelector.RachelImageEngine
+import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.tool.rachelClick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,7 +56,9 @@ class FragmentScanQRCode(main: MainActivity)
             v.flashlight.isSelected = !isTorch
         }
 
-        v.album.rachelClick { selectQRCode() }
+        v.album.rachelClick {
+            RachelPictureSelector.single(main) { parseQRCode(it) }
+        }
 
         permissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
@@ -73,18 +70,6 @@ class FragmentScanQRCode(main: MainActivity)
     override fun back() = BackState.POP
 
     override fun onScanResultCallback(result: AnalyzeResult<Result>) = processQRCode(result.result.text)
-
-    private fun selectQRCode() {
-        PictureSelector.create(context).openGallery(SelectMimeType.ofImage())
-            .setImageEngine(RachelImageEngine.instance)
-            .setSelectionMode(SelectModeConfig.SINGLE)
-            .forResult(object : OnResultCallbackListener<LocalMedia> {
-                override fun onResult(result: ArrayList<LocalMedia>) {
-                    if (result.size == 1) parseQRCode(result[0].realPath)
-                }
-                override fun onCancel() {}
-            })
-    }
 
     @NewThread
     private fun parseQRCode(path: String) {
