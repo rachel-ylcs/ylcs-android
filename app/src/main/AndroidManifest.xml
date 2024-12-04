@@ -68,6 +68,15 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|fontWeightAdjustment|fontScale|density|colorMode|uiMode"
             tools:ignore="DiscouragedApi" >
         </activity>
+        <provider
+            android:authorities="@string/app_provider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
         <service
             android:name=".service.MusicService"
             android:enabled="true"

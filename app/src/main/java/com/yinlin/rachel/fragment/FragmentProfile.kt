@@ -6,7 +6,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.topic.TopicPreview
@@ -49,7 +49,7 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
         }
 
         // 请求用户资料卡
-        @NewThread
+        @IOThread
         private fun requestUserProfile() {
             fragment.lifecycleScope.launch {
                 val loading = main.loading

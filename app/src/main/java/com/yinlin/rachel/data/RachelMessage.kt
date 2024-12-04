@@ -2,20 +2,21 @@ package com.yinlin.rachel.data
 
 enum class RachelMessage {
     // FragmentMusic
-    PREPARE_PLAYER, // MediaController
-    MUSIC_START_PLAYER,  // [Playlist | String]
+    MUSIC_START_PLAYER,  // Playlist
     MUSIC_PAUSE_PLAYER,
     MUSIC_STOP_PLAYER,
-    MUSIC_GET_PLAYLIST_INFO_PREVIEW, // String -> LoadMusicPreviewList
+    MUSIC_GET_PLAYLIST_NAMES, // -> List<String>
+    MUSIC_GET_PLAYLIST_PREVIEW, // String -> PlaylistPreview
+    MUSIC_FIND_PLAYLIST, // String -> Playlist?
     MUSIC_CREATE_PLAYLIST,  // String -> Boolean
     MUSIC_RENAME_PLAYLIST,  // String, String -> Boolean
     MUSIC_DELETE_PLAYLIST,  // String
-    MUSIC_UPDATE_PLAYLIST, // String, List<LoadMusicPreview>
     MUSIC_RELOAD_PLAYLIST,
+    MUSIC_ADD_MUSIC_INTO_PLAYLIST,  // String, MusicInfoPreviewList -> Int
     MUSIC_DELETE_MUSIC_FROM_PLAYLIST,  // String, String
-    MUSIC_ADD_MUSIC_INTO_PLAYLIST,  // Playlist, List<String> -> Int
+    MUSIC_MOVE_MUSIC_IN_PLAYLIST, // String, Int, Int
     MUSIC_GET_MUSIC_INFO, // String -> MusicInfo
-    MUSIC_GET_MUSIC_INFO_PREVIEW, // String? -> MusicInfoPreviewList
+    MUSIC_SEARCH_MUSIC_INFO_PREVIEW, // String? -> MusicInfoPreviewList
     MUSIC_DELETE_MUSIC,  // MusicInfoPreviewList
     MUSIC_GOTO_MUSIC,  // String
     MUSIC_NOTIFY_ADD_MUSIC,  // List<String>

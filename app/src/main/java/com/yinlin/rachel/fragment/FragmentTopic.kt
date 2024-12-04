@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.compareLatestTime
@@ -100,7 +100,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
             v.top.visible = item.isTop
         }
 
-        @NewThread
+        @IOThread
         fun requestTopic() {
             fragment.lifecycleScope.launch {
                 val loading = main.loading
@@ -195,7 +195,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         v.commentCard.visible = false
     }
 
-    @NewThread
+    @IOThread
     private fun sendComment(user: User, content: String) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -212,7 +212,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    @NewThread
+    @IOThread
     private fun sendCoin(value: Int) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -226,7 +226,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    @NewThread
+    @IOThread
     private fun deleteComment(cid: Long, position: Int) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -241,7 +241,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateCommentTop(cid: Long, position: Int, isTop: Boolean) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -287,7 +287,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    @NewThread
+    @IOThread
     private fun deleteTopic() {
         lifecycleScope.launch {
             val loading = main.loading
@@ -302,7 +302,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateTopicTop(isTop: Boolean) {
         lifecycleScope.launch {
             val loading = main.loading

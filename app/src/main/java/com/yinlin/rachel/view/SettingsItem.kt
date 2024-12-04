@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.core.view.children
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.textSizePx
 import com.yinlin.rachel.tool.toDP
@@ -24,7 +25,7 @@ class SettingsItem @JvmOverloads constructor(context: Context, attrs: AttributeS
     private val contentView = LinearLayout(context)
     private val arrowView = ImageView(context)
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.gray)
+        color = context.rc(R.color.gray)
         strokeWidth = 1f.toDP(context)
     }
     init {

@@ -20,8 +20,10 @@ import com.yinlin.rachel.tool.attachAlpha
 import com.yinlin.rachel.tool.detachAlpha
 import com.yinlin.rachel.tool.getAlpha
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rd
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.textSizePx
+import com.yinlin.rachel.view.FloatingLyricsView
 
 class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyricsSettingsBinding>(main) {
     private lateinit var registerFloatingPermission: ActivityResultLauncher<Intent>
@@ -49,8 +51,6 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
         }
 
-        v.itemOffsetLeft.value = lyricsSettings.offsetLeft
-        v.testGuideline1.setGuidelinePercent(lyricsSettings.offsetLeft)
         v.itemOffsetLeft.addOnChangeListener { _, value, _ -> v.testGuideline1.setGuidelinePercent(value) }
         v.itemOffsetLeft.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
@@ -59,9 +59,8 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        v.itemOffsetLeft.value = lyricsSettings.offsetLeft
 
-        v.itemOffsetRight.value = lyricsSettings.offsetRight
-        v.testGuideline2.setGuidelinePercent(lyricsSettings.offsetRight)
         v.itemOffsetRight.addOnChangeListener { _, value, _ -> v.testGuideline2.setGuidelinePercent(value) }
         v.itemOffsetRight.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
@@ -70,10 +69,11 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        v.itemOffsetRight.value = lyricsSettings.offsetRight
 
-        v.itemOffsetY.value = lyricsSettings.offsetY
-        setOffsetY(lyricsSettings.offsetY)
-        v.itemOffsetY.addOnChangeListener { _, value, _ -> setOffsetY(value) }
+        v.itemOffsetY.addOnChangeListener { _, value, _ ->
+            v.testContainer.setPadding(0, (value * FloatingLyricsView.DEFAULT_HEIGHT_RATIO).toInt(), 0, 0)
+        }
         v.itemOffsetY.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
                 lyricsSettings.offsetY = v.itemOffsetY.value
@@ -81,9 +81,8 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        v.itemOffsetY.value = lyricsSettings.offsetY
 
-        v.itemTextSize.value = lyricsSettings.textSize
-        v.testSurface.textSizePx = lyricsSettings.textSize * main.rd(R.dimen.sm)
         v.itemTextSize.addOnChangeListener { _, value, _ -> v.testSurface.textSizePx = value * main.rd(R.dimen.sm) }
         v.itemTextSize.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
@@ -92,9 +91,8 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        v.itemTextSize.value = lyricsSettings.textSize
 
-        v.itemTextColor.color = lyricsSettings.textColor
-        v.testSurface.textColor = lyricsSettings.textColor
         v.itemTextColor.setOnColorChangeListener { _, color -> v.testSurface.textColor = color }
         v.itemTextColor.setOnTouchListener { _, event ->
             if (event.action == KeyEvent.ACTION_UP) {
@@ -103,11 +101,8 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        v.itemTextColor.color = lyricsSettings.textColor
 
-        val backgroundColor = lyricsSettings.backgroundColor
-        v.itemBackgroundColor.color = backgroundColor.detachAlpha()
-        v.itemBackgroundAlpha.alphaValue = backgroundColor.getAlpha()
-        v.testSurface.backgroundColor = backgroundColor
         v.itemBackgroundColor.setOnColorChangeListener { _, color ->
             val alpha = lyricsSettings.backgroundColor.getAlpha()
             v.testSurface.backgroundColor = color.detachAlpha().attachAlpha(alpha)
@@ -132,16 +127,15 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
             }
             false
         }
+        val backgroundColor = lyricsSettings.backgroundColor
+        v.itemBackgroundColor.color = backgroundColor.detachAlpha()
+        v.itemBackgroundAlpha.alphaValue = backgroundColor.getAlpha()
     }
 
     override fun back() = BackState.POP
 
     private fun updateFloatingIconStatus() {
         v.ivFloating.load(if (canShow) R.drawable.icon_yes else R.drawable.icon_no)
-    }
-
-    private fun setOffsetY(value: Float) {
-        v.testContainer.setPadding(0, (value * 150).toInt(), 0, 0)
     }
 
     private fun updateSettings() {

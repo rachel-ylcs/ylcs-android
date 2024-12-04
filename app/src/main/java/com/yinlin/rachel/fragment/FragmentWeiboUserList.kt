@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
@@ -16,6 +16,7 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -79,7 +80,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
 
     override fun back() = BackState.POP
 
-    @NewThread
+    @IOThread
     private fun loadWeiboUserStorage() {
         lifecycleScope.launch {
             v.state.showLoading()
@@ -110,7 +111,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         }
     }
 
-    @NewThread
+    @IOThread
     private fun searchWeiboUser(name: String) {
         lifecycleScope.launch {
             v.state.showLoading()

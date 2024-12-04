@@ -8,6 +8,8 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.baseLine
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rf
 import com.yinlin.rachel.tool.textHeight
 
 class UserLabelView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -39,9 +41,9 @@ class UserLabelView @JvmOverloads constructor(context: Context, attrs: Attribute
     private var text: String = labelNameFromLevel[1]
 
     init {
-        paint.typeface = context.resources.getFont(R.font.xwwk)
+        paint.typeface = context.rf(R.font.xwwk)
         paint.isFakeBoldText = true
-        paint.color = context.getColor(R.color.title_dark)
+        paint.color = context.rc(R.color.title_dark)
         paint.textAlign = Paint.Align.CENTER
         paint.textSize = 4f
         setImageResource(R.drawable.label_fucaoweiying)

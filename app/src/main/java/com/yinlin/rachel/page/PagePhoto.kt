@@ -2,7 +2,7 @@ package com.yinlin.rachel.page
 
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.R
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.res.ResFile
@@ -87,7 +87,7 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
         return BackState.HOME
     }
 
-    @NewThread
+    @IOThread
     fun loadRes() {
         lifecycleScope.launch {
             v.state.showLoading()

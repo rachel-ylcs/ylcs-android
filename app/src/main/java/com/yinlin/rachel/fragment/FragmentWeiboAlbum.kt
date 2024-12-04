@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentWeiboAlbumBinding
@@ -86,7 +86,7 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
 
     override fun back() = BackState.POP
 
-    @NewThread @SuppressLint("NotifyDataSetChanged")
+    @IOThread @SuppressLint("NotifyDataSetChanged")
     private fun requestAlbum(page: Int) {
         lifecycleScope.launch {
             if (album[page - 1] == null) { // 无缓存

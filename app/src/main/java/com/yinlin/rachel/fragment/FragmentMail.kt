@@ -8,7 +8,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.user.Mail
@@ -17,6 +17,7 @@ import com.yinlin.rachel.databinding.ItemMailBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
@@ -120,7 +121,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
             }
         }
 
-        @NewThread
+        @IOThread
         private fun processMail(position: Int, mail: Mail, confirm: Boolean) {
             fragment.lifecycleScope.launch {
                 val loading = main.loading
@@ -135,7 +136,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
             }
         }
 
-        @NewThread
+        @IOThread
         private fun deleteMail(position: Int, mail: Mail) {
             fragment.lifecycleScope.launch {
                 val loading = main.loading
@@ -173,7 +174,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
 
     override fun back() = BackState.POP
 
-    @NewThread
+    @IOThread
     private fun loadMail() {
         lifecycleScope.launch {
             v.state.showLoading()

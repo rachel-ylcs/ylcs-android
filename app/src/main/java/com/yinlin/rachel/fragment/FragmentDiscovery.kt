@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -138,7 +138,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
         }
     }
 
-    @NewThread
+    @IOThread
     private fun requestNewData() {
         v.container.setNoMoreData(false)
         lifecycleScope.launch {
@@ -181,7 +181,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
         }
     }
 
-    @NewThread
+    @IOThread
     private fun requestNewDataMore() {
         lifecycleScope.launch {
             val current = v.tab.current

@@ -12,6 +12,8 @@ import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelSheet
 import com.yinlin.rachel.model.RachelTab
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.textColor
 
 class SheetLyricsInfo(fragment: FragmentMusic, private val infos: List<LyricsInfo>)

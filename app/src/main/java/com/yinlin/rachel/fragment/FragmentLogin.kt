@@ -4,7 +4,7 @@ import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -64,7 +64,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         v.forgotPasswordContainer.isExpand = true
     }
 
-    @NewThread
+    @IOThread
     fun login() {
         val name = v.loginName.text
         val pwd = v.loginPwd.text
@@ -90,7 +90,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         else tip(Tip.WARNING, "ID和密码不合规则")
     }
 
-    @NewThread
+    @IOThread
     fun register() {
         val name = v.registerName.text
         val pwd = v.registerPwd.text
@@ -114,7 +114,7 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         else tip(Tip.WARNING, "ID、密码、邀请人长度不合规则")
     }
 
-    @NewThread
+    @IOThread
     fun forgotPassword() {
         val name = v.forgotPasswordName.text
         val pwd = v.forgotPasswordPwd.text

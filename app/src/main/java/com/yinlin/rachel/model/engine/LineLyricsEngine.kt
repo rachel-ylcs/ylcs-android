@@ -9,7 +9,9 @@ import android.graphics.SurfaceTexture
 import android.view.TextureView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.music.LrcData
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.readText
+import com.yinlin.rachel.tool.rf
 import com.yinlin.rachel.tool.textHeight
 import com.yinlin.rachel.tool.toDP
 import java.io.File
@@ -23,24 +25,24 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
         private val maxTextHeight: Float = 30f.toDP(context)
 
         private val main = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = context.getColor(R.color.music_lyrics_main)
+            color = context.rc(R.color.music_lyrics_main)
             textAlign = Paint.Align.CENTER
-            typeface = context.resources.getFont(R.font.xwwk)
+            typeface = context.rf(R.font.xwwk)
             isFakeBoldText = true
-            setShadowLayer(2f, 2f, 2f, context.getColor(R.color.dark))
+            setShadowLayer(2f, 2f, 2f, context.rc(R.color.dark))
         }
 
         private val second = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = context.getColor(R.color.music_lyrics_second)
+            color = context.rc(R.color.music_lyrics_second)
             textAlign = Paint.Align.CENTER
-            typeface = context.resources.getFont(R.font.xwwk)
-            setShadowLayer(1f, 1f, 1f, context.getColor(R.color.dark))
+            typeface = context.rf(R.font.xwwk)
+            setShadowLayer(1f, 1f, 1f, context.rc(R.color.dark))
         }
 
         private val fade = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = context.getColor(R.color.music_lyrics_fade)
+            color = context.rc(R.color.music_lyrics_fade)
             textAlign = Paint.Align.CENTER
-            typeface = context.resources.getFont(R.font.xwwk)
+            typeface = context.rf(R.font.xwwk)
         }
 
         fun adjustPaint(maxWidth: Float, maxHeight: Float, maxLengthText: String) {

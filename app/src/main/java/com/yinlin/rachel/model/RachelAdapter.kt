@@ -70,8 +70,9 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
     fun notifySource() = notifyDataSetChanged()
 
     interface ListTouch<Item> {
-        fun onMove(item1: Item, position1: Int, item2: Item, position2: Int) { }
-        fun onMoved() { }
+        fun onPrepareMoved(oldPosition: Int, newPosition: Int) { }
+        fun onAfterMoved(oldPosition: Int, newPosition: Int) { }
+        fun onMoveCompleted(oldPosition: Int, newPosition: Int) { }
         fun onRemove(item: Item, position: Int) { }
     }
 
@@ -89,17 +90,18 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
             override fun onMove(view: RecyclerView, src: RecyclerView.ViewHolder, des: RecyclerView.ViewHolder): Boolean {
                 val srcPos = src.bindingAdapterPosition
                 val desPos = des.bindingAdapterPosition
-                callback.onMove(items[srcPos], srcPos, items[desPos], desPos)
+                callback.onPrepareMoved(srcPos, desPos)
                 Collections.swap(items, srcPos, desPos)
                 notifyItemMoved(srcPos, desPos)
                 endPos = desPos
+                callback.onAfterMoved(srcPos, desPos)
                 return true
             }
 
             override fun onSelectedChanged(holder: RecyclerView.ViewHolder?, actionState: Int) {
                 super.onSelectedChanged(holder, actionState)
                 if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-                    if (startPos != endPos) callback.onMoved()
+                    if (startPos != endPos) callback.onMoveCompleted(startPos, endPos)
                     startPos = -1
                     endPos = -1
                 }

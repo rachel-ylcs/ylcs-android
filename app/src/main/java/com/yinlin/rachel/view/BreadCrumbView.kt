@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.toDP
 
@@ -51,7 +52,7 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
             val tv = holder.itemView as TextView
             val context = tv.context
             tv.text = items[position]
-            tv.textColor = context.getColor(if (position == items.size - 1) R.color.steel_blue else R.color.black)
+            tv.textColor = context.rc(if (position == items.size - 1) R.color.steel_blue else R.color.black)
         }
 
         override fun getItemCount() = items.size

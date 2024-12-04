@@ -8,6 +8,7 @@ import android.view.View
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.baseLine
 import com.yinlin.rachel.model.RachelAttr
+import com.yinlin.rachel.tool.rf
 import com.yinlin.rachel.tool.textHeight
 
 class ValueTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -17,11 +18,11 @@ class ValueTextView @JvmOverloads constructor(context: Context, attrs: Attribute
     private val mValuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         isFakeBoldText = true
         textAlign = Paint.Align.CENTER
-        typeface = context.resources.getFont(R.font.xwwk)
+        typeface = context.rf(R.font.xwwk)
     }
     private val mTitlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
-        typeface = context.resources.getFont(R.font.xwwk)
+        typeface = context.rf(R.font.xwwk)
     }
     private val mGap: Int
     private val mPadding: Int

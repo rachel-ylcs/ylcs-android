@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textSizePx
 import com.yinlin.rachel.tool.toDP
 
@@ -24,7 +25,7 @@ class NavigationView @JvmOverloads constructor(context: Context, attrs: Attribut
     class ItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
         : AppCompatTextView(context, attrs, defStyleAttr) {
         private val mDividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = context.getColor(R.color.light_gray)
+            color = context.rc(R.color.light_gray)
             style = Paint.Style.STROKE
             strokeWidth = 0.5f.toDP(context)
         }
@@ -258,11 +259,8 @@ class NavigationView @JvmOverloads constructor(context: Context, attrs: Attribut
         if (position in 0 ..< mAdapter.items.size) smoothScrollToPosition(position)
     }
 
-    fun processCurrent(callback: (position: Int, title: String, obj: Any?) -> Unit) {
-        if (current != -1) {
-            val item = mAdapter.items[current]
-            callback(current, item.title, item.obj)
-        }
+    inline fun withCurrent(callback: (position: Int, title: String, obj: Any?) -> Unit) {
+        currentItem?.let { callback(current, it.title, it.obj) }
     }
 
     fun setItemTitle(position: Int, title: String) {

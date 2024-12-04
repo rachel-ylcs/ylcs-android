@@ -72,7 +72,7 @@ fun Activity.tip(type: Tip, text: String, anchorView: View? = null) {
     layout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).visible = false
     val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, null)
     view.findViewById<TextView>(R.id.text).text = text
-    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.getColor(color))
+    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.rc(color))
     layout.setPadding(0, 0, 0, 0)
     layout.backgroundColor = 0
     layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {

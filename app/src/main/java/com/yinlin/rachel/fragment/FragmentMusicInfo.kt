@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.attachAlpha
 import com.yinlin.rachel.tool.backgroundColor
@@ -31,7 +31,9 @@ import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.readText
+import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -268,7 +270,7 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
     }
 
     // 分享歌曲
-    @NewThread
+    @IOThread
     private fun shareMusic(id: String) {
         lifecycleScope.launch {
             val loading = main.loading

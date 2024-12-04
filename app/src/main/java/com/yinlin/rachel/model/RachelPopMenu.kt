@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.yinlin.rachel.R
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.toDP
 
 
@@ -52,7 +53,7 @@ object RachelPopMenu {
         list.adapter = Adapter(items, popupWindow)
         list.addItemDecoration(MaterialDividerItemDecoration(context, LinearLayoutManager.VERTICAL).apply {
             this.isLastItemDecorated = false
-            this.dividerColor = context.getColor(R.color.light_gray)
+            this.dividerColor = context.rc(R.color.light_gray)
         })
         popupWindow.isFocusable = true
         popupWindow.animationStyle = android.R.style.Animation_Dialog

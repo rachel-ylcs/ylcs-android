@@ -2,7 +2,7 @@ package com.yinlin.rachel.page
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.databinding.PageWeiboBinding
 import com.yinlin.rachel.fragment.FragmentMsg
@@ -47,7 +47,7 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
         }
     }
 
-    @NewThread
+    @IOThread
     fun requestNewData() {
         lifecycleScope.launch {
             v.state.showLoading()

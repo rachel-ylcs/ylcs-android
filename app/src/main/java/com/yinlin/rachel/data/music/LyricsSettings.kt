@@ -9,7 +9,7 @@ data class LyricsSettings(
     // 右侧偏移 0.0 ~ 1.0
     var offsetRight: Float = 1f,
     // 纵向偏移 0.0 ~ 2.0
-    var offsetY: Float = 0f,
+    var offsetY: Float = 1f,
     // 字体大小 0.75 ~ 1.5
     var textSize: Float = 1f,
     // 字体颜色

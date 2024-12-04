@@ -9,6 +9,8 @@ import android.view.View
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.baseLine
 import com.yinlin.rachel.model.RachelAttr
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rf
 import com.yinlin.rachel.tool.textHeight
 import com.yinlin.rachel.tool.toDP
 import kotlin.math.min
@@ -31,7 +33,7 @@ class DiagonalLabelView @JvmOverloads constructor(context: Context, attrs: Attri
         isDither = true
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.SQUARE
-        typeface = context.resources.getFont(R.font.xwwk)
+        typeface = context.rf(R.font.xwwk)
     }
     private val mRectPath = Path().apply { reset() }
     private val mTextPath = Path().apply { reset() }
@@ -69,7 +71,7 @@ class DiagonalLabelView @JvmOverloads constructor(context: Context, attrs: Attri
             if (mTextPaint.measureText(mText) > w / 1.2f) break
         }
         val shadowPixel = w / 100f
-        mRectPaint.setShadowLayer(shadowPixel, shadowPixel, shadowPixel, context.getColor(R.color.gray))
+        mRectPaint.setShadowLayer(shadowPixel, shadowPixel, shadowPixel, context.rc(R.color.gray))
     }
 
     override fun onDraw(canvas: Canvas) {

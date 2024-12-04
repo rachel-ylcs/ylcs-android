@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboAlbum
@@ -67,7 +67,7 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
 
     override fun back() = BackState.POP
 
-    @NewThread
+    @IOThread
     fun requestUserInfo() {
         lifecycleScope.launch {
             v.name.loading = true
@@ -110,7 +110,7 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
     }
 
     // 添加微博用户
-    @NewThread
+    @IOThread
     private fun addWeiboUser(uid: String) {
         lifecycleScope.launch {
             val loading = main.loading

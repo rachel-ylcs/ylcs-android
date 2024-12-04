@@ -128,6 +128,21 @@ abstract class RachelDialog<T : ViewBinding> (
             }.show()
         }
 
+        fun choice(context: Context, title: String = "", callbacks: List<Pair<String, () -> Unit>>) {
+            object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class.java) {
+                override fun init(v: DialogChoiceBinding) {
+                    v.title.text = title
+                    v.list.apply {
+                        adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, callbacks.map { it.first })
+                        onItemClickListener = OnItemClickListener { _, _, position, _ ->
+                            dismiss()
+                            callbacks.getOrNull(position)?.second?.invoke()
+                        }
+                    }
+                }
+            }.show()
+        }
+
         class DialogProgress(context: Context, private val t: String) : RachelDialog<DialogProgressBinding>(context, DialogProgressBinding::class.java, false) {
             var title: String
                 get() = v.title.text.toString()

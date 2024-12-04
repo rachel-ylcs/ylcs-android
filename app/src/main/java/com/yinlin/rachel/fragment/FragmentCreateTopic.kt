@@ -5,7 +5,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.topic.TopicPreview
@@ -48,7 +48,7 @@ class FragmentCreateTopic(main: MainActivity) : RachelFragment<FragmentCreateTop
         return BackState.POP
     }
 
-    @NewThread
+    @IOThread
     private fun sendTopic(user: User, title: String, content: String, pics: List<String>) {
         lifecycleScope.launch {
             val loading = main.loading

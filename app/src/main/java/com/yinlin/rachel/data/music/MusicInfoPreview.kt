@@ -11,10 +11,6 @@ data class MusicInfoPreview(
     var selected: Boolean = false,
 ) {
     val recordPath get() = pathMusic / (id + MusicRes.RECORD_NAME)
-
-    companion object {
-        val MusicInfo.preview get() = MusicInfoPreview(version, id, name, singer, false)
-    }
 }
 
 typealias MusicInfoPreviewList = List<MusicInfoPreview>

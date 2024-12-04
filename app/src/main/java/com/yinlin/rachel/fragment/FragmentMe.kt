@@ -6,7 +6,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -21,6 +21,8 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetUserCard
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.view.ActivityCalendarView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -167,7 +169,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
         }
     }
 
-    @NewThread
+    @IOThread
     private fun requestUserInfo() {
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) { API.UserAPI.getInfo(Config.token) }
@@ -189,7 +191,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
         }
     }
 
-    @NewThread
+    @IOThread
     private fun getActivities(showLoading: Boolean) {
         lifecycleScope.launch {
             if (showLoading) v.calendarMonth.loading = true
@@ -214,7 +216,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     }
 
     // 添加活动
-    @NewThread
+    @IOThread
     private fun addActivity(calendar: Calendar, show: ShowActivity) {
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) { API.UserAPI.addActivity(Config.token, show) }
@@ -227,7 +229,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     }
 
     // 删除活动
-    @NewThread
+    @IOThread
     private fun deleteActivity(calendar: Calendar) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -242,7 +244,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
     }
 
     // 签到
-    @NewThread
+    @IOThread
     private fun signin() {
         lifecycleScope.launch {
             val loading = main.loading

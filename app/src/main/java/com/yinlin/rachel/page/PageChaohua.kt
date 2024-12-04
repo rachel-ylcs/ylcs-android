@@ -1,7 +1,7 @@
 package com.yinlin.rachel.page
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.databinding.PageChaohuaBinding
 import com.yinlin.rachel.fragment.FragmentMsg
@@ -49,7 +49,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
         }
     }
 
-    @NewThread
+    @IOThread
     fun requestNewData() {
         lifecycleScope.launch {
             v.container.setNoMoreData(false)
@@ -68,7 +68,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
         }
     }
 
-    @NewThread
+    @IOThread
     fun requestMoreData() {
         lifecycleScope.launch {
             val oldSize = adapter.size

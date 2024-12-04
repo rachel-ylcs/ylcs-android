@@ -49,7 +49,10 @@ data class MusicInfo (
         json.remove("lrcData")
         infoPath.writeJson(json)
     }
+
+    val preview get() = MusicInfoPreview(version, id, name, singer, false)
 }
 
+typealias MusicMap = MutableMap<String, MusicInfo>
 typealias ChorusList = MutableList<Long>
 typealias LyricsFileMap = MutableMap<String, MutableList<String>>

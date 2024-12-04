@@ -5,7 +5,7 @@ import android.graphics.SurfaceTexture
 import android.util.AttributeSet
 import android.view.TextureView
 import android.widget.FrameLayout
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.tool.div
 import com.yinlin.rachel.model.engine.LyricsEngine
@@ -43,7 +43,7 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // 加载歌词引擎
-    @NewThread
+    @IOThread
     fun loadEngine(musicInfo: MusicInfo): Boolean {
         val lyrics = musicInfo.lyrics
         // 先检查当前歌词引擎是否合适
@@ -72,7 +72,7 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     // 切换歌词引擎
-    @NewThread
+    @IOThread
     fun switchEngine(musicInfo: MusicInfo, engineName: String, name: String): Boolean {
         // 先检查当前歌词引擎是否合适
         if (lyricsEngine != null) {

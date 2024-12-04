@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.luck.picture.lib.photoview.PhotoView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.common.SimpleImageDownloadListener
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentImagePreviewBinding
@@ -64,7 +64,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
     // What Fuck Bug? When Can It Be Fixed?
     private fun getFuckIndex(index: Int) = if (v.list.realCount > 1) index - 1 else index
 
-    @NewThread
+    @IOThread
     private fun downloadPicture(url: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -73,7 +73,7 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
         }
     }
 
-    @NewThread
+    @IOThread
     private fun downloadPictures(urls: List<String>) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

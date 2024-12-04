@@ -5,7 +5,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.Weibo
@@ -114,7 +114,7 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
             v.list.visible = item.subComments != null
         }
 
-        @NewThread
+        @IOThread
         private fun requestComment(loading: LoadingTextView) {
             fragment.lifecycleScope.launch {
                 loading.loading = true

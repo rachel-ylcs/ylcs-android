@@ -13,7 +13,7 @@ import com.king.zxing.analyze.MultiFormatAnalyzer
 import com.king.zxing.util.CodeUtils
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
 import com.yinlin.rachel.model.RachelFragment
@@ -71,7 +71,7 @@ class FragmentScanQRCode(main: MainActivity)
 
     override fun onScanResultCallback(result: AnalyzeResult<Result>) = processQRCode(result.result.text)
 
-    @NewThread
+    @IOThread
     private fun parseQRCode(path: String) {
         lifecycleScope.launch {
             val loading = main.loading

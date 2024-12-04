@@ -5,7 +5,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.NetEaseCloudAPI
 import com.yinlin.rachel.common.SilentDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -41,7 +41,7 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
 
     override fun back() = BackState.POP
 
-    @NewThread
+    @IOThread
     private fun requestMusic(text: String, isShareUrl: Boolean) {
         lifecycleScope.launch {
             v.loading.loading = true
@@ -68,14 +68,14 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
         }
     }
 
-    @NewThread
+    @IOThread
     private fun downloadMusic(music: CloudMusic) {
         lifecycleScope.launch {
             val loading = main.loading
             // 先停止播放器
             main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
             // 生成 Info
-            val musicId = "NEC${music.id}"
+            val musicId = "NEC${music.id}-${music.name}"
             val info = MusicInfo("1.0", "网易云音乐", musicId, music.name, music.singer,
                 "未知", "未知", "未知", bgd = false, video = false,
                 chorus = mutableListOf(), lyrics = mutableMapOf("line" to mutableListOf("")), lrcData)

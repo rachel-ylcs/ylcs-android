@@ -9,9 +9,11 @@ import android.view.MotionEvent
 import android.view.View
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelFrequencyCounter
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rf
+import com.yinlin.rachel.tool.textHeight
 import com.yinlin.rachel.tool.timeString
 import com.yinlin.rachel.tool.toDP
-import com.yinlin.rachel.tool.toSP
 import kotlin.math.abs
 
 
@@ -25,22 +27,22 @@ class HotpotProgressView @JvmOverloads constructor(context: Context, attrs: Attr
     private var duration: Long = 0L
     private var items: List<Long> = ArrayList()
     private val paintTotal = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.music_progress_total)
+        color = context.rc(R.color.music_progress_total)
     }
     private val paintPlayed = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.music_progress_played)
+        color = context.rc(R.color.music_progress_played)
     }
     private val paintHotpot = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.music_progress_hotpot)
+        color = context.rc(R.color.music_progress_hotpot)
     }
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.white)
-        textSize = 12f.toSP(context)
-        typeface = context.resources.getFont(R.font.xwwk)
+        color = context.rc(R.color.white)
+        textSize = context.resources.getDimension(R.dimen.sm)
+        typeface = context.rf(R.font.xwwk)
     }
-    private val progressHeight = 10.toDP(context)
+    private val progressHeight = 12.toDP(context)
     private val gap = 5.toDP(context)
-    private val textHeight = paintText.getFontMetrics().let { it.descent - it.ascent }
+    private val textHeight = paintText.textHeight
     private val updateCounter: RachelFrequencyCounter = RachelFrequencyCounter(4)
     private var listener: OnProgressChangedListener? = null
 
@@ -95,7 +97,7 @@ class HotpotProgressView @JvmOverloads constructor(context: Context, attrs: Attr
     fun setInfo(items: List<Long>, duration: Long) {
         this.items = items
         this.duration = duration
-        this.played = 0L
+        if (duration == 0L) this.played = 0L
         updateCounter.reset()
         invalidate()
     }

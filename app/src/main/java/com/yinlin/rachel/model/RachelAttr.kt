@@ -10,6 +10,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.StyleableRes
 import com.yinlin.rachel.R
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rd
 import com.yinlin.rachel.tool.toDP
 
 class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableRes ids: IntArray) : AutoCloseable {
@@ -29,7 +31,7 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
 
     @ColorInt
     fun color(@StyleableRes id: Int, @ColorRes default: Int): Int {
-        val value = context.getColor(default)
+        val value = context.rc(default)
         return attr?.getColor(id, value) ?: value
     }
 
@@ -53,7 +55,7 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
     }
 
     fun spx(@StyleableRes id: Int, @DimenRes default: Int): Float {
-        val value = context.resources.getDimensionPixelSize(default)
+        val value = context.rd(default)
         return (attr?.getDimensionPixelSize(id, value) ?: value).toFloat()
     }
 
@@ -70,7 +72,7 @@ class RachelAttr(private val context: Context, attrs: AttributeSet?, @StyleableR
         if (resId == -1) throw Exception()
         context.getColorStateList(resId)
     }
-    catch (_: Exception) { ColorStateList.valueOf(context.getColor(R.color.steel_blue)) }
+    catch (_: Exception) { ColorStateList.valueOf(context.rc(R.color.steel_blue)) }
 
     override fun close() { attr?.recycle() }
 }

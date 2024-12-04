@@ -9,6 +9,7 @@ import android.widget.ImageView
 import com.google.android.material.tabs.TabLayout
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelTab
+import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.toDP
 
 
@@ -16,7 +17,7 @@ class BottomTabView @JvmOverloads constructor(context: Context, attrs: Attribute
     : TabLayout(context, attrs, defStyleAttr), TabLayout.OnTabSelectedListener {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.getColor(R.color.gray)
+        color = context.rc(R.color.gray)
         strokeWidth = 1f.toDP(context)
     }
     var listener: (RachelTab) -> Unit = {}

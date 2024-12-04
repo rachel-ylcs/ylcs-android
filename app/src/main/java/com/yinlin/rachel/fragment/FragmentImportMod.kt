@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.RachelMessage
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.databinding.FragmentImportModBinding
@@ -16,6 +16,7 @@ import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,7 +27,7 @@ class FragmentImportMod(main: MainActivity, private val uri: Uri) : RachelFragme
 
     override fun bindingClass() = FragmentImportModBinding::class.java
 
-    @NewThread
+    @IOThread
     override fun init() {
         var releaser: RachelMod.Releaser? = null
         var errorText = "导入失败"

@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:valueFrom="0"
             android:valueTo="2"
-            android:value="0" />
+            android:value="1" />
     </com.yinlin.rachel.view.SettingsItem>
     <com.yinlin.rachel.view.SettingsItem
         android:layout_width="match_parent"

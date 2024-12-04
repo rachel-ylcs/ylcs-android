@@ -1,4 +1,4 @@
-package com.yinlin.rachel.tool
+package com.yinlin.rachel.common
 
 import android.content.Context
 import android.os.Handler
@@ -12,6 +12,7 @@ import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import com.yinlin.rachel.tool.Config
 
 @UnstableApi
 class FfmpegRenderersFactory(context: Context) : DefaultRenderersFactory(context) {
@@ -38,7 +39,8 @@ fun buildFfmpegPlayer(context: Context) = ExoPlayer.Builder(context)
     .setAudioAttributes(AudioAttributes.Builder()
         .setUsage(C.USAGE_MEDIA)
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-        .build(), Config.music_focus)
+        .build(), Config.music_focus
+    )
     .setHandleAudioBecomingNoisy(true)
     .setRenderersFactory(FfmpegRenderersFactory(context))
     .build()

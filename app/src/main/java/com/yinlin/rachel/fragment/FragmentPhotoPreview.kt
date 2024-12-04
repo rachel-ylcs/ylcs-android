@@ -5,7 +5,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.common.SimpleImageDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -51,7 +51,7 @@ class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) :
 
     override fun back() = BackState.POP
 
-    @NewThread
+    @IOThread
     fun download4KRes() {
         lifecycleScope.launch {
             val loading = main.loading
@@ -62,7 +62,7 @@ class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) :
         }
     }
 
-    @NewThread
+    @IOThread
     private fun downloadPicture(url: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

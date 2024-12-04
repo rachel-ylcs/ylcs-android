@@ -12,16 +12,18 @@ import com.haibin.calendarview.CalendarView
 import com.haibin.calendarview.MonthView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.activity.ShowActivityPreviewList
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rf
 import com.yinlin.rachel.tool.toDP
 
 class ActivityCalendarView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null)
     : CalendarView(context, attrs) {
     class RachelMonthView(context: Context) : MonthView(context) {
-        private val colorNormal = context.getColor(R.color.calendar_normal)
-        private val colorOther = context.getColor(R.color.calendar_other)
-        private val colorNow = context.getColor(R.color.calendar_now)
-        private val colorWeekend = context.getColor(R.color.calendar_weekend)
-        private val colorActivity = context.getColor(R.color.calendar_activity)
+        private val colorNormal = context.rc(R.color.calendar_normal)
+        private val colorOther = context.rc(R.color.calendar_other)
+        private val colorNow = context.rc(R.color.calendar_now)
+        private val colorWeekend = context.rc(R.color.calendar_weekend)
+        private val colorActivity = context.rc(R.color.calendar_activity)
         private var showStar = run {
             val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.icon_star_colorful)!!).mutate()
             val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
@@ -34,14 +36,14 @@ class ActivityCalendarView @JvmOverloads constructor(context: Context, attrs: At
         private val dayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = context.resources.getDimension(R.dimen.base)
             textAlign = Paint.Align.CENTER
-            typeface = context.resources.getFont(R.font.xwwk)
+            typeface = context.rf(R.font.xwwk)
             color = colorNormal
             isFakeBoldText = true
         }
         private val lunarPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = context.resources.getDimension(R.dimen.xxs)
             textAlign = Paint.Align.CENTER
-            typeface = context.resources.getFont(R.font.xwwk)
+            typeface = context.rf(R.font.xwwk)
             color = colorNormal
         }
         private val pointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

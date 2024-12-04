@@ -12,7 +12,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.common.DialogMediaDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -22,6 +22,8 @@ import com.yinlin.rachel.databinding.ItemDevelopStateBinding
 import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.textColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,7 +69,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
     override fun back() = BackState.POP
 
     // 检查更新
-    @NewThread
+    @IOThread
     private fun checkUpdate() {
         val appVersion = main.appVersion
         lifecycleScope.launch {
@@ -99,7 +101,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
     }
 
     // 下载最新安装包
-    @NewThread
+    @IOThread
     private fun downloadAPK(url: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

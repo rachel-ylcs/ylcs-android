@@ -40,8 +40,10 @@ class CDView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
         }
     }
 
-    fun loadCD(file: File) { pic.load(file) }
-    fun clearCD() { pic.pureColor = 0 }
+    fun loadCD(file: File?) {
+        if (file != null) pic.load(file)
+        else pic.pureColor = 0
+    }
     fun startCD() = if (animator.isPaused) animator.resume() else animator.start()
     fun pauseCD() = animator.pause()
 }

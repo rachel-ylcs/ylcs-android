@@ -1,43 +1,38 @@
 package com.yinlin.rachel
 
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.StringRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import com.yinlin.rachel.api.API
+import com.yinlin.rachel.common.MusicCenter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.databinding.ActivityMainBinding
 import com.yinlin.rachel.fragment.FragmentImportMod
 import com.yinlin.rachel.fragment.FragmentImportNetEaseCloud
 import com.yinlin.rachel.fragment.FragmentLogin
+import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.fragment.FragmentProfile
 import com.yinlin.rachel.model.RachelActivity
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
-import com.yinlin.rachel.service.MusicService
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.tool.currentDateInteger
 import com.yinlin.rachel.tool.tip
 import com.yinlin.rachel.tool.visible
+import com.yinlin.rachel.tool.withTimeoutIO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.reflect.KClass
 
 class MainActivity : RachelActivity() {
@@ -77,22 +72,33 @@ class MainActivity : RachelActivity() {
         lifecycleScope.launch {
             val loadingDialog = loading
 
-            // 1. 处理 Intent
+            v.btv.listener = {
+                if (isMain) {
+                    val oldFragment = currentFragment
+                    currentFragment = fragments[it.index]
+                    currentMainIndex = it.index
+                    manager.beginTransaction().hide(oldFragment).show(currentFragment).commit()
+                }
+            }
+
+            // ! 1. 处理 Intent
             processIntent(intent)
 
-            // 2. 注册 MusicService
-            val sessionToken = SessionToken(this@MainActivity, ComponentName(this@MainActivity, MusicService::class.java))
-            val mediaControllerFuture = MediaController.Builder(this@MainActivity, sessionToken).buildAsync()
-            val player = withContext(Dispatchers.IO) { mediaControllerFuture.get() }
-            sendMessage(RachelTab.music, RachelMessage.PREPARE_PLAYER, player)
+            // ! 2. 注册 MusicService
+            val fragmentMusic = fragments[RachelTab.music.index] as FragmentMusic
+            val musicCenter = MusicCenter(this@MainActivity, handler, fragmentMusic)
+            fragmentMusic.musicCenter = musicCenter
+            withContext(Dispatchers.IO) { musicCenter.preparePlayer(this@MainActivity) }
+            // 更新播放模式
+            musicCenter.updatePlayMode()
+            // 恢复上次播放
+            musicCenter.resumeLastMusic()
 
-            // 3. 更新 Token
+            // ! 3. 更新 Token
             val token = Config.token
             if (token.isNotEmpty()) {
                 if (Config.token_daily != currentDateInteger) {
-                    val result = withContext(Dispatchers.IO) {
-                        withTimeoutOrNull(5000) { API.UserAPI.updateToken(token) } ?: API.errResult()
-                    }
+                    val result = withTimeoutIO(5000L) { API.UserAPI.updateToken(token) } ?: API.errResult()
                     when (result.code) {
                         API.Code.SUCCESS -> Config.token = result.data.token
                         API.Code.UNAUTHORIZED -> {
@@ -155,18 +161,7 @@ class MainActivity : RachelActivity() {
         transaction.show(currentFragment)
         transaction.commit()
 
-        // 初始化底部导航栏
-        v.btv.apply {
-            setItems(tabs, home)
-            listener = {
-                if (isMain) {
-                    val oldFragment = currentFragment
-                    currentFragment = fragments[it.index]
-                    currentMainIndex = it.index
-                    manager.beginTransaction().hide(oldFragment).show(currentFragment).commit()
-                }
-            }
-        }
+        v.btv.setItems(tabs, home)
     }
 
     fun navigate(des: RachelFragment<*>) {
@@ -296,14 +291,7 @@ class MainActivity : RachelActivity() {
         catch (_: Exception) { }
     }
 
-    fun isForeground(tab: RachelTab): Boolean = isMain && currentMainIndex == tab.index
-
     val loading: RachelDialog.Companion.DialogLoading get() = RachelDialog.loading(this, handler)
-
-    // 资源
-    fun rs(@StringRes id: Int) = getString(id)
-    fun rc(@ColorRes id: Int) = getColor(id)
-    fun rd(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 
     // 取当前版本
     val appVersion: Long get() = packageManager.getPackageInfo(packageName, 0).longVersionCode

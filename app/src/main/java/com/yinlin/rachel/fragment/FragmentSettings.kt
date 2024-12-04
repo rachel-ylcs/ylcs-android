@@ -7,7 +7,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
-import com.yinlin.rachel.annotation.NewThread
+import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -21,6 +21,8 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetCrashLog
+import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.rs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -150,7 +152,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun logoff() {
         lifecycleScope.launch {
             val loading = main.loading
@@ -175,7 +177,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateName(name: String) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -190,7 +192,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateAvatar(filename: String) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -207,7 +209,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateSignature(signature: String) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -222,7 +224,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun updateWall(wall: String) {
         lifecycleScope.launch {
             val loading = main.loading
@@ -239,7 +241,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun uploadPlaylist() {
         lifecycleScope.launch {
             val loading = main.loading
@@ -249,7 +251,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun downloadPlaylist() {
         lifecycleScope.launch {
             val loading = main.loading
@@ -266,7 +268,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
         }
     }
 
-    @NewThread
+    @IOThread
     private fun sendFeedback(content: String) {
         lifecycleScope.launch {
             val loading = main.loading

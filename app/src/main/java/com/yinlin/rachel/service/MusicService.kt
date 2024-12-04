@@ -9,7 +9,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.yinlin.rachel.MainActivity
-import com.yinlin.rachel.tool.buildFfmpegPlayer
+import com.yinlin.rachel.common.buildFfmpegPlayer
 
 class MusicService : MediaLibraryService(), MediaLibraryService.MediaLibrarySession.Callback {
     private lateinit var player: ExoPlayer
