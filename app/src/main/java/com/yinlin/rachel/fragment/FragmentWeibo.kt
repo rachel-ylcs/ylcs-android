@@ -2,7 +2,6 @@ package com.yinlin.rachel.fragment
 
 import android.view.Gravity
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.annotation.IOThread
@@ -20,12 +19,10 @@ import com.yinlin.rachel.model.RachelHeaderAdapter
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.toDP
 import com.yinlin.rachel.view.LoadingTextView
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
 class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragment<FragmentWeiboBinding>(main) {
@@ -116,10 +113,9 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
 
         @IOThread
         private fun requestComment(loading: LoadingTextView) {
-            fragment.lifecycleScope.launch {
-                loading.loading = true
-                val comments = mutableListOf<WeiboComment>()
-                withContext(Dispatchers.IO) { WeiboAPI.extractWeiboDetails(weibo.id, comments) }
+            loading.loading = true
+            val comments = mutableListOf<WeiboComment>()
+            fragment.startIOWithResult({ WeiboAPI.extractWeiboDetails(weibo.id, comments) }) {
                 loading.loading = false
                 if (comments.isNotEmpty()) {
                     setSource(comments)

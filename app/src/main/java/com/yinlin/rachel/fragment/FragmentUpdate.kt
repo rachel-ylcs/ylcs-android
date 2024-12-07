@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
@@ -25,10 +23,10 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.ri
 import com.yinlin.rachel.tool.rs
+import com.yinlin.rachel.tool.startIO
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.textColor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.withMain
 import xyz.sangcomz.stickytimelineview.callback.SectionCallback
 import xyz.sangcomz.stickytimelineview.model.SectionInfo
 
@@ -73,10 +71,9 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
     @IOThread
     private fun checkUpdate() {
         val appVersion = main.appVersion
-        lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) { API.CommonAPI.getServerInfo() }
-            if (result.success) {
-                val info = result.data
+        startIOWithResult({ API.CommonAPI.getServerInfo() }) {
+            if (it.success) {
+                val info = it.data
                 downloadUrl = info.downloadUrl
                 if (appVersion < info.targetVersion) isNeedUpdate = true
                 v.appVersion.text = "${main.rs(R.string.app_name)} ${main.appVersionName(appVersion)}"
@@ -96,7 +93,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
             }
             else {
                 main.pop()
-                tip(Tip.ERROR, result.msg)
+                tip(Tip.ERROR, it.msg)
             }
         }
     }
@@ -104,36 +101,34 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
     // 下载最新安装包
     @IOThread
     private fun downloadAPK(url: String) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Net.download(url, listener = object : DialogMediaDownloadListener(main) {
-                    override fun makeMediaUri(url: String, values: ContentValues): Uri {
-                        values.put(MediaStore.MediaColumns.DISPLAY_NAME, url.substringAfterLast('/'))
-                        values.put(MediaStore.Images.Media.MIME_TYPE, "application/vnd.android.package-archive")
-                        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-                        return MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                    }
+        startIO {
+            Net.download(url, listener = object : DialogMediaDownloadListener(main) {
+                override fun makeMediaUri(url: String, values: ContentValues): Uri {
+                    values.put(MediaStore.MediaColumns.DISPLAY_NAME, url.substringAfterLast('/'))
+                    values.put(MediaStore.Images.Media.MIME_TYPE, "application/vnd.android.package-archive")
+                    values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                    return MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                }
 
-                    override suspend fun onCompleted() {
-                        withContext(Dispatchers.Main) {
-                            try {
-                                val intent = Intent(Intent.ACTION_VIEW)
-                                intent.setDataAndType(uri, "application/vnd.android.package-archive")
-                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                startActivity(intent)
-                            }
-                            catch (_: Exception) {
-                                tip(Tip.ERROR, "打开安装包失败, 请手动在下载目录安装")
-                            }
+                override suspend fun onCompleted() {
+                    withMain {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW)
+                            intent.setDataAndType(uri, "application/vnd.android.package-archive")
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }
+                        catch (_: Exception) {
+                            tip(Tip.ERROR, "打开安装包失败, 请手动在下载目录安装")
                         }
                     }
+                }
 
-                    override suspend fun onFailed() {
-                        withContext(Dispatchers.Main) { tip(Tip.ERROR, "下载失败") }
-                    }
-                })
-            }
+                override suspend fun onFailed() {
+                    withMain { tip(Tip.ERROR, "下载失败") }
+                }
+            })
         }
     }
 }

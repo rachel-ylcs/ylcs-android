@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import com.haibin.calendarview.Calendar
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -23,10 +22,8 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetUserCard
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.view.ActivityCalendarView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  {
     override fun bindingClass() = FragmentMeBinding::class.java
@@ -171,90 +168,85 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
 
     @IOThread
     private fun requestUserInfo() {
-        lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getInfo(Config.token) }
-            when (result.code) {
+        startIOWithResult({ API.UserAPI.getInfo(Config.token) }) {
+            when (it.code) {
                 API.Code.SUCCESS -> {
-                    val user = result.data
+                    val user = it.data
                     Config.user = user
                     updateUserInfo(user)
                 }
                 API.Code.UNAUTHORIZED -> {
-                    tip(Tip.WARNING, result.msg)
+                    tip(Tip.WARNING, it.msg)
                     Config.token = ""
                     Config.user = null
                     updateUserInfo(null)
                     main.navigate(FragmentLogin(main))
                 }
-                else -> tip(Tip.ERROR, result.msg)
+                else -> tip(Tip.ERROR, it.msg)
             }
         }
     }
 
     @IOThread
     private fun getActivities(showLoading: Boolean) {
-        lifecycleScope.launch {
-            if (showLoading) v.calendarMonth.loading = true
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getActivities() }
+        if (showLoading) v.calendarMonth.loading = true
+        startIOWithResult({ API.UserAPI.getActivities() }) {
             if (showLoading) v.calendarMonth.loading = false
-            if (result.success) {
-                v.calendar.setActivities(result.data)
+            if (it.success) {
+                v.calendar.setActivities(it.data)
                 v.calendar.scrollToCurrent(true)
             }
         }
     }
 
     // 获取活动详情
+    @IOThread
     private fun getActivityInfo(calendar: Calendar) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getActivityInfo(calendar.date) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.getActivityInfo(calendar.date) }) {
             loading.dismiss()
-            if (result.success) main.navigate(FragmentShowActivity(main, result.data))
-            else tip(Tip.ERROR, result.msg)
+            if (it.success) main.navigate(FragmentShowActivity(main, it.data))
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     // 添加活动
     @IOThread
     private fun addActivity(calendar: Calendar, show: ShowActivity) {
-        lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) { API.UserAPI.addActivity(Config.token, show) }
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+        startIOWithResult({ API.UserAPI.addActivity(Config.token, show) }) {
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 v.calendar.addActivity(calendar, show.title)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     // 删除活动
     @IOThread
     private fun deleteActivity(calendar: Calendar) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.deleteActivity(Config.token, calendar.date) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.deleteActivity(Config.token, calendar.date) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 v.calendar.removeSchemeDate(calendar)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     // 签到
     @IOThread
     private fun signin() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.signin(Config.token) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.signin(Config.token) }) {
             loading.dismiss()
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 requestUserInfo()
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 }

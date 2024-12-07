@@ -13,9 +13,9 @@ import com.yinlin.rachel.databinding.FragmentLoginBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
-import kotlinx.coroutines.Dispatchers
+import com.yinlin.rachel.tool.startIOWithResult
+import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(main) {
     override fun bindingClass() = FragmentLoginBinding::class.java
@@ -71,11 +71,11 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
             lifecycleScope.launch {
                 val loading = main.loading
-                val result1 = withContext(Dispatchers.IO) { API.UserAPI.login(name, pwd) }
+                val result1 = withIO { API.UserAPI.login(name, pwd) }
                 if (result1.success) {
                     val token = result1.data.token
                     Config.token = token
-                    val result2 = withContext(Dispatchers.IO) { API.UserAPI.getInfo(token) }
+                    val result2 = withIO { API.UserAPI.getInfo(token) }
                     if (result2.success) {
                         val user = result2.data
                         Config.user = user
@@ -98,15 +98,14 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         val inviterName = v.registerInviter.text
         if (User.Companion.Constraint.name(name, inviterName) && User.Companion.Constraint.password(pwd, confirmPwd)) {
             if (pwd == confirmPwd) {
-                lifecycleScope.launch {
-                    val loading = main.loading
-                    val result = withContext(Dispatchers.IO) { API.UserAPI.register(name, pwd, inviterName) }
+                val loading = main.loading
+                startIOWithResult({ API.UserAPI.register(name, pwd, inviterName) }) {
                     loading.dismiss()
-                    if (result.success) {
-                        tip(Tip.SUCCESS, result.msg)
+                    if (it.success) {
+                        tip(Tip.SUCCESS, it.msg)
                         showLogin()
                     }
-                    else tip(Tip.ERROR, result.msg)
+                    else tip(Tip.ERROR, it.msg)
                 }
             }
             else tip(Tip.WARNING, "两次输入的密码不相同")
@@ -119,15 +118,14 @@ class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(m
         val name = v.forgotPasswordName.text
         val pwd = v.forgotPasswordPwd.text
         if (User.Companion.Constraint.name(name) && User.Companion.Constraint.password(pwd)) {
-            lifecycleScope.launch {
-                val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.forgotPassword(name, pwd) }
+            val loading = main.loading
+            startIOWithResult({ API.UserAPI.forgotPassword(name, pwd) }) {
                 loading.dismiss()
-                if (result.success) {
-                    tip(Tip.SUCCESS, result.msg)
+                if (it.success) {
+                    tip(Tip.SUCCESS, it.msg)
                     showLogin()
                 }
-                else tip(Tip.ERROR, result.msg)
+                else tip(Tip.ERROR, it.msg)
             }
         }
         else tip(Tip.WARNING, "ID和新密码不合规则")

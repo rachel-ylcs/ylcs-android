@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
@@ -15,9 +14,7 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.startIOWithResult
 
 class FragmentCreateTopic(main: MainActivity) : RachelFragment<FragmentCreateTopicBinding>(main) {
     override fun bindingClass() = FragmentCreateTopicBinding::class.java
@@ -50,17 +47,15 @@ class FragmentCreateTopic(main: MainActivity) : RachelFragment<FragmentCreateTop
 
     @IOThread
     private fun sendTopic(user: User, title: String, content: String, pics: List<String>) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.sendTopic(Config.token, title, content, pics) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.sendTopic(Config.token, title, content, pics) }) {
             loading.dismiss()
-            if (result.success) {
-                val topPreview = TopicPreview(result.data.tid, user.uid, user.name, title, result.data.pic, false, 0, 0)
+            if (it.success) {
+                val topPreview = TopicPreview(it.data.tid, user.uid, user.name, title, it.data.pic, false, 0, 0)
                 main.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_ADD_TOPIC, topPreview)
                 main.pop()
-                tip(Tip.SUCCESS, result.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 }

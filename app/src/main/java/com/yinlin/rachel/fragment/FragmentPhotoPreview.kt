@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
@@ -15,9 +14,8 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadBlack
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.tool.rachelClick
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.startIO
+import com.yinlin.rachel.tool.startIOWithResult
 
 class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) : RachelFragment<FragmentPhotoPreviewBinding>(main) {
     override fun bindingClass() = FragmentPhotoPreviewBinding::class.java
@@ -53,21 +51,16 @@ class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) :
 
     @IOThread
     fun download4KRes() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.download4KRes(Config.token) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.download4KRes(Config.token) }) {
             loading.dismiss()
-            if (result.success) downloadPicture(pic.mSourceUrl)
-            else tip(Tip.ERROR, result.msg)
+            if (it.success) downloadPicture(pic.mSourceUrl)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun downloadPicture(url: String) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Net.download(url, listener = SimpleImageDownloadListener(this@FragmentPhotoPreview))
-            }
-        }
+        startIO { Net.download(url, listener = SimpleImageDownloadListener(this@FragmentPhotoPreview)) }
     }
 }

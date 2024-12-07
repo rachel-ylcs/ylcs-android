@@ -17,9 +17,8 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.toDP
-import kotlinx.coroutines.Dispatchers
+import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.jvm.internal.Ref.IntRef
 
 class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : RachelFragment<FragmentWeiboAlbumBinding>(main) {
@@ -92,7 +91,7 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
             if (album[page - 1] == null) { // 无缓存
                 val picCount = IntRef()
                 v.title.loading = true
-                val pagePics = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserAlbumPics(containerId, page, PIC_LIMIT, picCount) }
+                val pagePics = withIO { WeiboAPI.extractWeiboUserAlbumPics(containerId, page, PIC_LIMIT, picCount) }
                 v.title.loading = false
                 if (pagePics.isNotEmpty()) album[page - 1] = AlbumCache(picCount.element, pagePics)
             }

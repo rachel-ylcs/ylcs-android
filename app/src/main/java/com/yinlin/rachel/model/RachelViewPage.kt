@@ -3,12 +3,13 @@ package com.yinlin.rachel.model
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.startIO
+import com.yinlin.rachel.tool.startIOWithResult
+import kotlinx.coroutines.CoroutineScope
 
 abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val fragment: F) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -42,5 +43,6 @@ abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val 
     protected open fun init() { }
     open fun back(): BackState = BackState.CANCEL
 
-    val lifecycleScope: LifecycleCoroutineScope get() = fragment.lifecycleScope
+    fun startIO(block: suspend CoroutineScope.() -> Unit) = fragment.startIO(block)
+    fun <T> startIOWithResult(ioBlock: suspend CoroutineScope.() -> T, mainBlock: suspend CoroutineScope.(T) -> Unit) = fragment.startIOWithResult(ioBlock, mainBlock)
 }

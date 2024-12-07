@@ -17,10 +17,10 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rs
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
+import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUserListBinding>(main) {
     class Adapter(fragment: FragmentWeiboUserList) : RachelAdapter<ItemWeiboUserBinding, WeiboUserStorage>() {
@@ -89,7 +89,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
             var isNeedUpdate = false
             for (user in users) {
                 if (user.name.isEmpty() || user.avatar.isEmpty()) {
-                    val userStorage = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserStorage(user.userId) }
+                    val userStorage = withIO { WeiboAPI.extractWeiboUserStorage(user.userId) }
                     if (userStorage != null) {
                         user.name = userStorage.name
                         user.avatar = userStorage.avatar
@@ -113,14 +113,13 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
 
     @IOThread
     private fun searchWeiboUser(name: String) {
-        lifecycleScope.launch {
-            v.state.showLoading()
-            val result = withContext(Dispatchers.IO) { WeiboAPI.searchUser(name) }
-            if (result != null) {
-                if (result.isNotEmpty()) {
+        v.state.showLoading()
+        startIOWithResult({ WeiboAPI.searchUser(name) }) {
+            if (it != null) {
+                if (it.isNotEmpty()) {
                     v.title.text = main.rs(R.string.weibo_user_list_search)
                     mAdapter.isManagerMode = false
-                    mAdapter.setSource(result)
+                    mAdapter.setSource(it)
                     mAdapter.notifySource()
                     v.state.showContent()
                 }

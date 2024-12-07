@@ -14,6 +14,7 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.loadBlack
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.startIO
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.RotateYTransformer
@@ -66,19 +67,15 @@ class FragmentImagePreview(main: MainActivity, private val pics: List<RachelPrev
 
     @IOThread
     private fun downloadPicture(url: String) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Net.download(url, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
-            }
+        startIO {
+            Net.download(url, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
         }
     }
 
     @IOThread
     private fun downloadPictures(urls: List<String>) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Net.downloadAll(urls, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
-            }
+        startIO {
+            Net.downloadAll(urls, listener = SimpleImageDownloadListener(this@FragmentImagePreview))
         }
     }
 }

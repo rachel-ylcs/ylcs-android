@@ -5,6 +5,7 @@ import com.yinlin.rachel.databinding.SheetCrashLogBinding
 import com.yinlin.rachel.fragment.FragmentSettings
 import com.yinlin.rachel.tool.interceptScroll
 import com.yinlin.rachel.model.RachelSheet
+import com.yinlin.rachel.tool.startIOWithResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,8 +15,8 @@ class SheetCrashLog(fragment: FragmentSettings) : RachelSheet<SheetCrashLogBindi
 
     override fun init() {
         v.log.interceptScroll()
-        lifecycleScope.launch {
-            v.log.text = withContext(Dispatchers.IO) { RachelApplication.crashHandler.getCrashLog() }
+        startIOWithResult({ RachelApplication.crashHandler.getCrashLog() }) {
+            v.log.text = it
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -19,10 +18,8 @@ import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.tool.isTop
 import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.view.NavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBinding>(main)  {
     class Adapter(fragment: FragmentDiscovery) : RachelAdapter<ItemTopicUserBinding, TopicPreview>() {
@@ -141,17 +138,16 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
     @IOThread
     private fun requestNewData() {
         v.container.setNoMoreData(false)
-        lifecycleScope.launch {
-            v.list.scrollToPosition(0)
-            v.state.showLoading("加载主题中...")
-            val current = v.tab.current
-            val result = withContext(Dispatchers.IO) {
-                if (current == TAB_LATEST) API.UserAPI.getLatestTopic()
-                else API.UserAPI.getHotTopic()
-            }
-            when (result.code) {
+        v.list.scrollToPosition(0)
+        v.state.showLoading("加载主题中...")
+        val current = v.tab.current
+        startIOWithResult({
+            if (current == TAB_LATEST) API.UserAPI.getLatestTopic()
+            else API.UserAPI.getHotTopic()
+        }) {
+            when (it.code) {
                 API.Code.SUCCESS -> {
-                    val topics = result.data
+                    val topics = it.data
                     if (topics.isEmpty()) {
                         if (current == TAB_LATEST) topicUpper = 2147483647
                         else topicOffset = 0
@@ -170,7 +166,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
                     mAdapter.notifySource()
                 }
                 API.Code.UNAUTHORIZED, API.Code.FAILED -> {
-                    v.state.showError(result.msg) { requestNewData() }
+                    v.state.showError(it.msg) { requestNewData() }
                     v.container.finishRefresh()
                 }
                 else -> {
@@ -183,14 +179,13 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
 
     @IOThread
     private fun requestNewDataMore() {
-        lifecycleScope.launch {
-            val current = v.tab.current
-            val result = withContext(Dispatchers.IO) {
-                if (current == TAB_LATEST) API.UserAPI.getLatestTopic(topicUpper)
-                else API.UserAPI.getHotTopic(topicOffset)
-            }
-            if (result.success) {
-                val topics = result.data
+        val current = v.tab.current
+        startIOWithResult({
+            if (current == TAB_LATEST) API.UserAPI.getLatestTopic(topicUpper)
+            else API.UserAPI.getHotTopic(topicOffset)
+        }) {
+            if (it.success) {
+                val topics = it.data
                 if (topics.isEmpty()) v.container.finishLoadMoreWithNoMoreData()
                 else {
                     val newCount = topics.size
@@ -202,7 +197,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
                 }
             }
             else {
-                tip(Tip.ERROR, result.msg)
+                tip(Tip.ERROR, it.msg)
                 v.container.finishLoadMore()
             }
         }

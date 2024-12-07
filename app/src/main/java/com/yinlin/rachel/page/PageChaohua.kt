@@ -9,9 +9,6 @@ import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.common.WeiboAdapter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.isTop
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, FragmentMsg>(fragment) {
     private val mAdapter = WeiboAdapter(fragment.main)
@@ -51,12 +48,12 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
 
     @IOThread
     fun requestNewData() {
-        lifecycleScope.launch {
-            v.container.setNoMoreData(false)
-            v.state.showLoading()
-            v.container.setEnableLoadMore(false)
-            mAdapter.clearSource()
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(0, mAdapter.items) }
+        v.container.setNoMoreData(false)
+        v.state.showLoading()
+        v.container.setEnableLoadMore(false)
+        mAdapter.clearSource()
+        startIOWithResult({ WeiboAPI.extractChaohua(0, mAdapter.items) }) {
+            sinceId = it
             if (mAdapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) {
@@ -70,9 +67,9 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
 
     @IOThread
     fun requestMoreData() {
-        lifecycleScope.launch {
-            val oldSize = mAdapter.size
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(sinceId, mAdapter.items) }
+        val oldSize = mAdapter.size
+        startIOWithResult({ WeiboAPI.extractChaohua(sinceId, mAdapter.items) }) {
+            sinceId = it
             if (sinceId == 0L) v.container.finishLoadMoreWithNoMoreData()
             else {
                 mAdapter.notifyItemRangeInserted(oldSize, mAdapter.size - oldSize)

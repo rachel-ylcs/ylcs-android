@@ -38,10 +38,11 @@ import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.readText
 import com.yinlin.rachel.tool.rs
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
+import com.yinlin.rachel.tool.withIO
+import com.yinlin.rachel.tool.withMain
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : RachelFragment<FragmentMusicInfoBinding>(main) {
@@ -157,26 +158,27 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
             GROUP_SHARE -> RachelDialog.confirm(main, content="导出MOD\"${this.id}\"到文件分享?") { shareMusic(musicInfo.id) }
         } }
 
+        // 异步加载歌词
         lifecycleScope.launch {
             v.loadingLyrics.loading = true
             if (musicInfo.lrcData == null) {
-                val lrcData = withContext(Dispatchers.IO) { LrcData.parseLrcData(musicInfo.defaultLrcPath.readText()) }
+                val lrcData = withIO { LrcData.parseLrcData(musicInfo.defaultLrcPath.readText()) }
                 musicInfo.lrcData = lrcData
             }
             v.loadingLyrics.loading = false
             musicInfo.lrcData?.let { v.lyrics.text = it.plainText }
         }
 
-        lifecycleScope.launch {
-            v.loadingRes.loading = true
-            withContext(Dispatchers.IO) {
-                val resList = pathMusic.listFiles {
+        // 异步加载资源信息
+        v.loadingRes.loading = true
+        startIOWithResult({
+            pathMusic.listFiles {
                     file -> MusicRes.checkResFile(musicInfo.id, file)
-                }?.map { MusicRes.parse(musicInfo.id, it) } ?: emptyList()
-                mAdapter.setSource(resList)
-                mAdapter.notifySource()
-            }
+            }?.map { MusicRes.parse(musicInfo.id, it) } ?: emptyList()
+        }) {
             v.loadingRes.loading = false
+            mAdapter.setSource(it)
+            mAdapter.notifySource()
         }
     }
 
@@ -184,19 +186,18 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
 
     private fun editRes(pos: Int, res: MusicRes) = when (res.id) {
         MusicRes.Type.RECORD -> RachelPictureSelector.single(main, 512, 512, false) {
-            lifecycleScope.launch {
-                val result = withContext(Dispatchers.IO) {
-                    val result = File(it).copySafely(musicInfo.recordPath)
-                    if (result) {
-                        withContext(Dispatchers.Main) {
-                            main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
-                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
-                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
-                        }
-                    }
-                    result
-                }
+            startIOWithResult({
+                val result = File(it).copySafely(musicInfo.recordPath)
                 if (result) {
+                    withMain {
+                        main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
+                        val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                        if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                    }
+                }
+                result
+            }) {
+                if (it) {
                     v.record.load(musicInfo.recordPath)
                     res.fileSize = musicInfo.recordPath.fileSizeString
                     mAdapter.notifyItemChanged(pos)
@@ -205,18 +206,17 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
             }
         }
         MusicRes.Type.BGS -> RachelPictureSelector.single(main, 1080, 1920, false) {
-            lifecycleScope.launch {
-                val result = withContext(Dispatchers.IO) {
-                    val result = File(it).copySafely(musicInfo.bgsPath)
-                    if (result) {
-                        withContext(Dispatchers.Main) {
-                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
-                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
-                        }
-                    }
-                    result
-                }
+            startIOWithResult({
+                val result = File(it).copySafely(musicInfo.bgsPath)
                 if (result) {
+                    withMain {
+                        val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                        if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                    }
+                }
+                result
+            }) {
+                if (it) {
                     res.fileSize = musicInfo.bgsPath.fileSizeString
                     mAdapter.notifyItemChanged(pos)
                 }
@@ -228,88 +228,88 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
 
     private fun deleteRes(pos: Int, res: MusicRes) {
         when (res.id) {
-            MusicRes.Type.VIDEO -> lifecycleScope.launch {
-                val result = withContext(Dispatchers.IO) {
-                    val result = musicInfo.videoPath.deleteSafely()
-                    if (result) {
-                        musicInfo.video = false
-                        musicInfo.rewrite()
-                        withContext(Dispatchers.Main) {
-                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
-                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
-                        }
-                    }
-                    result
-                }
+            MusicRes.Type.VIDEO -> startIOWithResult({
+                val result = musicInfo.videoPath.deleteSafely()
                 if (result) {
+                    musicInfo.video = false
+                    musicInfo.rewrite()
+                    withMain {
+                        val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                        if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                    }
+                }
+                result
+            }) {
+                if (it) {
                     mAdapter.removeItem(pos)
                     mAdapter.notifyItemRemoved(pos)
                 }
             }
-            MusicRes.Type.BGD -> lifecycleScope.launch {
-                val result = withContext(Dispatchers.IO) {
-                    val result = musicInfo.bgdPath.deleteSafely()
-                    if (result) {
-                        musicInfo.bgd = false
-                        musicInfo.rewrite()
-                        withContext(Dispatchers.Main) {
-                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
-                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
-                        }
-                    }
-                    result
-                }
+            MusicRes.Type.BGD -> startIOWithResult({
+                val result = musicInfo.bgdPath.deleteSafely()
                 if (result) {
+                    musicInfo.bgd = false
+                    musicInfo.rewrite()
+                    withMain {
+                        val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                        if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                    }
+                }
+                result
+            }) {
+                if (it) {
                     mAdapter.removeItem(pos)
                     mAdapter.notifyItemRemoved(pos)
                 }
             }
-            MusicRes.Type.LRC -> lifecycleScope.launch {
+            MusicRes.Type.LRC -> {
                 val lrcList = musicInfo.lyrics[LineLyricsEngine.NAME]
                 val resId = res.name.removeSuffix(res.ext)
                 if (resId.isNotEmpty() && lrcList != null && lrcList.contains(resId)) {
-                    val result = withContext(Dispatchers.IO) {
+                    startIOWithResult({
                         val result = musicInfo.customPath(res.name).deleteSafely()
                         if (result) {
                             lrcList.remove(resId)
                             musicInfo.rewrite()
                             // 如果正在播放这首歌则切换到默认歌词
-                            withContext(Dispatchers.Main) {
+                            withMain {
                                 val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
                                 if (currentMusicInfo == musicInfo)
                                     main.sendMessage(RachelTab.music, RachelMessage.MUSIC_USE_LYRICS_ENGINE, LineLyricsEngine.NAME, LineLyricsEngine.DEFAULT_RES)
                             }
                         }
                         result
-                    }
-                    if (result) {
-                        mAdapter.removeItem(pos)
-                        mAdapter.notifyItemRemoved(pos)
+                    }) {
+                        if (it) {
+                            mAdapter.removeItem(pos)
+                            mAdapter.notifyItemRemoved(pos)
+                        }
                     }
                 }
             }
-            MusicRes.Type.PAG -> lifecycleScope.launch {
+            MusicRes.Type.PAG -> {
                 val pagList = musicInfo.lyrics[PAGLyricsEngine.NAME]
                 val resId = res.name.removeSuffix(res.ext)
                 if (resId.isNotEmpty() && pagList != null && pagList.contains(resId)) {
-                    val result = withContext(Dispatchers.IO) {
+                    startIOWithResult({
                         val result = musicInfo.customPath(res.name).deleteSafely()
                         if (result) {
                             pagList.remove(resId)
                             if (pagList.isEmpty()) musicInfo.lyrics.remove(PAGLyricsEngine.NAME)
                             musicInfo.rewrite()
                             // 如果正在播放这首歌则切换到默认歌词
-                            withContext(Dispatchers.Main) {
+                            withMain {
                                 val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
                                 if (currentMusicInfo == musicInfo)
                                     main.sendMessage(RachelTab.music, RachelMessage.MUSIC_USE_LYRICS_ENGINE, LineLyricsEngine.NAME, LineLyricsEngine.DEFAULT_RES)
                             }
                         }
                         result
-                    }
-                    if (result) {
-                        mAdapter.removeItem(pos)
-                        mAdapter.notifyItemRemoved(pos)
+                    }) {
+                        if (it) {
+                            mAdapter.removeItem(pos)
+                            mAdapter.notifyItemRemoved(pos)
+                        }
                     }
                 }
             }
@@ -320,25 +320,24 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
     // 分享歌曲
     @IOThread
     private fun shareMusic(id: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val uri = withContext(Dispatchers.IO) {
-                try {
-                    val merger = RachelMod.Merger(pathMusic)
-                    val metadata = merger.getMetadata(listOf(id), emptyList(), null)
-                    val resolver: ContentResolver = main.contentResolver
-                    val values = ContentValues()
-                    values.put(MediaStore.Downloads.DISPLAY_NAME, "${id}.rachel")
-                    val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)!!
-                    if (resolver.openOutputStream(uri).use { merger.run(it!!, metadata, null) }) uri
-                    else null
-                } catch (_: Exception) { null }
-            }
+        val loading = main.loading
+        startIOWithResult({
+            try {
+                val merger = RachelMod.Merger(pathMusic)
+                val metadata = merger.getMetadata(listOf(id), emptyList(), null)
+                val resolver: ContentResolver = main.contentResolver
+                val values = ContentValues()
+                values.put(MediaStore.Downloads.DISPLAY_NAME, "${id}.rachel")
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)!!
+                if (resolver.openOutputStream(uri).use { merger.run(it!!, metadata, null) }) uri
+                else null
+            } catch (_: Exception) { null }
+        }) {
             loading.dismiss()
             try {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "application/*"
-                intent.putExtra(Intent.EXTRA_STREAM, uri)
+                intent.putExtra(Intent.EXTRA_STREAM, it)
                 startActivity(Intent.createChooser(intent, "分享歌曲MOD"))
             }
             catch (_: Exception) {

@@ -15,6 +15,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.activity.VideoActivity
 import com.yinlin.rachel.common.MusicCenter
+import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.Command
 import com.yinlin.rachel.data.music.LrcData
@@ -157,6 +158,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     override fun hidden() {
         isForeground = false
     }
+
+    override fun back() = BackState.HOME
 
     @Suppress("UNCHECKED_CAST")
     override fun message(msg: RachelMessage, vararg args: Any?) {

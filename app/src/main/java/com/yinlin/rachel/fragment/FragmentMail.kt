@@ -1,7 +1,6 @@
 package com.yinlin.rachel.fragment
 
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -18,11 +17,9 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(main) {
     class Adapter(private val fragment: FragmentMail) : RachelAdapter<ItemMailBinding, Mail>() {
@@ -123,31 +120,29 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
 
         @IOThread
         private fun processMail(position: Int, mail: Mail, confirm: Boolean) {
-            fragment.lifecycleScope.launch {
-                val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.processMail(Config.token, mail.mid, confirm) }
+            val loading = main.loading
+            fragment.startIOWithResult({ API.UserAPI.processMail(Config.token, mail.mid, confirm) }) {
                 loading.dismiss()
-                if (result.success) {
+                if (it.success) {
                     mail.processed = true
                     notifyItemChanged(position)
-                    fragment.tip(Tip.SUCCESS, result.msg)
+                    fragment.tip(Tip.SUCCESS, it.msg)
                 }
-                else fragment.tip(Tip.ERROR, result.msg)
+                else fragment.tip(Tip.ERROR, it.msg)
             }
         }
 
         @IOThread
         private fun deleteMail(position: Int, mail: Mail) {
-            fragment.lifecycleScope.launch {
-                val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.deleteMail(Config.token, mail.mid) }
+            val loading = main.loading
+            fragment.startIOWithResult({ API.UserAPI.deleteMail(Config.token, mail.mid) }) {
                 loading.dismiss()
-                if (result.success) {
+                if (it.success) {
                     removeItem(position)
                     notifyItemRemoved(position)
-                    fragment.tip(Tip.SUCCESS, result.msg)
+                    fragment.tip(Tip.SUCCESS, it.msg)
                 }
-                else fragment.tip(Tip.ERROR, result.msg)
+                else fragment.tip(Tip.ERROR, it.msg)
             }
         }
     }
@@ -176,20 +171,19 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
 
     @IOThread
     private fun loadMail() {
-        lifecycleScope.launch {
-            v.state.showLoading()
-            val result = withContext(Dispatchers.IO) { API.UserAPI.getMail(Config.token) }
+        v.state.showLoading()
+        startIOWithResult({ API.UserAPI.getMail(Config.token) }) {
             if (v.container.isRefreshing) v.container.finishRefresh()
-            when (result.code) {
+            when (it.code) {
                 API.Code.SUCCESS -> {
-                    val mails = result.data
+                    val mails = it.data
                     if (mails.isEmpty()) v.state.showEmpty()
                     else v.state.showContent()
                     mAdapter.setSource(mails)
                     mAdapter.notifySource()
                 }
-                API.Code.UNAUTHORIZED -> tip(Tip.WARNING, result.msg)
-                API.Code.FAILED -> tip(Tip.ERROR, result.msg)
+                API.Code.UNAUTHORIZED -> tip(Tip.WARNING, it.msg)
+                API.Code.FAILED -> tip(Tip.ERROR, it.msg)
                 else -> v.state.showOffline { loadMail() }
             }
         }

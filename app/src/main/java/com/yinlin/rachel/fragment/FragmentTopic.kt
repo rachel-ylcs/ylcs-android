@@ -1,7 +1,6 @@
 package com.yinlin.rachel.fragment
 
 import android.text.InputType
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -25,11 +24,8 @@ import com.yinlin.rachel.model.RachelPopMenu
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
 
 class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<FragmentTopicBinding>(main) {
     class Adapter(private val fragment: FragmentTopic) : RachelHeaderAdapter<HeaderTopicBinding, ItemCommentBinding, Comment>() {
@@ -102,12 +98,11 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
 
         @IOThread
         fun requestTopic() {
-            fragment.lifecycleScope.launch {
-                val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.getTopic(fragment.tid) }
+            val loading = main.loading
+            fragment.startIOWithResult({ API.UserAPI.getTopic(fragment.tid) }) {
                 loading.dismiss()
-                if (result.success) {
-                    val topic = result.data
+                if (it.success) {
+                    val topic = it.data
                     fragment.topic = topic
                     header.apply {
                         name.text = topic.name
@@ -116,7 +111,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
                         title.text = topic.title
                         content.text = topic.content
                         userLabel.setLabel(topic.label, topic.level)
-                        pics.images = RachelPreview.fromSingleUri(topic.pics) { topic.picPath(it) }
+                        pics.images = RachelPreview.fromSingleUri(topic.pics) { picPath -> topic.picPath(picPath) }
                     }
                     setSource(topic.comments)
                     notifySourceEx()
@@ -197,57 +192,53 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
 
     @IOThread
     private fun sendComment(user: User, content: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.sendComment(Config.token, tid, content) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.sendComment(Config.token, tid, content) }) {
             loading.dismiss()
-            if (result.success) {
-                val comment = result.data
+            if (it.success) {
+                val comment = it.data
                 closeCommentCard()
                 adapter += Comment(comment.cid, user.uid, user.name, comment.ts, content, false, user.label, user.coin)
                 adapter.notifyInsertEx(adapter.size)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun sendCoin(value: Int) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.sendCoin(Config.token, topic.uid, tid, value) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.sendCoin(Config.token, topic.uid, tid, value) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun deleteComment(cid: Long, position: Int) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.deleteComment(Config.token, cid, tid) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.deleteComment(Config.token, cid, tid) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 adapter.removeItem(position)
                 adapter.notifyRemovedEx(position)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateCommentTop(cid: Long, position: Int, isTop: Boolean) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateCommentTop(Config.token, cid, tid, isTop) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateCommentTop(Config.token, cid, tid, isTop) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 val comment = adapter[position]
                 if (comment.isTop != isTop) {
                     comment.isTop = isTop
@@ -283,36 +274,34 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
                     }
                 }
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun deleteTopic() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.deleteTopic(Config.token, tid) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.deleteTopic(Config.token, tid) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 main.sendMessage(RachelTab.discovery, RachelMessage.DISCOVERY_DELETE_TOPIC, tid)
                 main.popMessage(FragmentProfile::class, RachelMessage.PROFILE_DELETE_TOPIC, tid)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateTopicTop(isTop: Boolean) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateTopicTop(Config.token, tid, isTop) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateTopicTop(Config.token, tid, isTop) }) {
             loading.dismiss()
-            if (result.success) {
+            if (it.success) {
                 main.sendBottomMessage(FragmentProfile::class, RachelMessage.PROFILE_UPDATE_TOPIC_TOP, tid, isTop)
-                tip(Tip.SUCCESS, result.msg)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 }

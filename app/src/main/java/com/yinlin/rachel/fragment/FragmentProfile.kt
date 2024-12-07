@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -19,10 +18,8 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
     class Adapter(private val fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
@@ -51,12 +48,11 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
         // 请求用户资料卡
         @IOThread
         private fun requestUserProfile() {
-            fragment.lifecycleScope.launch {
-                val loading = main.loading
-                val result = withContext(Dispatchers.IO) { API.UserAPI.getProfile(fragment.profileUid) }
+            val loading = main.loading
+            fragment.startIOWithResult({ API.UserAPI.getProfile(fragment.profileUid) }) {
                 loading.dismiss()
-                if (result.success) {
-                    val profile = result.data
+                if (it.success) {
+                    val profile = it.data
                     header.apply {
                         name.text = profile.name
                         label.setLabel(profile.label, profile.level)

@@ -2,7 +2,6 @@ package com.yinlin.rachel.fragment
 
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.lifecycleScope
 import com.google.zxing.Result
 import com.king.camera.scan.AnalyzeResult
 import com.king.camera.scan.BaseCameraScan
@@ -19,9 +18,7 @@ import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.tool.rachelClick
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.startIOWithResult
 
 
 class FragmentScanQRCode(main: MainActivity)
@@ -73,11 +70,10 @@ class FragmentScanQRCode(main: MainActivity)
 
     @IOThread
     private fun parseQRCode(path: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { CodeUtils.parseQRCode(path) }
+        val loading = main.loading
+        startIOWithResult({ CodeUtils.parseQRCode(path) }) {
             loading.dismiss()
-            if (result != null) processQRCode(result)
+            if (it != null) processQRCode(it)
             else tip(Tip.WARNING, "未能识别此数据")
         }
     }

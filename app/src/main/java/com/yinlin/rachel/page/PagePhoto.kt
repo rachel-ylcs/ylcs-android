@@ -17,9 +17,6 @@ import com.yinlin.rachel.model.RachelImageLoader.loadLoading
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.tool.visible
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, FragmentMsg>(fragment) {
     class Adapter(private val page: PagePhoto, var currentRes: ResFolder) : RachelAdapter<ItemPhotoBinding, ResFile>() {
@@ -89,9 +86,9 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
 
     @IOThread
     fun loadRes() {
-        lifecycleScope.launch {
-            v.state.showLoading()
-            rootRes = withContext(Dispatchers.IO) { API.CommonAPI.getPhotos() }
+        v.state.showLoading()
+        startIOWithResult({ API.CommonAPI.getPhotos() }) {
+            rootRes = it
             if (v.container.isRefreshing) v.container.finishRefresh()
             if (rootRes.items.isEmpty()) v.state.showOffline { loadRes() }
             else {

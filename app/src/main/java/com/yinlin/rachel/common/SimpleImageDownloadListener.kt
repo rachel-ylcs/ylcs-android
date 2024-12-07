@@ -6,8 +6,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.model.RachelFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.withMain
 
 class SimpleImageDownloadListener(private val fragment: RachelFragment<*>): DialogMediaDownloadListener(fragment.main) {
     override fun makeMediaUri(url: String, values: ContentValues): Uri {
@@ -18,10 +17,10 @@ class SimpleImageDownloadListener(private val fragment: RachelFragment<*>): Dial
     }
 
     override suspend fun onCompleted() {
-        withContext(Dispatchers.Main) { fragment.tip(Tip.SUCCESS, "下载成功") }
+        withMain { fragment.tip(Tip.SUCCESS, "下载成功") }
     }
 
     override suspend fun onFailed() {
-        withContext(Dispatchers.Main) { fragment.tip(Tip.ERROR, "下载失败") }
+        withMain { fragment.tip(Tip.ERROR, "下载失败") }
     }
 }

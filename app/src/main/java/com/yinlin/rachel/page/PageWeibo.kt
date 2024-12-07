@@ -10,9 +10,6 @@ import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.common.WeiboAdapter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.isTop
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, FragmentMsg>(fragment) {
     private val mAdapter = WeiboAdapter(fragment.main)
@@ -49,10 +46,9 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
 
     @IOThread
     fun requestNewData() {
-        lifecycleScope.launch {
-            v.state.showLoading()
-            mAdapter.clearSource()
-            withContext(Dispatchers.IO) { WeiboAPI.extractAllUserWeibo(Config.weibo_users, mAdapter.items) }
+        v.state.showLoading()
+        mAdapter.clearSource()
+        startIOWithResult({ WeiboAPI.extractAllUserWeibo(Config.weibo_users, mAdapter.items) }) {
             if (mAdapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) v.container.finishRefresh()

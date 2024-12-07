@@ -2,6 +2,7 @@ package com.yinlin.rachel.tool
 
 import android.content.Context
 import androidx.annotation.RawRes
+import com.yinlin.rachel.annotation.IOThread
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -68,7 +69,7 @@ fun File.copySafely(other: File, overwrite: Boolean = true): Boolean = try {
 } catch (_: Exception) { false }
 
 fun File.deleteSafely(): Boolean = try {
-    this.delete()
+    this.deleteRecursively()
 } catch (_: Exception) { false }
 
 fun File.deleteFilterSafely(delName: String): Boolean = try {
@@ -91,6 +92,7 @@ private val Long.fileSizeString: String get() = if (this < 1024) "${this}B"
 
 val File.fileSizeString: String get() = try { this.length().fileSizeString } catch (_: Exception) { "0B" }
 
+@IOThread
 val File.folderSizeString: String get() = try {
     var size = 0L
     Files.walk(this.toPath()).use {

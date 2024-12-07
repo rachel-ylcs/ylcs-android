@@ -19,10 +19,10 @@ import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.startIOWithResult
+import com.yinlin.rachel.tool.withIO
 import com.yinlin.rachel.tool.writeRes
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 import java.io.OutputStream
 
@@ -46,12 +46,8 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
     private fun requestMusic(text: String, isShareUrl: Boolean) {
         lifecycleScope.launch {
             v.loading.loading = true
-            val id = if (isShareUrl) {
-                withContext(Dispatchers.IO) { NetEaseCloudAPI.getMusicId(text) }
-            } else text
-            musicInfo = id?.let {
-                withContext(Dispatchers.IO) { NetEaseCloudAPI.getMusicInfo(it) }
-            }
+            val id = if (isShareUrl) { withIO { NetEaseCloudAPI.getMusicId(text) } } else text
+            musicInfo = id?.let { withIO { NetEaseCloudAPI.getMusicInfo(it) } }
             v.loading.loading = false
             v.loading.text = "导入"
             lrcData = musicInfo?.lyrics?.let { LrcData.parseLrcData(it) }
@@ -71,40 +67,36 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
 
     @IOThread
     private fun downloadMusic(music: CloudMusic) {
-        lifecycleScope.launch {
-            val loading = main.loading
-
-            // 生成 musicId
-            val musicId = "NEC${music.id}-${music.name}"
-
-            // 如果导入的歌曲正在播放则只能停止播放器
-            val playlist = main.sendMessageForResult<PlayingMusicPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_PLAYLIST_PREVIEW)!!
-            if (playlist.indexOfFirst { it.id == musicId } != -1) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-
-            // 生成 Info
-            val info = MusicInfo("1.0", "网易云音乐", musicId, music.name, music.singer,
-                "未知", "未知", "未知", bgd = false, video = false,
-                chorus = mutableListOf(), lyrics = mutableMapOf("line" to mutableListOf("")), lrcData)
-            withContext(Dispatchers.IO) {
-                // 元数据
-                info.rewrite()
-                // 壁纸
-                info.bgsPath.writeRes(main, R.raw.img_default_bgs)
-                // 歌词
-                info.defaultLrcPath.writeText(music.lyrics)
-                // 封面
-                Net.download(music.pic, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
-                    override suspend fun onPrepare(url: String): OutputStream {
-                        return FileOutputStream(info.recordPath)
-                    }
-                })
-                // 音频
-                Net.download(music.mp3Url, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
-                    override suspend fun onPrepare(url: String): OutputStream {
-                        return FileOutputStream(info.audioPath)
-                    }
-                })
-            }
+        // 生成 musicId
+        val musicId = "NEC${music.id}-${music.name}"
+        // 如果导入的歌曲正在播放则只能停止播放器
+        val playlist = main.sendMessageForResult<PlayingMusicPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_PLAYLIST_PREVIEW)!!
+        if (playlist.indexOfFirst { it.id == musicId } != -1) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
+        // 生成 Info
+        val info = MusicInfo("1.0", "网易云音乐", musicId, music.name, music.singer,
+            "未知", "未知", "未知", bgd = false, video = false,
+            chorus = mutableListOf(), lyrics = mutableMapOf("line" to mutableListOf("")), lrcData)
+        val loading = main.loading
+        startIOWithResult({
+            // 元数据
+            info.rewrite()
+            // 壁纸
+            info.bgsPath.writeRes(main, R.raw.img_default_bgs)
+            // 歌词
+            info.defaultLrcPath.writeText(music.lyrics)
+            // 封面
+            Net.download(music.pic, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
+                override suspend fun onPrepare(url: String): OutputStream {
+                    return FileOutputStream(info.recordPath)
+                }
+            })
+            // 音频
+            Net.download(music.mp3Url, mapOf("User-Agent" to "Mozilla/5.0"), listener = object : SilentDownloadListener() {
+                override suspend fun onPrepare(url: String): OutputStream {
+                    return FileOutputStream(info.audioPath)
+                }
+            })
+        }) {
             loading.dismiss()
             main.sendMessage(RachelTab.music, RachelMessage.MUSIC_NOTIFY_ADD_MUSIC, listOf(musicId))
             tip(Tip.SUCCESS, "导入成功")

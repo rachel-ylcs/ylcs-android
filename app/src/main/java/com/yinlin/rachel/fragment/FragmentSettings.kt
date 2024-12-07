@@ -1,7 +1,5 @@
 package com.yinlin.rachel.fragment
 
-
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -21,13 +19,12 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetCrashLog
+import com.yinlin.rachel.tool.deleteSafely
 import com.yinlin.rachel.tool.folderSizeString
 import com.yinlin.rachel.tool.pathCache
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.startIOWithResult
 
 class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBinding>(main) {
     override fun bindingClass() = FragmentSettingsBinding::class.java
@@ -152,11 +149,10 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
     @IOThread
     private fun logoff() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.logoff(Config.token) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.logoff(Config.token) }) {
             loading.dismiss()
-            when (result.code) {
+            when (it.code) {
                 API.Code.SUCCESS -> {
                     Config.token = ""
                     Config.user = null
@@ -164,134 +160,125 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
                     main.pop()
                 }
                 API.Code.UNAUTHORIZED -> {
-                    tip(Tip.WARNING, result.msg)
+                    tip(Tip.WARNING, it.msg)
                     Config.token = ""
                     Config.user = null
                     main.pop()
                     main.navigate(FragmentLogin(main))
                 }
-                else -> tip(Tip.ERROR, result.msg)
+                else -> tip(Tip.ERROR, it.msg)
             }
         }
     }
 
     @IOThread
     private fun updateName(name: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateName(Config.token, name) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateName(Config.token, name) }) {
             loading.dismiss()
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 v.name.text = name
                 main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateAvatar(filename: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateAvatar(Config.token, filename) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateAvatar(Config.token, filename) }) {
             loading.dismiss()
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 val user = Config.user!!
                 Config.cache_key_avatar_meta.update()
                 v.avatar.load(user.avatarPath, Config.cache_key_avatar)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateSignature(signature: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateSignature(Config.token, signature) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateSignature(Config.token, signature) }) {
             loading.dismiss()
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 v.signature.text = signature
                 main.sendMessage(RachelTab.me, RachelMessage.ME_REQUEST_USER_INFO)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateWall(wall: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.updateWall(Config.token, wall) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.updateWall(Config.token, wall) }) {
             loading.dismiss()
-            if (result.success) {
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                tip(Tip.SUCCESS, it.msg)
                 val user = Config.user!!
                 Config.cache_key_wall_meta.update()
                 v.wall.load(user.wallPath, Config.cache_key_wall)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun uploadPlaylist() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.uploadPlaylist(Config.token, Config.playlist) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.uploadPlaylist(Config.token, Config.playlist) }) {
             loading.dismiss()
-            tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
+            tip(if (it.success) Tip.SUCCESS else Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun downloadPlaylist() {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.downloadPlaylist(Config.token) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.downloadPlaylist(Config.token) }) {
             loading.dismiss()
-            if (result.success) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST, result.data)
-                tip(Tip.SUCCESS, result.msg)
+            if (it.success) {
+                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST, it.data)
+                tip(Tip.SUCCESS, it.msg)
             }
-            else tip(Tip.ERROR, result.msg)
+            else tip(Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun sendFeedback(content: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { API.UserAPI.sendFeedback(Config.token, content) }
+        val loading = main.loading
+        startIOWithResult({ API.UserAPI.sendFeedback(Config.token, content) }) {
             loading.dismiss()
-            tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
+            tip(if (it.success) Tip.SUCCESS else Tip.ERROR, it.msg)
         }
     }
 
     @IOThread
     private fun updateCacheSize() {
-        lifecycleScope.launch {
-            val size = withContext(Dispatchers.IO) { pathCache.folderSizeString }
-            v.cacheSize.text = size
+        startIOWithResult({ pathCache.folderSizeString }) {
+            v.cacheSize.text = it
         }
     }
 
     @IOThread
     private fun clearCacheSize() {
-        lifecycleScope.launch {
-            v.clearCache.isEnabled = false
-            v.cacheSize.text = "清理缓存中..."
-            val size = withContext(Dispatchers.IO) {
-                Glide.get(main).clearDiskCache()
-                pathCache.folderSizeString
-            }
-            v.cacheSize.text = size
+        v.clearCache.isEnabled = false
+        v.cacheSize.text = "清理缓存中..."
+        startIOWithResult({
+            pathCache.deleteSafely()
+            pathCache.folderSizeString
+        }) {
             v.clearCache.isEnabled = true
+            v.cacheSize.text = it
         }
     }
 }

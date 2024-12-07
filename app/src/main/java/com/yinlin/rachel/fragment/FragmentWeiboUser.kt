@@ -1,6 +1,5 @@
 package com.yinlin.rachel.fragment
 
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
@@ -18,9 +17,7 @@ import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.common.WeiboAdapter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.rachelClick
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.startIOWithResult
 
 class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : RachelFragment<FragmentWeiboUserBinding>(main) {
     class WeiboAlbumAdapter(private val fragment: FragmentWeiboUser) : RachelAdapter<ItemWeiboAlbumBinding, WeiboAlbum>() {
@@ -69,9 +66,8 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
 
     @IOThread
     fun requestUserInfo() {
-        lifecycleScope.launch {
-            v.name.loading = true
-            val userInfo = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUser(weiboUserId) }
+        v.name.loading = true
+        startIOWithResult({ WeiboAPI.extractWeiboUser(weiboUserId) }) { userInfo ->
             v.name.loading = false
             if (userInfo != null) {
                 v.name.text = userInfo.name
@@ -81,20 +77,18 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
                 v.follow.text = "关注 ${userInfo.followNum}"
                 v.fans.text = "粉丝 ${userInfo.fansNum}"
 
-                lifecycleScope.launch {
-                    v.loadingAlbum.loading = true
-                    val albums = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserAlbum(weiboUserId) }
+                v.loadingAlbum.loading = true
+                startIOWithResult({ WeiboAPI.extractWeiboUserAlbum(weiboUserId) }) {
                     v.loadingAlbum.loading = false
-                    if (albums.isNotEmpty()) {
-                        albumAdapter.setSource(albums)
+                    if (it.isNotEmpty()) {
+                        albumAdapter.setSource(it)
                         albumAdapter.notifySource()
                     }
                 }
 
-                lifecycleScope.launch {
-                    v.loadingWeibo.loading = true
-                    val weibos = mutableListOf<Weibo>()
-                    withContext(Dispatchers.IO) { WeiboAPI.extractAllWeibo(weiboUserId, weibos) }
+                v.loadingWeibo.loading = true
+                val weibos = mutableListOf<Weibo>()
+                startIOWithResult({ WeiboAPI.extractAllWeibo(weiboUserId, weibos) }) {
                     v.loadingWeibo.loading = false
                     if (weibos.isNotEmpty()) {
                         weiboAdapter.setSource(weibos)
@@ -112,13 +106,12 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
     // 添加微博用户
     @IOThread
     private fun addWeiboUser(uid: String) {
-        lifecycleScope.launch {
-            val loading = main.loading
-            val result = withContext(Dispatchers.IO) { WeiboAPI.extractWeiboUserStorage(uid) }
+        val loading = main.loading
+        startIOWithResult({ WeiboAPI.extractWeiboUserStorage(uid) }) {
             loading.dismiss()
-            if (result != null) {
+            if (it != null) {
                 val weiboUsers = Config.weibo_users
-                weiboUsers += result
+                weiboUsers += it
                 Config.weibo_users = weiboUsers
                 tip(Tip.SUCCESS, "添加成功")
             }

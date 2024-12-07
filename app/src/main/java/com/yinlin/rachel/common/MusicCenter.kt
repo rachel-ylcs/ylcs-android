@@ -40,8 +40,7 @@ import com.yinlin.rachel.tool.moveItem
 import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.readJson
 import com.yinlin.rachel.tool.rs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.yinlin.rachel.tool.withIO
 
 
 typealias RachelPlayer = MediaController
@@ -327,7 +326,7 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
         // 2. 无需考虑更新恢复被删除的歌单中的歌曲以及更新新版本的歌曲与元数据
         val addInfos = mutableListOf<MusicInfo>()
         val removeInfos = mutableListOf<MusicInfo>()
-        withContext(Dispatchers.IO) {
+        withIO {
             for (id in ids) {
                 val info: MusicInfo = (pathMusic / (id + MusicRes.INFO_NAME)).readJson()
                 if (info.isCorrect) addInfos += info
@@ -351,7 +350,7 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
         // 删除所有音乐信息
         for (selectItem in musicItems) musicInfos.remove(selectItem.id)
         // 删除本地文件
-        withContext(Dispatchers.IO) {
+        withIO {
             for (selectItem in musicItems) pathMusic.deleteFilterSafely(selectItem.id)
         }
     }

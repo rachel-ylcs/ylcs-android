@@ -29,10 +29,9 @@ import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.tool.currentDateInteger
 import com.yinlin.rachel.tool.tip
 import com.yinlin.rachel.tool.visible
+import com.yinlin.rachel.tool.withIO
 import com.yinlin.rachel.tool.withTimeoutIO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
 
 class MainActivity : RachelActivity() {
@@ -79,7 +78,7 @@ class MainActivity : RachelActivity() {
             val fragmentMusic = fragments[RachelTab.music.index] as FragmentMusic
             val musicCenter = MusicCenter(this@MainActivity, handler, fragmentMusic)
             fragmentMusic.musicCenter = musicCenter
-            withContext(Dispatchers.IO) { musicCenter.preparePlayer(this@MainActivity) }
+            withIO { musicCenter.preparePlayer(this@MainActivity) }
             // 恢复上次播放
             musicCenter.resumeLastMusic()
 
