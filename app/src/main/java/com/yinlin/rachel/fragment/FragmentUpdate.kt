@@ -23,6 +23,7 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.ri
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.textColor
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +45,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
 
     override fun bindingClass() = FragmentUpdateBinding::class.java
 
-    private val adapter = Adapter(main)
+    private val mAdapter = Adapter(main)
     private var downloadUrl: String? = null
     private var isNeedUpdate: Boolean = false
 
@@ -60,7 +61,7 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 10)
             layoutManager = LinearLayoutManager(main, LinearLayoutManager.VERTICAL, false)
-            adapter = this@FragmentUpdate.adapter
+            adapter = mAdapter
         }
 
         checkUpdate()
@@ -87,11 +88,11 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
                     else R.color.dark_red
                 )
                 v.list.addItemDecoration(object : SectionCallback {
-                    override fun getSectionHeader(position: Int) = SectionInfo(adapter[position].name, "", AppCompatResources.getDrawable(main, adapter[position].icon))
-                    override fun isSection(position: Int): Boolean = adapter[position].type != adapter[position - 1].type
+                    override fun getSectionHeader(position: Int) = SectionInfo(mAdapter[position].name, "", main.ri(mAdapter[position].icon))
+                    override fun isSection(position: Int): Boolean = mAdapter[position].type != mAdapter[position - 1].type
                 })
-                adapter.setSource(info.developState)
-                adapter.notifySource()
+                mAdapter.setSource(info.developState)
+                mAdapter.notifySource()
             }
             else {
                 main.pop()

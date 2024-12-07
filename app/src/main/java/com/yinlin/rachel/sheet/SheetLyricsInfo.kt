@@ -5,6 +5,7 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LyricsInfo
+import com.yinlin.rachel.data.music.LyricsInfoList
 import com.yinlin.rachel.databinding.ItemLyricsInfoBinding
 import com.yinlin.rachel.databinding.SheetLyricsInfoBinding
 import com.yinlin.rachel.fragment.FragmentMusic
@@ -16,7 +17,7 @@ import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.textColor
 
-class SheetLyricsInfo(fragment: FragmentMusic, private val infos: List<LyricsInfo>)
+class SheetLyricsInfo(fragment: FragmentMusic, private val infos: LyricsInfoList)
     : RachelSheet<SheetLyricsInfoBinding, FragmentMusic>(fragment, 0.6f) {
     class Adapter(private val sheet: SheetLyricsInfo) : RachelAdapter<ItemLyricsInfoBinding, LyricsInfo>() {
         private val main = sheet.fragment.main
@@ -46,16 +47,18 @@ class SheetLyricsInfo(fragment: FragmentMusic, private val infos: List<LyricsInf
         }
     }
 
+    private val mAdapter = Adapter(this)
+
     override fun bindingClass() = SheetLyricsInfoBinding::class.java
 
     override fun init() {
         v.list.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = Adapter(this@SheetLyricsInfo).apply {
-                setSource(infos)
-                notifySource()
-            }
+            adapter = mAdapter
             interceptScroll()
         }
+
+        mAdapter.setSource(infos)
+        mAdapter.notifySource()
     }
 }

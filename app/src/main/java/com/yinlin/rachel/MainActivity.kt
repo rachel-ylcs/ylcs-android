@@ -72,15 +72,6 @@ class MainActivity : RachelActivity() {
         lifecycleScope.launch {
             val loadingDialog = loading
 
-            v.btv.listener = {
-                if (isMain) {
-                    val oldFragment = currentFragment
-                    currentFragment = fragments[it.index]
-                    currentMainIndex = it.index
-                    manager.beginTransaction().hide(oldFragment).show(currentFragment).commit()
-                }
-            }
-
             // ! 1. 处理 Intent
             processIntent(intent)
 
@@ -89,8 +80,6 @@ class MainActivity : RachelActivity() {
             val musicCenter = MusicCenter(this@MainActivity, handler, fragmentMusic)
             fragmentMusic.musicCenter = musicCenter
             withContext(Dispatchers.IO) { musicCenter.preparePlayer(this@MainActivity) }
-            // 更新播放模式
-            musicCenter.updatePlayMode()
             // 恢复上次播放
             musicCenter.resumeLastMusic()
 
@@ -111,7 +100,8 @@ class MainActivity : RachelActivity() {
                     }
                 }
             }
-            
+
+            v.btv.visible = true
             loadingDialog.dismiss()
         }
     }
@@ -161,7 +151,18 @@ class MainActivity : RachelActivity() {
         transaction.show(currentFragment)
         transaction.commit()
 
-        v.btv.setItems(tabs, home)
+        v.btv.apply {
+            setItems(tabs, home)
+            visible = false
+            listener = {
+                if (isMain) {
+                    val oldFragment = currentFragment
+                    currentFragment = fragments[it.index]
+                    currentMainIndex = it.index
+                    manager.beginTransaction().hide(oldFragment).show(currentFragment).commit()
+                }
+            }
+        }
     }
 
     fun navigate(des: RachelFragment<*>) {

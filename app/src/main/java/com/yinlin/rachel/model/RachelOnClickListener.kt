@@ -4,7 +4,7 @@ import android.view.View
 
 
 class RachelOnClickListener : View.OnClickListener {
-    private var delay: Long = 500L
+    private var delay: Long = 300L
     private var lastTime: Long = 0L
     private var listener: View.OnClickListener
 

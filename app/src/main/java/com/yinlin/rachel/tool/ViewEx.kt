@@ -19,6 +19,7 @@ import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import com.haibin.calendarview.Calendar
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip.*
@@ -42,8 +43,8 @@ var View.visible: Boolean
     get() = this.visibility == View.VISIBLE
     set(value) { this.visibility = if (value) View.VISIBLE else View.GONE }
 
-fun View.rachelClick(listener: View.OnClickListener) = setOnClickListener(RachelOnClickListener(listener))
-fun View.rachelClick(delay: Long, listener: View.OnClickListener) = setOnClickListener(RachelOnClickListener(delay, listener))
+fun View.rachelClick(listener: View.OnClickListener) = this.setOnClickListener(RachelOnClickListener(listener))
+fun View.rachelClick(delay: Long, listener: View.OnClickListener) = this.setOnClickListener(RachelOnClickListener(delay, listener))
 
 @SuppressLint("ClickableViewAccessibility")
 fun View.interceptScroll() {
@@ -69,17 +70,15 @@ fun Activity.tip(type: Tip, text: String, anchorView: View? = null) {
     }
     val bar = Snackbar.make(anchorView ?: this.window.decorView, "", 1500)
     val layout = bar.view as ViewGroup
-    layout.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).visible = false
-    val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, null)
-    view.findViewById<TextView>(R.id.text).text = text
-    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.rc(color))
     layout.setPadding(0, 0, 0, 0)
     layout.backgroundColor = 0
-    layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
+    layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
         setMargins(20.toDP(this@tip), 0, 20.toDP(this@tip), 100.toDP(this@tip))
-        gravity = Gravity.BOTTOM
+        gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
     }
-    layout.addView(view)
+    val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, layout, true)
+    view.findViewById<TextView>(R.id.text).text = text
+    view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.rc(color))
     bar.show()
 }
 

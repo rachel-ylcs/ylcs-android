@@ -23,6 +23,7 @@ import com.yinlin.rachel.databinding.DialogProgressBinding
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.toDP
+import com.yinlin.rachel.tool.visible
 import com.yinlin.rachel.view.InputView
 
 abstract class RachelDialog<T : ViewBinding> (
@@ -116,9 +117,10 @@ abstract class RachelDialog<T : ViewBinding> (
         fun choice(context: Context, title: String = "", items: List<String>, callback: (Int) -> Unit) {
             object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class.java) {
                 override fun init(v: DialogChoiceBinding) {
-                    v.title.text = title
+                    if (title.isEmpty()) v.title.visible = false
+                    else v.title.text = title
                     v.list.apply {
-                        adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, items)
+                        adapter = ArrayAdapter(context, R.layout.item_choice, items)
                         onItemClickListener = OnItemClickListener { _, _, position, _ ->
                             dismiss()
                             callback(position)
@@ -131,9 +133,10 @@ abstract class RachelDialog<T : ViewBinding> (
         fun choice(context: Context, title: String = "", callbacks: List<Pair<String, () -> Unit>>) {
             object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class.java) {
                 override fun init(v: DialogChoiceBinding) {
-                    v.title.text = title
+                    if (title.isEmpty()) v.title.visible = false
+                    else v.title.text = title
                     v.list.apply {
-                        adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, callbacks.map { it.first })
+                        adapter = ArrayAdapter(context, R.layout.item_choice, callbacks.map { it.first })
                         onItemClickListener = OnItemClickListener { _, _, position, _ ->
                             dismiss()
                             callbacks.getOrNull(position)?.second?.invoke()

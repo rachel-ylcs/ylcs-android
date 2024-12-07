@@ -1,7 +1,5 @@
 package com.yinlin.rachel.sheet
 
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.toBitmap
 import com.king.zxing.util.CodeUtils
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.R
@@ -10,6 +8,7 @@ import com.yinlin.rachel.databinding.SheetUserCardBinding
 import com.yinlin.rachel.fragment.FragmentMe
 import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelSheet
+import com.yinlin.rachel.tool.rb
 import com.yinlin.rachel.tool.toDP
 
 class SheetUserCard(fragment: FragmentMe, private val user: User) : RachelSheet<SheetUserCardBinding, FragmentMe>(fragment, 0.6f) {
@@ -22,7 +21,7 @@ class SheetUserCard(fragment: FragmentMe, private val user: User) : RachelSheet<
             CodeUtils.createQRCode(
             "rachel://yinlin/openProfile?uid=${user.uid}",
             150.toDP(context),
-            AppCompatResources.getDrawable(context, R.mipmap.icon)!!.toBitmap())
+            context.rb(R.mipmap.icon))
         )
     }
 }

@@ -4,11 +4,11 @@ import android.app.Application
 import android.content.Context
 import com.tencent.mmkv.MMKV
 import com.yinlin.rachel.tool.Config
-import com.yinlin.rachel.tool.basePath
+import com.yinlin.rachel.tool.pathCache
 import com.yinlin.rachel.tool.createAll
 import com.yinlin.rachel.tool.currentDateInteger
 import com.yinlin.rachel.tool.div
-import com.yinlin.rachel.tool.pathAPP
+import com.yinlin.rachel.tool.pathApp
 import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.readText
 import java.io.PrintWriter
@@ -22,7 +22,7 @@ class RachelApplication : Application() {
     class CrashHandler : Thread.UncaughtExceptionHandler {
         private val sw = StringWriter()
         private val pw = PrintWriter(sw)
-        private val crashFile = pathAPP / "rachel-crash.txt"
+        private val crashFile = pathApp / "rachel-crash.txt"
 
         override fun uncaughtException(t: Thread, e: Throwable) {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
@@ -47,8 +47,9 @@ class RachelApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // 初始化目录
-        basePath = filesDir.path
-        pathAPP.createAll()
+        pathApp = filesDir
+        pathCache = cacheDir
+        pathApp.createAll()
         pathMusic.createAll()
 
         // 崩溃记录

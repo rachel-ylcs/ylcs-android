@@ -4,60 +4,47 @@ package com.yinlin.rachel.fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.net.Uri
+import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.Timeline
-import androidx.media3.session.MediaController
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
-import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.activity.VideoActivity
 import com.yinlin.rachel.common.MusicCenter
-import com.yinlin.rachel.common.RachelPlayer
-import com.yinlin.rachel.tool.clearAddAll
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.data.music.Command
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.LyricsInfo
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.data.music.MusicInfoPreviewList
 import com.yinlin.rachel.data.music.MusicPlayMode
-import com.yinlin.rachel.data.music.MusicRes
 import com.yinlin.rachel.data.music.Playlist
+import com.yinlin.rachel.data.music.PlaylistMap
 import com.yinlin.rachel.data.music.PlaylistPreview
 import com.yinlin.rachel.databinding.FragmentMusicBinding
 import com.yinlin.rachel.model.RachelAppIntent
 import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.model.RachelImageLoader.load
-import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.model.RachelTimer
 import com.yinlin.rachel.model.engine.LyricsEngineFactory
-import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.sheet.SheetCurrentPlaylist
 import com.yinlin.rachel.sheet.SheetLyricsEngine
 import com.yinlin.rachel.sheet.SheetLyricsInfo
 import com.yinlin.rachel.sheet.SheetSleepMode
-import com.yinlin.rachel.tool.deleteFilter
-import com.yinlin.rachel.tool.div
-import com.yinlin.rachel.tool.pathMusic
+import com.yinlin.rachel.tool.Config
+import com.yinlin.rachel.tool.Tip
+import com.yinlin.rachel.tool.pureColor
+import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
-import com.yinlin.rachel.tool.readJson
 import com.yinlin.rachel.tool.readText
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.view.FloatingLyricsView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(main), MusicCenter.UIListener {
     companion object {
@@ -92,9 +79,6 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     }
 
     override fun start() {
-        // 进度条
-        v.progress.setOnProgressChangedListener { musicCenter.setProgressPercent(it) }
-
         v.headerContainer.listener = { pos -> when (pos) {
             GROUP_HEADER_LIBRARY -> main.navigate(FragmentLibrary(main, musicCenter.previewLibrary))
             GROUP_HEADER_PLAYLIST -> main.navigate(FragmentPlaylist(main, musicCenter.playlistNames))
@@ -111,15 +95,23 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         } }
 
         v.controlContainer.listener = { pos -> when (pos) {
-            GROUP_CONTROL_MODE -> musicCenter.nextPlayMode()
-            GROUP_CONTROL_PREVIOUS -> musicCenter.gotoPrevious()
-            GROUP_CONTROL_PLAY -> musicCenter.playOrPause()
-            GROUP_CONTROL_NEXT -> musicCenter.gotoNext()
+            GROUP_CONTROL_MODE -> musicCenter.send(Command.CommandNextMode)
+            GROUP_CONTROL_PREVIOUS -> musicCenter.send(Command.CommandGotoPrevious)
+            GROUP_CONTROL_PLAY -> musicCenter.send(Command.CommandPlayOrPause)
+            GROUP_CONTROL_NEXT -> musicCenter.send(Command.CommandGotoNext)
             GROUP_CONTROL_PLAYLIST -> musicCenter.withPlaylist {
                 val data = musicCenter.previewCurrentPlaylist
                 if (data.isNotEmpty()) SheetCurrentPlaylist(this, it.name, data).show()
             }
         } }
+
+        v.progress.setOnProgressChangedListener {
+            musicCenter.send(Command.CommandSetProgressPercent, Bundle().apply { putFloat(Command.ARG_PROGRESS_PERCENT, it) })
+        }
+
+        v.record.rachelClick {
+            musicCenter.withMusic { main.navigate(FragmentMusicInfo(main, it)) }
+        }
 
         v.toolContainer.listener = { pos -> when (pos) {
             GROUP_TOOL_AN -> musicCenter.withMusic {
@@ -132,7 +124,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             }
             GROUP_TOOL_MV -> musicCenter.withMusic {
                 if (it.video) {
-                    musicCenter.pause()
+                    musicCenter.send(Command.CommandPause)
                     val intent = Intent(main, VideoActivity::class.java)
                     intent.putExtra("uri", it.videoPath.absolutePath)
                     startActivity(intent)
@@ -150,7 +142,9 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             GROUP_TOOL_COMMENT -> tip(Tip.INFO, "即将开放, 敬请期待新版本!")
         } }
 
-        // 进入前台时需要更新
+        // 更新播放模式
+        onMusicModeChanged(musicCenter.playMode)
+        // 更新歌曲信息
         isForeground = true
         updateMusicInfo(musicCenter.currentMusicInfo)
     }
@@ -168,39 +162,36 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {
             RachelMessage.MUSIC_START_PLAYER -> musicCenter.start(args[0] as Playlist)
-//            RachelMessage.MUSIC_PAUSE_PLAYER -> if (isLoadMusic && player.isPlaying) player.pause()
-            RachelMessage.MUSIC_STOP_PLAYER -> musicCenter.stop()
-            RachelMessage.MUSIC_DELETE_PLAYLIST -> musicCenter.deletePlaylist(args[0] as String)
+            RachelMessage.MUSIC_STOP_PLAYER -> musicCenter.send(Command.CommandStop)
+            RachelMessage.MUSIC_DELETE_PLAYLIST -> {
+                val playlist = musicCenter.findPlaylist(args[0] as String)
+                playlist?.let { musicCenter.deletePlaylist(it) }
+            }
             RachelMessage.MUSIC_MOVE_MUSIC_IN_PLAYLIST -> {
                 val playlist = musicCenter.findPlaylist(args[0] as String)
                 playlist?.let { musicCenter.moveMusicInPlaylist(it, args[1] as Int, args[2] as Int) }
             }
-//            RachelMessage.MUSIC_RELOAD_PLAYLIST -> playlists.clearAddAll(Config.playlist)
+            RachelMessage.MUSIC_RELOAD_PLAYLIST -> musicCenter.reloadPlaylist(args[0] as PlaylistMap)
             RachelMessage.MUSIC_DELETE_MUSIC_FROM_PLAYLIST -> {
                 val playlist = musicCenter.findPlaylist(args[0] as String)
                 playlist?.let { musicCenter.deleteMusicFromPlaylist(it, args[1] as String) }
             }
+            RachelMessage.MUSIC_NOTIFY_ADD_MUSIC -> lifecycleScope.launch { musicCenter.notifyAddMusic(args[0] as List<String>) }
             RachelMessage.MUSIC_DELETE_MUSIC -> lifecycleScope.launch { musicCenter.deleteMusic(args[0] as MusicInfoPreviewList) }
-            RachelMessage.MUSIC_GOTO_MUSIC -> musicCenter.gotoIndex(musicCenter.indexOfMusic(args[0] as String))
-//            RachelMessage.MUSIC_NOTIFY_ADD_MUSIC -> {
-//                lifecycleScope.launch {
-//                    withContext(Dispatchers.IO) {
-//                        for (id in args[0] as List<*>) {
-//                            val info: MusicInfo = (pathMusic / (id as String + MusicRes.INFO_NAME)).readJson()
-//                            if (info.isCorrect) musicInfos[info.id] = info
-//                            else musicInfos.remove(id)
-//                        }
-//                    }
-//                }
-//            }
-//            RachelMessage.MUSIC_USE_LYRICS_ENGINE -> {
-//                val engineName = args[0] as String
-//                val name = args[1] as String
-//                currentMusic?.let {
-//                    if (!v.lyrics.switchEngine(it, engineName, name)) tip(Tip.ERROR, "加载歌词引擎失败")
-//                }
-//            }
-//            RachelMessage.MUSIC_UPDATE_LYRICS_SETTINGS -> floatingLyrics.updateSettings(Config.music_lyrics_settings)
+            RachelMessage.MUSIC_GOTO_MUSIC -> {
+                val index = musicCenter.indexOfMusic(args[0] as String)
+                musicCenter.send(Command.CommandGotoIndex, Bundle().apply { putInt(Command.ARG_INDEX, index) })
+            }
+            RachelMessage.MUSIC_UPDATE_MUSIC_INFO -> updateMusicInfo(args[0] as MusicInfo)
+            RachelMessage.MUSIC_USE_LYRICS_ENGINE -> {
+                val engineName = args[0] as String
+                val name = args[1] as String
+                musicCenter.withMusic {
+                    if (!v.lyrics.switchEngine(it, engineName, name)) tip(Tip.ERROR, "加载歌词引擎失败")
+                }
+            }
+            RachelMessage.MUSIC_PREPARE_FLOATING_LYRICS -> prepareFlowLyrics(musicCenter.currentMusicInfo)
+            RachelMessage.MUSIC_UPDATE_LYRICS_SETTINGS -> floatingLyrics.updateSettings(Config.music_lyrics_settings)
             else -> {}
         }
     }
@@ -209,23 +200,30 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     override fun messageForResult(msg: RachelMessage, vararg args: Any?): Any? {
         when (msg) {
             RachelMessage.MUSIC_GET_PLAYLIST_NAMES -> return musicCenter.playlistNames
-            RachelMessage.MUSIC_GET_PLAYLIST_PREVIEW -> return musicCenter.previewPlaylist(args[0] as String)
+            RachelMessage.MUSIC_GET_PLAYLIST_PREVIEW -> {
+                val name = args[0] as String
+                val playlist = musicCenter.findPlaylist(name)
+                return playlist?.let { musicCenter.previewPlaylist(it) } ?: PlaylistPreview(name, emptyList())
+            }
             RachelMessage.MUSIC_FIND_PLAYLIST -> return musicCenter.findPlaylist(args[0] as String)
             RachelMessage.MUSIC_CREATE_PLAYLIST -> return musicCenter.createPlaylist(args[0] as String)
-            RachelMessage.MUSIC_RENAME_PLAYLIST -> return musicCenter.renamePlaylist(args[0] as String, args[1] as String)
+            RachelMessage.MUSIC_RENAME_PLAYLIST -> {
+                val playlist = musicCenter.findPlaylist(args[0] as String)
+                return playlist?.let { musicCenter.renamePlaylist(it, args[1] as String) } ?: false
+            }
+            RachelMessage.MUSIC_GET_CURRENT_PLAYLIST_PREVIEW -> return musicCenter.previewCurrentPlaylist
             RachelMessage.MUSIC_ADD_MUSIC_INTO_PLAYLIST -> {
-                val playlistName = args[0] as String
+                val playlist = musicCenter.findPlaylist(args[0] as String)
                 val selectItems = args[1] as MusicInfoPreviewList
-                val playlist = musicCenter.findPlaylist(playlistName)
                 return playlist?.let { musicCenter.addMusicIntoPlaylist(playlist, selectItems) } ?: 0
             }
+            RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO -> return musicCenter.currentMusicInfo
             RachelMessage.MUSIC_GET_MUSIC_INFO -> return musicCenter.findMusic(args[0] as String)
             RachelMessage.MUSIC_SEARCH_MUSIC_INFO_PREVIEW -> return musicCenter.searchMusicPreview(args[0] as String?)
             else -> return null
         }
     }
-
-
+    
     override fun onMusicModeChanged(mode: MusicPlayMode) {
         v.controlContainer.setItemImage(GROUP_CONTROL_MODE, when (mode) {
             MusicPlayMode.LOOP -> R.drawable.icon_play_mode_loop
@@ -310,17 +308,6 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
         }
     }
 
-//
-//    // 是否在前台
-//    private val isForeground get() = main.isForeground(RachelTab.music)
-//    // 取当前播放音乐
-//    private val currentMusic: MusicInfo? get() = player.currentMediaItem?.let { musicInfos[it.mediaId] }
-//    // 是否加载音乐 (即player加载了music的状态, music处于播放或暂停)
-//    private val isLoadMusic get() = player.playbackState == Player.STATE_READY && currentMusic != null
-//    // 是否在播放某个歌单
-//    private fun isLoadPlaylist(playlist: Playlist) = isLoadMusic && currentPlaylist == playlist
-//
-
     // 睡眠模式
     private fun prepareSleepMode() {
         if (sleepModeTimer.isStart) SheetSleepMode(this, sleepModeTimer).show()
@@ -334,7 +321,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             picker.addOnPositiveButtonClickListener {
                 val minutes = picker.hour * 60 + picker.minute
                 if (minutes > 0L) {
-                    sleepModeTimer.start(minutes * 60 * 1000L, 1000L) { musicCenter.stop() }
+                    sleepModeTimer.start(minutes * 60 * 1000L, 1000L) { musicCenter.send(Command.CommandStop) }
                     tip(Tip.SUCCESS, "睡眠模式已开启")
                 }
             }
@@ -343,7 +330,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     }
 
     // 启动悬浮窗
-    private fun prepareFlowLyrics(musicInfo: MusicInfo) {
+    private fun prepareFlowLyrics(musicInfo: MusicInfo?) {
         if (floatingLyrics.canShow) {
             if (!floatingLyrics.isAttached) {
                 val manager = main.getSystemService(Context.WINDOW_SERVICE) as? WindowManager?
@@ -361,7 +348,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
                 floatingLyrics.updateSettings(Config.music_lyrics_settings)
                 manager?.addView(floatingLyrics, params)
             }
-            floatingLyrics.load(musicInfo.lrcData)
+            musicInfo?.lrcData?.let { floatingLyrics.load(it) }
             floatingLyrics.showState = true
         }
         else {

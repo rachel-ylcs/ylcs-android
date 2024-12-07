@@ -50,7 +50,7 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
             val v = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as ItemBinding
             val holder = RachelItemViewHolder(v)
             val root = v.root
-            root.rachelClick(300) {
+            root.rachelClick {
                 val position = holder.bindingAdapterPosition - 1
                 onItemClicked(holder.v, items[position], position)
             }

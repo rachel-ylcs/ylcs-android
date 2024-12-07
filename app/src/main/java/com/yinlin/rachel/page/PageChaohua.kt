@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, FragmentMsg>(fragment) {
-    private val adapter = WeiboAdapter(fragment.main)
+    private val mAdapter = WeiboAdapter(fragment.main)
     private var sinceId: Long = 0L
 
     override fun bindingClass(): Class<PageChaohuaBinding> = PageChaohuaBinding::class.java
@@ -35,7 +35,7 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 16)
             setItemViewCacheSize(4)
-            adapter = this@PageChaohua.adapter
+            adapter = mAdapter
         }
 
         requestNewData()
@@ -55,15 +55,15 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
             v.container.setNoMoreData(false)
             v.state.showLoading()
             v.container.setEnableLoadMore(false)
-            adapter.clearSource()
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(0, adapter.items) }
-            if (adapter.isEmpty) v.state.showOffline { requestNewData() }
+            mAdapter.clearSource()
+            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(0, mAdapter.items) }
+            if (mAdapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) {
                 if (sinceId == 0L) v.container.finishRefreshWithNoMoreData()
                 else v.container.finishRefresh()
             }
-            adapter.notifySource()
+            mAdapter.notifySource()
             v.container.setEnableLoadMore(true)
         }
     }
@@ -71,11 +71,11 @@ class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, Fr
     @IOThread
     fun requestMoreData() {
         lifecycleScope.launch {
-            val oldSize = adapter.size
-            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(sinceId, adapter.items) }
+            val oldSize = mAdapter.size
+            sinceId = withContext(Dispatchers.IO) { WeiboAPI.extractChaohua(sinceId, mAdapter.items) }
             if (sinceId == 0L) v.container.finishLoadMoreWithNoMoreData()
             else {
-                adapter.notifyItemRangeInserted(oldSize, adapter.size - oldSize)
+                mAdapter.notifyItemRangeInserted(oldSize, mAdapter.size - oldSize)
                 v.container.finishLoadMore()
             }
         }

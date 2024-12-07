@@ -6,12 +6,11 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
-lateinit var basePath: String
-val pathAPP: File
-    get() = File(basePath)
-val pathMusic: File
-    get() = File(basePath, "music")
+lateinit var pathApp: File
+lateinit var pathCache: File
+val pathMusic: File get() = File(pathApp, "music")
 
 operator fun File.div(child: String) = File(this, child)
 
@@ -63,24 +62,41 @@ fun File.create(data: ByteArray) {
 
 fun File.createAll() = mkdirs()
 
-fun File.deleteFilter(delName: String) {
-    listFiles { file ->
+fun File.copySafely(other: File, overwrite: Boolean = true): Boolean = try {
+    this.copyTo(other, overwrite)
+    true
+} catch (_: Exception) { false }
+
+fun File.deleteSafely(): Boolean = try {
+    this.delete()
+} catch (_: Exception) { false }
+
+fun File.deleteFilterSafely(delName: String): Boolean = try {
+    val files = listFiles { file ->
         val filename: String = file.getName()
         var pos = filename.lastIndexOf('.')
         var name = if (pos == -1) filename else filename.substring(0, pos)
         pos = name.lastIndexOf('_')
         if (pos != -1) name = name.substring(0, pos)
         file.isFile() && delName.equals(name, ignoreCase = true)
-    }?.let {
-        for (file in it) file.delete()
-    }
-}
+    }!!
+    for (file in files) file.delete()
+    true
+} catch (_: Exception) { false }
 
-val File.fileSizeString: String get() = try {
-    val fileSize = this.length()
-    if (fileSize < 1024) "${fileSize}B"
-    else if (fileSize < 1024 * 1024) "${fileSize / 1024}KB"
-    else if (fileSize < 1024 * 1024 * 1024) "${fileSize / (1024 * 1024)}MB"
-    else "${fileSize / (1024 * 1024 * 1024)}GB"
-}
-catch (_: Exception) { "0 B" }
+private val Long.fileSizeString: String get() = if (this < 1024) "${this}B"
+    else if (this < 1024 * 1024) "${this / 1024}KB"
+    else if (this < 1024 * 1024 * 1024) "${this / (1024 * 1024)}MB"
+    else "${this / (1024 * 1024 * 1024)}GB"
+
+val File.fileSizeString: String get() = try { this.length().fileSizeString } catch (_: Exception) { "0B" }
+
+val File.folderSizeString: String get() = try {
+    var size = 0L
+    Files.walk(this.toPath()).use {
+        for (file in it) {
+            if (Files.isRegularFile(file)) size += Files.size(file)
+        }
+    }
+    size.fileSizeString
+} catch (_: Exception) { "0B" }

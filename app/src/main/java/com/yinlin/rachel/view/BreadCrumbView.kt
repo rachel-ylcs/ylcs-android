@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.rb
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.toDP
@@ -61,7 +62,7 @@ class BreadCrumbView @JvmOverloads constructor(context: Context, attrs: Attribut
     class TabDecoration(context: Context) : ItemDecoration() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         private val iconWidth = 10.toDP(context)
-        private val bitmap = AppCompatResources.getDrawable(context, R.drawable.icon_expand)!!.toBitmap(iconWidth, iconWidth)
+        private val bitmap = context.rb(R.drawable.icon_expand, iconWidth, iconWidth)
 
         override fun onDraw(canvas: Canvas, parent: RecyclerView, state: State) {
             val childCount = parent.childCount

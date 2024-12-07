@@ -46,8 +46,11 @@ class FragmentPlaylist(
         override fun onItemClicked(v: ItemMusicLineBinding, item: PlaylistPreview.MusicItem, position: Int) {
             RachelDialog.choice(main, callbacks = listOf(
                 "播放" to {
-                    main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, Playlist(main.rs(R.string.default_playlist_name), item.id))
-                    main.pop()
+                    if (item.isDeleted) fragment.tip(Tip.WARNING, main.rs(R.string.no_audio_source))
+                    else {
+                        main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, Playlist(main.rs(R.string.default_playlist_name), item.id))
+                        main.pop()
+                    }
                 },
                 "删除" to {
                     fragment.v.tab.withCurrent { _, title, _ ->
@@ -68,6 +71,7 @@ class FragmentPlaylist(
             }
         }
     }
+
     companion object {
         const val GROUP_ADD = 0
         const val GROUP_PLAY = 1

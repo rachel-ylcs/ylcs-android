@@ -53,7 +53,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         }
     }
 
-    private val adapter = Adapter(this)
+    private val mAdapter = Adapter(this)
 
     companion object {
         const val GROUP_SEARCH = 0
@@ -72,7 +72,7 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         v.list.apply {
             layoutManager = LinearLayoutManager(main)
             setHasFixedSize(true)
-            adapter = this@FragmentWeiboUserList.adapter
+            adapter = mAdapter
         }
 
         loadWeiboUserStorage()
@@ -103,9 +103,9 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
             if (correctUsers.isEmpty()) v.state.showEmpty()
             else {
                 v.title.text = main.rs(R.string.weibo_user_list_like)
-                adapter.isManagerMode = true
-                adapter.setSource(correctUsers)
-                adapter.notifySource()
+                mAdapter.isManagerMode = true
+                mAdapter.setSource(correctUsers)
+                mAdapter.notifySource()
                 v.state.showContent()
             }
         }
@@ -119,9 +119,9 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
             if (result != null) {
                 if (result.isNotEmpty()) {
                     v.title.text = main.rs(R.string.weibo_user_list_search)
-                    adapter.isManagerMode = false
-                    adapter.setSource(result)
-                    adapter.notifySource()
+                    mAdapter.isManagerMode = false
+                    mAdapter.setSource(result)
+                    mAdapter.notifySource()
                     v.state.showContent()
                 }
                 else v.state.showEmpty()

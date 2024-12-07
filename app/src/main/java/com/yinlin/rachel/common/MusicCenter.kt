@@ -4,6 +4,7 @@ package com.yinlin.rachel.common
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import androidx.core.content.FileProvider
 import androidx.media3.common.C
@@ -12,10 +13,14 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
 import com.yinlin.rachel.R
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.data.music.Command
 import com.yinlin.rachel.data.music.MusicInfo
 import com.yinlin.rachel.data.music.MusicInfoPreviewList
 import com.yinlin.rachel.data.music.MusicMap
@@ -28,7 +33,9 @@ import com.yinlin.rachel.data.music.PlaylistMap
 import com.yinlin.rachel.data.music.PlaylistPreview
 import com.yinlin.rachel.service.MusicService
 import com.yinlin.rachel.tool.Config
-import com.yinlin.rachel.tool.deleteFilter
+import com.yinlin.rachel.tool.clearAddAll
+import com.yinlin.rachel.tool.deleteFilterSafely
+import com.yinlin.rachel.tool.div
 import com.yinlin.rachel.tool.moveItem
 import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.readJson
@@ -39,6 +46,7 @@ import kotlinx.coroutines.withContext
 
 typealias RachelPlayer = MediaController
 
+@OptIn(UnstableApi::class)
 class MusicCenter(private val context: Context, private val handler: Handler, private val uiListener: UIListener) : Player.Listener {
     companion object {
         const val UPDATE_FREQUENCY: Long = 100L // 更新频率
@@ -73,13 +81,10 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
     // 查找歌单
     fun findPlaylist(name: String): Playlist? = playlists[name]
     // 指定歌单预览
-    fun previewPlaylist(name: String): PlaylistPreview {
-        val playlist = playlists[name]
-        return PlaylistPreview(name, playlist?.items?.map {
-            val info = musicInfos[it]
-            PlaylistPreview.MusicItem(it, info?.name ?: it, info?.singer ?: "", info == null)
-        } ?: emptyList())
-    }
+    fun previewPlaylist(playlist: Playlist) = PlaylistPreview(playlist.name, playlist.items.map {
+        val info = musicInfos[it]
+        PlaylistPreview.MusicItem(it, info?.name ?: it, info?.singer ?: "", info == null)
+    })
 
     // 当前播放歌单
     var currentPlaylist: Playlist? = null
@@ -165,35 +170,10 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
         player.removeListener(this)
     }
 
-    // 更新播放模式
-    fun updatePlayMode() {
-        when (Config.music_play_mode) {
-            MusicPlayMode.ORDER -> {
-                player.repeatMode = Player.REPEAT_MODE_ALL
-                player.shuffleModeEnabled = false
-            }
-            MusicPlayMode.LOOP -> {
-                player.repeatMode = Player.REPEAT_MODE_ONE
-                player.shuffleModeEnabled = false
-            }
-            MusicPlayMode.RANDOM -> {
-                player.repeatMode = Player.REPEAT_MODE_ALL
-                player.shuffleModeEnabled = true
-            }
-        }
-    }
-
-    // 切换播放模式
-    fun nextPlayMode() {
-        val nextMode = when (val mode = Config.music_play_mode) {
-            MusicPlayMode.ORDER -> MusicPlayMode.LOOP
-            MusicPlayMode.LOOP -> MusicPlayMode.RANDOM
-            MusicPlayMode.RANDOM -> MusicPlayMode.ORDER
-            else -> mode
-        }
-        Config.music_play_mode = nextMode
-        updatePlayMode()
-    }
+    // 发送命令
+    fun send(command: SessionCommand, args: Bundle = Bundle.EMPTY): Bundle =
+        if (player.isConnected) player.sendCustomCommand(command, args).get().extras
+        else Bundle.EMPTY
 
     // 恢复上一次播放
     fun resumeLastMusic() {
@@ -205,6 +185,7 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
             currentPlaylist = playlist // 设置当前播放歌单
             // 暂停 Player
             val musicIndex = mediaItems.indexOfFirst { it.mediaId == musicId }
+            player.clearMediaItems()
             if (musicIndex == -1) player.setMediaItems(mediaItems, false)
             else player.setMediaItems(mediaItems, musicIndex, 0L)
             player.prepare()
@@ -225,8 +206,7 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
     }
 
     // 重命名歌单
-    fun renamePlaylist(oldName: String, newName: String): Boolean {
-        val playlist = playlists[oldName] ?: return false
+    fun renamePlaylist(playlist: Playlist, newName: String): Boolean {
         // 校验歌单
         if (newName.isEmpty() || playlists.containsKey(newName) ||
             newName == context.rs(R.string.default_playlist_name)) return false
@@ -240,16 +220,23 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
     }
 
     // 删除歌单
-    fun deletePlaylist(name: String) {
-        val playlist = playlists[name]
-        if (playlist != null) {
-            // 检查歌单是否正在播放
-            if (playlist == currentPlaylist) stop()
-            // UI更新
-            playlists.remove(playlist.name)
-            // 数据存储
-            Config.playlist = playlists
-        }
+    fun deletePlaylist(playlist: Playlist) {
+        // 检查歌单是否正在播放
+        if (playlist == currentPlaylist) send(Command.CommandStop)
+        // UI更新
+        playlists.remove(playlist.name)
+        // 数据存储
+        Config.playlist = playlists
+    }
+
+    // 重载歌单
+    fun reloadPlaylist(newPlaylists: PlaylistMap) {
+        // 更换歌单
+        playlists.clearAddAll(newPlaylists)
+        // 将当前播放列表脱离歌单
+        currentPlaylist?.let { it.name = context.rs(R.string.default_playlist_name) }
+        // 数据存储
+        Config.playlist = playlists
     }
 
     // 添加歌曲到歌单
@@ -267,12 +254,12 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
         if (num > 0) {
             // 添加到新列表中
             oldItems.addAll(newItems)
-            // 数据存储
-            Config.playlist = playlists
             // 检查当前是否在播放此列表
             if (playlist == currentPlaylist) {
                 for (item in newItems) musicInfos[item]?.let { player.addMediaItem(it.buildMusicItem) }
             }
+            // 数据存储
+            Config.playlist = playlists
         }
         return num
     }
@@ -281,14 +268,14 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
     fun deleteMusicFromPlaylist(playlist: Playlist, id: String) {
         val position = playlist.items.indexOf(id)
         if (position != -1) {
+            // 从歌单中移除
+            playlist.items.removeAt(position)
             // 检查歌单是否正在播放
             if (playlist == currentPlaylist) {
                 // 移除正在播放的媒体
                 val mediaIndex = indexOfMusic(id)
                 if (mediaIndex != -1) player.removeMediaItem(mediaIndex)
             }
-            // 从歌单中移除
-            playlist.items.removeAt(position)
             // 数据存储
             Config.playlist = playlists
         }
@@ -327,10 +314,28 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
                 }
             }
         }
-        // 移动歌单两个歌曲的位置
+        // 移动歌单歌曲的位置
         items.moveItem(oldPosition, newPosition)
         // 数据存储
         Config.playlist = playlists
+    }
+
+    // 提醒歌曲已添加
+    suspend fun notifyAddMusic(ids: List<String>) {
+        // 添加前必须停止播放器
+        // 1. 保证了导入时能够覆盖正在播放的音频文件
+        // 2. 无需考虑更新恢复被删除的歌单中的歌曲以及更新新版本的歌曲与元数据
+        val addInfos = mutableListOf<MusicInfo>()
+        val removeInfos = mutableListOf<MusicInfo>()
+        withContext(Dispatchers.IO) {
+            for (id in ids) {
+                val info: MusicInfo = (pathMusic / (id + MusicRes.INFO_NAME)).readJson()
+                if (info.isCorrect) addInfos += info
+                else removeInfos += info
+            }
+        }
+        for (info in addInfos) musicInfos[info.id] = info
+        for (info in removeInfos) musicInfos.remove(info.id)
     }
 
     // 删除歌曲
@@ -347,88 +352,48 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
         for (selectItem in musicItems) musicInfos.remove(selectItem.id)
         // 删除本地文件
         withContext(Dispatchers.IO) {
-            for (selectItem in musicItems) pathMusic.deleteFilter(selectItem.id)
+            for (selectItem in musicItems) pathMusic.deleteFilterSafely(selectItem.id)
         }
+    }
+
+    // 获取播放模式
+    val playMode: MusicPlayMode get() {
+        val mode = send(Command.CommandGetMode).getInt(Command.ARG_MODE, -1)
+        return if (mode == -1) MusicPlayMode.ORDER else MusicPlayMode(mode)
     }
 
     // 播放歌单
     fun start(playlist: Playlist) {
-        val mediaItems = mutableListOf<MediaItem>()
-        for (id in playlist.items) musicInfos[id]?.let { mediaItems += it.buildMusicItem }
-        currentPlaylist = playlist // 设置当前播放歌单
-        // 启动 Player
-        player.setMediaItems(mediaItems, false)
-        player.prepare()
-        player.play()
-    }
-
-    // 暂停
-    fun pause() {
-        if (player.isPlaying) player.pause()
-    }
-
-    // 停止
-    fun stop() {
-        player.clearMediaItems()
-        player.stop()
-    }
-
-    // 设置进度百分比
-    fun setProgressPercent(percent: Float) {
-        if (currentMusicInfo != null) {
-            player.seekTo((player.duration * percent).toLong())
-            if (!player.isPlaying) player.play()
-        }
-    }
-
-    // 播放或暂停
-    fun playOrPause() {
-        if (currentMusicInfo != null) {
-            if (player.isPlaying) player.pause()
-            else player.play()
-        }
-    }
-
-    // 切换上一首
-    fun gotoPrevious() {
-        val index = player.previousMediaItemIndex
-        if (index != -1) {
-            player.seekTo(index, 0)
-            if (!player.isPlaying) player.play()
-        }
-    }
-
-    // 切换下一首
-    fun gotoNext() {
-        val index = player.nextMediaItemIndex
-        if (index != -1) {
-            player.seekTo(index, 0)
-            if (!player.isPlaying) player.play()
-        }
-    }
-
-    // 跳转指定位置
-    fun gotoIndex(index: Int) {
-        if (index != -1 && player.currentMediaItemIndex != index) {
-            player.seekTo(index, 0L)
-            if (!player.isPlaying) player.play()
+        if (playlist != currentPlaylist) {
+            val mediaItems = mutableListOf<MediaItem>()
+            for (id in playlist.items) musicInfos[id]?.let { mediaItems += it.buildMusicItem }
+            if (mediaItems.isNotEmpty()) {
+                currentPlaylist = playlist // 设置当前播放歌单
+                // 启动 Player
+                player.clearMediaItems()
+                player.setMediaItems(mediaItems, false)
+                player.prepare()
+                player.play()
+            }
         }
     }
 
     override fun onRepeatModeChanged(repeatMode: Int) {
         super.onRepeatModeChanged(repeatMode)
-        uiListener.onMusicModeChanged(Config.music_play_mode)
+        uiListener.onMusicModeChanged(playMode)
     }
 
     override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
         super.onShuffleModeEnabledChanged(shuffleModeEnabled)
-        uiListener.onMusicModeChanged(Config.music_play_mode)
+        uiListener.onMusicModeChanged(playMode)
     }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
-        println("onMediaItemTransition mediaItem=${mediaItem?.mediaId} reason=$reason")
         val musicInfo = musicInfos[mediaItem?.mediaId]
+
+        // 随机列表洗牌
+        send(Command.CommandShuffle)
 
         // 更新上次播放记录
         Config.music_last_playlist = currentPlaylist?.name ?: ""
@@ -443,18 +408,19 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
 
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
-        println("onPlayerError error=$error")
-        stop()
+        send(Command.CommandStop)
         uiListener.onMusicError(error)
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         when (playbackState) {
-            Player.STATE_IDLE -> println("onPlaybackStateChanged playbackState=IDLE")
-            Player.STATE_BUFFERING -> println("onPlaybackStateChanged playbackState=BUFFERING")
+            Player.STATE_IDLE -> {
+                currentPlaylist = null
+                uiListener.onMusicStop()
+            }
+            Player.STATE_BUFFERING -> { }
             Player.STATE_READY -> {
-                println("onPlaybackStateChanged playbackState=READY isPlaying=${player.isPlaying}")
                 val musicInfo = musicInfos[player.currentMediaItem?.mediaId]
                 val duration = player.duration
                 if (musicInfo != null && duration != C.TIME_UNSET) {
@@ -462,18 +428,14 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
                 }
             }
             Player.STATE_ENDED -> {
-                println("onPlaybackStateChanged playbackState=ENDED ${player.mediaItemCount}")
-                if (player.mediaItemCount == 0) {
-                    currentPlaylist = null
-                    uiListener.onMusicStop()
-                }
+                if (player.mediaItemCount == 0) send(Command.CommandStop)
+                else if (!player.isPlaying) player.play() // 单曲循环
             }
         }
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         super.onIsPlayingChanged(isPlaying)
-        println("onIsPlayingChanged isPlaying=$isPlaying")
         handler.removeCallbacks(onTimeUpdate)
         if (isPlaying) handler.post(onTimeUpdate)
         uiListener.onMusicPlaying(isPlaying)

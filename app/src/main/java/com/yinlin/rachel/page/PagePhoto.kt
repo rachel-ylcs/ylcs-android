@@ -48,7 +48,7 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
     }
 
     private var rootRes = ResFolder.emptyRes
-    private val adapter = Adapter(this, rootRes)
+    private val mAdapter = Adapter(this, rootRes)
 
     override fun bindingClass(): Class<PagePhotoBinding> = PagePhotoBinding::class.java
 
@@ -58,21 +58,21 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 15)
-            adapter = this@PagePhoto.adapter
+            adapter = mAdapter
         }
 
         // Tab
         v.tab.listener = { oldPos, newPos, text ->
-            adapter.currentRes = if (newPos == 0) rootRes
+            mAdapter.currentRes = if (newPos == 0) rootRes
             else if (oldPos > newPos) {
-                var root = adapter.currentRes
+                var root = mAdapter.currentRes
                 for (i in newPos ..< oldPos) root = root.parent!!
                 root
             }
-            else adapter.currentRes.items.find { it.name == text }!! as ResFolder
+            else mAdapter.currentRes.items.find { it.name == text }!! as ResFolder
             v.list.smoothScrollToPosition(0)
-            adapter.setSource(adapter.currentRes.items)
-            adapter.notifySource()
+            mAdapter.setSource(mAdapter.currentRes.items)
+            mAdapter.notifySource()
         }
 
         // 下拉刷新

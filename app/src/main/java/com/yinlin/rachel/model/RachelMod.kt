@@ -85,8 +85,7 @@ object RachelMod {
         }
 
         fun close() {
-            try { stream.close() }
-            catch (_: Exception) { }
+            try { stream.close() } catch (_: Exception) { }
         }
     }
 

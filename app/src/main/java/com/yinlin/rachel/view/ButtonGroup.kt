@@ -6,10 +6,10 @@ import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.tool.rachelClick
+import com.yinlin.rachel.tool.ri
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.textSizePx
 import com.yinlin.rachel.tool.visible
@@ -61,7 +61,7 @@ class ButtonGroup @JvmOverloads constructor(context: Context, attrs: AttributeSe
                     }
                 }
                 tv.gravity = Gravity.CENTER
-                val drawable = AppCompatResources.getDrawable(context, iconsArray[index])
+                val drawable = context.ri(iconsArray[index])
                 if (textPosition == TOP) tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, drawable)
                 else tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, drawable, null, null)
                 val text = splitStrings.getOrNull(index)?.trim() ?: ""
@@ -94,7 +94,7 @@ class ButtonGroup @JvmOverloads constructor(context: Context, attrs: AttributeSe
 
     fun setItemImage(index: Int, @DrawableRes res: Int) {
         items[index].apply {
-            val drawable = AppCompatResources.getDrawable(context, res)
+            val drawable = context.ri(res)
             if (compoundDrawablesRelative[1] != null) setCompoundDrawablesRelativeWithIntrinsicBounds(null, drawable, null, null)
             else setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, drawable)
         }

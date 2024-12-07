@@ -11,6 +11,7 @@
     <TextView
         style="@style/RachelText.X"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:textColor="@color/steel_blue"
         android:textStyle="bold"
@@ -20,7 +21,8 @@
         android:id="@+id/floating"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="状态栏歌词" >
+        android:text="状态栏歌词"
+        app:HasArrow="false" >
         <ImageView
             android:id="@+id/iv_floating"
             android:layout_width="wrap_content"
@@ -72,8 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="左侧偏移"
-        app:HasArrow="false"
-        android:clipChildren="false" >
+        app:HasArrow="false" >
         <com.google.android.material.slider.Slider
             android:id="@+id/itemOffsetLeft"
             android:layout_width="match_parent"

@@ -43,7 +43,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
             v.pics.listener = { position, _ -> main.navigate(FragmentImagePreview(main, v.pics.images, position)) }
 
             // 菜单
-            v.more.rachelClick(300) {
+            v.more.rachelClick {
                 val menuList = ArrayList<RachelPopMenu.Item>()
                 val user = Config.loginUser
                 if (user != null) {
@@ -68,7 +68,7 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
 
         override fun init(holder: RachelItemViewHolder<ItemCommentBinding>, v: ItemCommentBinding) {
             v.avatar.rachelClick { main.navigate(FragmentProfile(main, this[holder.positionEx].uid)) }
-            v.more.rachelClick(300) {
+            v.more.rachelClick {
                 val menuList = ArrayList<RachelPopMenu.Item>()
                 val user = Config.loginUser
                 val topicUid = fragment.topic.uid

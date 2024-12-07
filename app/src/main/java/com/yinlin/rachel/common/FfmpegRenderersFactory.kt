@@ -2,6 +2,7 @@ package com.yinlin.rachel.common
 
 import android.content.Context
 import android.os.Handler
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
@@ -34,7 +35,7 @@ class FfmpegRenderersFactory(context: Context) : DefaultRenderersFactory(context
     }
 }
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 fun buildFfmpegPlayer(context: Context) = ExoPlayer.Builder(context)
     .setAudioAttributes(AudioAttributes.Builder()
         .setUsage(C.USAGE_MEDIA)

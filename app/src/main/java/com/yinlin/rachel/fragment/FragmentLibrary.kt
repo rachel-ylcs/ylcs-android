@@ -137,12 +137,11 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
 
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {
-            // TODO:
             RachelMessage.LIBRARY_UPDATE_MUSIC_INFO -> {
                 val musicInfo = args[0] as MusicInfo
-                val pos = mAdapter.items.indexOfFirst { it.id == musicInfo.id }
+                val pos = mAdapter.findItem { it.id == musicInfo.id }
                 if (pos != -1) {
-                    mAdapter.items[pos] = musicInfo.preview
+                    mAdapter[pos] = musicInfo.preview
                     mAdapter.notifyItemChanged(pos)
                 }
             }
@@ -178,7 +177,7 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
         val selectIds = mAdapter.checkIds
         if (selectIds.isNotEmpty()) RachelDialog.confirm(main, content="是否从曲库中卸载指定歌曲?") {
             main.sendMessage(RachelTab.music, RachelMessage.MUSIC_DELETE_MUSIC, selectIds)
-            for (ids in selectIds) mAdapter.items.remove(ids)
+            for (ids in selectIds) mAdapter.removeItem(mAdapter.indexItem(ids))
             mAdapter.isManageMode = false
         }
     }

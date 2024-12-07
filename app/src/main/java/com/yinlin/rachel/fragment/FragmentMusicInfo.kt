@@ -29,6 +29,10 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelMod
 import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.model.RachelTab
+import com.yinlin.rachel.model.engine.LineLyricsEngine
+import com.yinlin.rachel.model.engine.PAGLyricsEngine
+import com.yinlin.rachel.tool.copySafely
+import com.yinlin.rachel.tool.deleteSafely
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.pathMusic
 import com.yinlin.rachel.tool.rc
@@ -49,21 +53,15 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
         override fun init(holder: RachelViewHolder<ItemMusicResBinding>, v: ItemMusicResBinding) {
             v.edit.rachelClick {
                 val pos = holder.bindingAdapterPosition
-                val item = items[pos]
-                if (!item.canEdit) return@rachelClick
-                fragment.editRes(pos, item)
+                val item = this[pos]
+                if (item.canEdit) fragment.editRes(pos, item)
             }
 
             v.delete.rachelClick {
                 val pos = holder.bindingAdapterPosition
-                val item = items[pos]
-                if (!item.canDelete) return@rachelClick
-                RachelDialog.confirm(main, "该操作不可逆!", "是否从从MOD中删除该资源") {
-                    if (fragment.deleteRes(item)) {
-                        removeItem(pos)
-                        notifyItemRemoved(pos)
-                    }
-                    else fragment.tip(Tip.ERROR, "删除失败")
+                val item = this[pos]
+                if (item.canDelete) RachelDialog.confirm(main, "该操作不可逆!", "是否从从MOD中删除该资源") {
+                    fragment.deleteRes(pos, item)
                 }
             }
         }
@@ -91,27 +89,28 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
     override fun init() {
         v.name.rachelClick {
             RachelDialog.input(main, "修改歌曲名称", 32) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 v.name.text = it
                 musicInfo.name = it
                 main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
+                val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
                 musicInfo.rewrite()
             }
         }
 
         v.singer.rachelClick {
             RachelDialog.input(main, "修改演唱歌手", 32) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 v.singer.text = it
                 musicInfo.singer = it
                 main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
+                val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
                 musicInfo.rewrite()
             }
         }
 
         v.lyricist.rachelClick {
             RachelDialog.input(main, "修改作词", 32) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 v.lyricist.text = it
                 musicInfo.lyricist = it
                 musicInfo.rewrite()
@@ -120,7 +119,6 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
 
         v.composer.rachelClick {
             RachelDialog.input(main, "修改作曲", 32) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 v.composer.text = it
                 musicInfo.composer = it
                 musicInfo.rewrite()
@@ -129,7 +127,6 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
 
         v.album.rachelClick {
             RachelDialog.input(main, "修改专辑分类", 32) {
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
                 v.album.text = it
                 musicInfo.album = it
                 musicInfo.rewrite()
@@ -156,17 +153,16 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
 
         v.groupRes.listener = { pos -> when (pos) {
             GROUP_PLAY -> main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, Playlist(main.rs(R.string.default_playlist_name), musicInfo.id))
-            GROUP_ADD -> {
-
-            }
-            GROUP_SHARE -> RachelDialog.confirm(main, content="导出MOD\"${this.id}\"到文件分享?") {
-                shareMusic(musicInfo.id)
-            }
+            GROUP_ADD -> { }
+            GROUP_SHARE -> RachelDialog.confirm(main, content="导出MOD\"${this.id}\"到文件分享?") { shareMusic(musicInfo.id) }
         } }
 
         lifecycleScope.launch {
             v.loadingLyrics.loading = true
-            if (musicInfo.lrcData == null) musicInfo.lrcData = withContext(Dispatchers.IO) { LrcData.parseLrcData(musicInfo.defaultLrcPath.readText()) }
+            if (musicInfo.lrcData == null) {
+                val lrcData = withContext(Dispatchers.IO) { LrcData.parseLrcData(musicInfo.defaultLrcPath.readText()) }
+                musicInfo.lrcData = lrcData
+            }
             v.loadingLyrics.loading = false
             musicInfo.lrcData?.let { v.lyrics.text = it.plainText }
         }
@@ -187,86 +183,138 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
     override fun back() = BackState.POP
 
     private fun editRes(pos: Int, res: MusicRes) = when (res.id) {
-        MusicRes.Type.RECORD -> {
-            RachelPictureSelector.single(main, 512, 512, false) {
-                try {
-                    File(it).copyTo(musicInfo.recordPath, true)
+        MusicRes.Type.RECORD -> RachelPictureSelector.single(main, 512, 512, false) {
+            lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    val result = File(it).copySafely(musicInfo.recordPath)
+                    if (result) {
+                        withContext(Dispatchers.Main) {
+                            main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
+                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                        }
+                    }
+                    result
+                }
+                if (result) {
                     v.record.load(musicInfo.recordPath)
-                    mAdapter.items[pos].fileSize = musicInfo.recordPath.fileSizeString
+                    res.fileSize = musicInfo.recordPath.fileSizeString
                     mAdapter.notifyItemChanged(pos)
-                    main.sendBottomMessage(FragmentLibrary::class, RachelMessage.LIBRARY_UPDATE_MUSIC_INFO, musicInfo)
                 }
-                catch (_: Exception) {
-                    tip(Tip.ERROR, "编辑失败")
-                }
+                else tip(Tip.ERROR, "编辑失败")
             }
         }
-        MusicRes.Type.BGS -> {
-            RachelPictureSelector.single(main, 1080, 1920, false) {
-                try {
-                    File(it).copyTo(musicInfo.bgsPath, true)
-                    mAdapter.items[pos].fileSize = musicInfo.bgsPath.fileSizeString
+        MusicRes.Type.BGS -> RachelPictureSelector.single(main, 1080, 1920, false) {
+            lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    val result = File(it).copySafely(musicInfo.bgsPath)
+                    if (result) {
+                        withContext(Dispatchers.Main) {
+                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                        }
+                    }
+                    result
+                }
+                if (result) {
+                    res.fileSize = musicInfo.bgsPath.fileSizeString
                     mAdapter.notifyItemChanged(pos)
                 }
-                catch (_: Exception) {
-                    tip(Tip.ERROR, "编辑失败")
-                }
+                else tip(Tip.ERROR, "编辑失败")
             }
         }
         else -> tip(Tip.WARNING, "该资源未开放编辑")
     }
 
-    private fun deleteRes(res: MusicRes): Boolean = when (res.id) {
-        MusicRes.Type.VIDEO -> {
-            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-            val result = musicInfo.videoPath.delete()
-            if (result) {
-                musicInfo.video = false
-                musicInfo.rewrite()
-            }
-            result
-        }
-        MusicRes.Type.BGD -> {
-            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-            val result = musicInfo.bgdPath.delete()
-            if (result) {
-                musicInfo.bgd = false
-                musicInfo.rewrite()
-            }
-            result
-        }
-        MusicRes.Type.LRC -> {
-            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-            val lrcList = musicInfo.lyrics["line"]
-            var result = false
-            if (lrcList != null) {
-                val resId = res.name.removeSuffix(res.ext)
-                if (resId.isNotEmpty() && lrcList.contains(resId)) {
-                    if (musicInfo.customPath(res.name).delete() && lrcList.remove(resId)) {
+    private fun deleteRes(pos: Int, res: MusicRes) {
+        when (res.id) {
+            MusicRes.Type.VIDEO -> lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    val result = musicInfo.videoPath.deleteSafely()
+                    if (result) {
+                        musicInfo.video = false
                         musicInfo.rewrite()
-                        result = true
+                        withContext(Dispatchers.Main) {
+                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                        }
+                    }
+                    result
+                }
+                if (result) {
+                    mAdapter.removeItem(pos)
+                    mAdapter.notifyItemRemoved(pos)
+                }
+            }
+            MusicRes.Type.BGD -> lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    val result = musicInfo.bgdPath.deleteSafely()
+                    if (result) {
+                        musicInfo.bgd = false
+                        musicInfo.rewrite()
+                        withContext(Dispatchers.Main) {
+                            val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                            if (currentMusicInfo == musicInfo) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_UPDATE_MUSIC_INFO, musicInfo)
+                        }
+                    }
+                    result
+                }
+                if (result) {
+                    mAdapter.removeItem(pos)
+                    mAdapter.notifyItemRemoved(pos)
+                }
+            }
+            MusicRes.Type.LRC -> lifecycleScope.launch {
+                val lrcList = musicInfo.lyrics[LineLyricsEngine.NAME]
+                val resId = res.name.removeSuffix(res.ext)
+                if (resId.isNotEmpty() && lrcList != null && lrcList.contains(resId)) {
+                    val result = withContext(Dispatchers.IO) {
+                        val result = musicInfo.customPath(res.name).deleteSafely()
+                        if (result) {
+                            lrcList.remove(resId)
+                            musicInfo.rewrite()
+                            // 如果正在播放这首歌则切换到默认歌词
+                            withContext(Dispatchers.Main) {
+                                val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                                if (currentMusicInfo == musicInfo)
+                                    main.sendMessage(RachelTab.music, RachelMessage.MUSIC_USE_LYRICS_ENGINE, LineLyricsEngine.NAME, LineLyricsEngine.DEFAULT_RES)
+                            }
+                        }
+                        result
+                    }
+                    if (result) {
+                        mAdapter.removeItem(pos)
+                        mAdapter.notifyItemRemoved(pos)
                     }
                 }
             }
-            result
-        }
-        MusicRes.Type.PAG -> {
-            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-            val pagList = musicInfo.lyrics["pag"]
-            var result = false
-            if (pagList != null) {
+            MusicRes.Type.PAG -> lifecycleScope.launch {
+                val pagList = musicInfo.lyrics[PAGLyricsEngine.NAME]
                 val resId = res.name.removeSuffix(res.ext)
-                if (resId.isNotEmpty() && pagList.contains(resId)) {
-                    if (musicInfo.customPath(res.name).delete() && pagList.remove(resId)) {
-                        if (pagList.isEmpty()) musicInfo.lyrics.remove("pag")
-                        musicInfo.rewrite()
-                        result = true
+                if (resId.isNotEmpty() && pagList != null && pagList.contains(resId)) {
+                    val result = withContext(Dispatchers.IO) {
+                        val result = musicInfo.customPath(res.name).deleteSafely()
+                        if (result) {
+                            pagList.remove(resId)
+                            if (pagList.isEmpty()) musicInfo.lyrics.remove(PAGLyricsEngine.NAME)
+                            musicInfo.rewrite()
+                            // 如果正在播放这首歌则切换到默认歌词
+                            withContext(Dispatchers.Main) {
+                                val currentMusicInfo = main.sendMessageForResult<MusicInfo>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_MUSIC_INFO)
+                                if (currentMusicInfo == musicInfo)
+                                    main.sendMessage(RachelTab.music, RachelMessage.MUSIC_USE_LYRICS_ENGINE, LineLyricsEngine.NAME, LineLyricsEngine.DEFAULT_RES)
+                            }
+                        }
+                        result
+                    }
+                    if (result) {
+                        mAdapter.removeItem(pos)
+                        mAdapter.notifyItemRemoved(pos)
                     }
                 }
             }
-            result
+            else -> { }
         }
-        else -> false
     }
 
     // 分享歌曲
@@ -284,8 +332,7 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
                     val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)!!
                     if (resolver.openOutputStream(uri).use { merger.run(it!!, metadata, null) }) uri
                     else null
-                }
-                catch (_: Exception) { null }
+                } catch (_: Exception) { null }
             }
             loading.dismiss()
             try {

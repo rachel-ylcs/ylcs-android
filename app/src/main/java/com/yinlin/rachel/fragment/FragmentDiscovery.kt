@@ -60,7 +60,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
     private var topicUpper: Int = 2147483647
     private var topicOffset: Int = 0
 
-    private val adapter = Adapter(this)
+    private val mAdapter = Adapter(this)
 
     override fun bindingClass() = FragmentDiscoveryBinding::class.java
 
@@ -100,7 +100,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 20)
             setItemViewCacheSize(4)
-            adapter = this@FragmentDiscovery.adapter
+            adapter = mAdapter
         }
     }
 
@@ -121,17 +121,17 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
             RachelMessage.DISCOVERY_ADD_TOPIC -> {
                 // 只有在最新状态下更新, 热门无需更新
                 if (v.tab.current == TAB_LATEST) {
-                    adapter.addItem(0, args[0] as TopicPreview)
-                    adapter.notifyItemInserted(0)
+                    mAdapter.addItem(0, args[0] as TopicPreview)
+                    mAdapter.notifyItemInserted(0)
                     v.list.scrollToPosition(0)
                 }
             }
             RachelMessage.DISCOVERY_DELETE_TOPIC -> {
                 val tid = args[0] as Int
-                val index = adapter.findItem { it.tid == tid }
+                val index = mAdapter.findItem { it.tid == tid }
                 if (index != -1) {
-                    adapter.removeItem(index)
-                    adapter.notifyItemRemoved(index)
+                    mAdapter.removeItem(index)
+                    mAdapter.notifyItemRemoved(index)
                 }
             }
             else -> { }
@@ -166,8 +166,8 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
                         v.state.showContent()
                         v.container.setEnableLoadMore(true)
                     }
-                    adapter.setSource(topics)
-                    adapter.notifySource()
+                    mAdapter.setSource(topics)
+                    mAdapter.notifySource()
                 }
                 API.Code.UNAUTHORIZED, API.Code.FAILED -> {
                     v.state.showError(result.msg) { requestNewData() }
@@ -196,8 +196,8 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
                     val newCount = topics.size
                     if (current == TAB_LATEST) topicUpper = topics.last().tid
                     else topicOffset += topics.size
-                    adapter.addSource(topics)
-                    adapter.notifyItemRangeInserted(adapter.size - newCount, newCount)
+                    mAdapter.addSource(topics)
+                    mAdapter.notifyItemRangeInserted(mAdapter.size - newCount, newCount)
                     v.container.finishLoadMore()
                 }
             }

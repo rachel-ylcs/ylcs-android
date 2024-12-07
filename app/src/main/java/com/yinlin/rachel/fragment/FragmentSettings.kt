@@ -21,6 +21,8 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.sheet.SheetCrashLog
+import com.yinlin.rachel.tool.folderSizeString
+import com.yinlin.rachel.tool.pathCache
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +72,8 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             else tip(Tip.WARNING, "请先登录")
         }
 
+        updateInfo()
+
         /*    ----    个性化设置    ----    */
 
         /*    ----    资讯设置    ----    */
@@ -108,28 +112,22 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
 
         /*    ----    通用设置    ----    */
 
-        v.clearCache.rachelClick {
-            lifecycleScope.launch {
-                v.clearCache.isEnabled = false
-                withContext(Dispatchers.IO) { Glide.get(main).clearDiskCache() }
-                v.clearCache.isEnabled = true
-                tip(Tip.SUCCESS, "清理缓存成功")
-            }
-        }
+        v.clearCache.rachelClick { clearCacheSize() }
+        updateCacheSize()
 
         v.crashLog.rachelClick { SheetCrashLog(this).show() }
 
         v.version.text = main.appVersionName(main.appVersion)
         v.checkUpdate.rachelClick { main.navigate(FragmentUpdate(main)) }
 
-        v.about.rachelClick { main.navigate(FragmentAbout(main)) }
-
         v.feedback.rachelClick {
             if (Config.isLogin) RachelDialog.input(main, "悉听良计, 赠以银币!", 256, 10) { sendFeedback(it) }
             else tip(Tip.WARNING, "请先登录")
         }
 
-        updateInfo()
+        v.privacyPolicy.rachelClick { main.navigate(FragmentPrivacyPolicy(main)) }
+
+        v.about.rachelClick { main.navigate(FragmentAbout(main)) }
     }
 
     override fun back() = BackState.POP
@@ -258,10 +256,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             val result = withContext(Dispatchers.IO) { API.UserAPI.downloadPlaylist(Config.token) }
             loading.dismiss()
             if (result.success) {
-                val playlist = result.data
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-                Config.playlist = playlist
-                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST)
+                main.sendMessage(RachelTab.music, RachelMessage.MUSIC_RELOAD_PLAYLIST, result.data)
                 tip(Tip.SUCCESS, result.msg)
             }
             else tip(Tip.ERROR, result.msg)
@@ -275,6 +270,28 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             val result = withContext(Dispatchers.IO) { API.UserAPI.sendFeedback(Config.token, content) }
             loading.dismiss()
             tip(if (result.success) Tip.SUCCESS else Tip.ERROR, result.msg)
+        }
+    }
+
+    @IOThread
+    private fun updateCacheSize() {
+        lifecycleScope.launch {
+            val size = withContext(Dispatchers.IO) { pathCache.folderSizeString }
+            v.cacheSize.text = size
+        }
+    }
+
+    @IOThread
+    private fun clearCacheSize() {
+        lifecycleScope.launch {
+            v.clearCache.isEnabled = false
+            v.cacheSize.text = "清理缓存中..."
+            val size = withContext(Dispatchers.IO) {
+                Glide.get(main).clearDiskCache()
+                pathCache.folderSizeString
+            }
+            v.cacheSize.text = size
+            v.clearCache.isEnabled = true
         }
     }
 }

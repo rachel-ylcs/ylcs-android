@@ -29,7 +29,7 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
         val v = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as Binding
         val holder = RachelViewHolder(v)
         val root = v.root
-        root.rachelClick(300) {
+        root.rachelClick {
             val position = holder.bindingAdapterPosition
             onItemClicked(holder.v, items[position], position)
         }
@@ -55,6 +55,7 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
 
     operator fun plusAssign(item: Item) { items.add(item) }
     fun addItem(index: Int, item: Item) = items.add(index, item)
+    fun indexItem(item: Item) = items.indexOf(item)
     inline fun findItem(predicate: (Item) -> Boolean) = items.indexOfFirst(predicate)
     fun removeItem(index: Int) = items.removeAt(index)
     fun swapItem(src: Int, des: Int) = Collections.swap(items, src, des)

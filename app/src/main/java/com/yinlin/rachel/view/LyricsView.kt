@@ -20,9 +20,13 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var isEngineLoad: Boolean = false
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-        if (lyricsEngine != null && lyricsFileName != null && musicInfo != null && childCount != 0) {
-            if (lyricsEngine!!.load(getChildAt(0) as TextureView, surface,
-                    width, height, lyricsFileName!!)) isEngineLoad = true
+        val engine = lyricsEngine
+        val filename = lyricsFileName
+        if (engine != null && filename != null && musicInfo != null && childCount != 0) {
+            if (engine.load(getChildAt(0) as TextureView, surface, width, height, filename)) {
+                isEngineLoad = true
+                update(0)
+            }
             else releaseEngine()
         }
     }
@@ -83,7 +87,8 @@ class LyricsView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         if (lyricsEngine == null) lyricsEngine = LyricsEngineFactory.newEngine(context, engineName)
         if (lyricsEngine == null) return false
         else {
-            lyricsFileName = (pathMusic / "${musicInfo.id}${if(name.isEmpty()) "" else "_"}${name}${lyricsEngine?.ext}").absolutePath
+            val filename = if (name.isEmpty()) "" else "_${name}"
+            lyricsFileName = (pathMusic / "${musicInfo.id}${filename}${lyricsEngine?.ext}").absolutePath
             this.musicInfo = musicInfo
             addTexture()
             return true

@@ -37,6 +37,7 @@ class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyrics
     override fun init() {
         registerFloatingPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             updateFloatingIconStatus()
+            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_PREPARE_FLOATING_LYRICS)
         }
 
         updateFloatingIconStatus()

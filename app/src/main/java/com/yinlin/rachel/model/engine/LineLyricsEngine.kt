@@ -78,6 +78,7 @@ class LineLyricsEngine(context: Context) : LyricsEngine {
 
     companion object {
         const val MAX_WIDTH_RATIO = 0.8f
+        const val DEFAULT_RES = ""
         const val NAME = "line"
         const val DESCRIPTION = "原生逐行歌词渲染引擎, 自适应字体大小, 自内向外渐隐"
         val ICON: Int = R.drawable.img_lyrics_engine_line

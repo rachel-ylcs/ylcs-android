@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, FragmentMsg>(fragment) {
-    private val adapter = WeiboAdapter(fragment.main)
+    private val mAdapter = WeiboAdapter(fragment.main)
 
     override fun bindingClass(): Class<PageWeiboBinding> = PageWeiboBinding::class.java
 
@@ -33,7 +33,7 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
             setHasFixedSize(true)
             recycledViewPool.setMaxRecycledViews(0, 16)
             setItemViewCacheSize(4)
-            adapter = this@PageWeibo.adapter
+            adapter = mAdapter
         }
 
         requestNewData()
@@ -51,12 +51,12 @@ class PageWeibo(fragment: FragmentMsg) : RachelViewPage<PageWeiboBinding, Fragme
     fun requestNewData() {
         lifecycleScope.launch {
             v.state.showLoading()
-            adapter.clearSource()
-            withContext(Dispatchers.IO) { WeiboAPI.extractAllUserWeibo(Config.weibo_users, adapter.items) }
-            if (adapter.isEmpty) v.state.showOffline { requestNewData() }
+            mAdapter.clearSource()
+            withContext(Dispatchers.IO) { WeiboAPI.extractAllUserWeibo(Config.weibo_users, mAdapter.items) }
+            if (mAdapter.isEmpty) v.state.showOffline { requestNewData() }
             else v.state.showContent()
             if (v.container.isRefreshing) v.container.finishRefresh()
-            adapter.notifySource()
+            mAdapter.notifySource()
         }
     }
 }

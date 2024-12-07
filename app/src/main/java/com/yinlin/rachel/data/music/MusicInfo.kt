@@ -31,7 +31,7 @@ data class MusicInfo (
         if (video && !videoPath.exists()) return false
         if (lyrics.isEmpty()) return false
         val lineEngine = lyrics[LineLyricsEngine.NAME]
-        return !(lineEngine.isNullOrEmpty() || !lineEngine.contains(""))
+        return !(lineEngine.isNullOrEmpty() || !lineEngine.contains(LineLyricsEngine.DEFAULT_RES))
     }
 
     val infoPath get() = pathMusic / (id + MusicRes.INFO_NAME)

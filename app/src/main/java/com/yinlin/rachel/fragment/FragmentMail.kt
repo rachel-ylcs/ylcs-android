@@ -152,7 +152,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
         }
     }
 
-    private val adapter = Adapter(this)
+    private val mAdapter = Adapter(this)
 
     override fun bindingClass() = FragmentMailBinding::class.java
 
@@ -162,7 +162,7 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
             layoutManager = LinearLayoutManager(main)
             recycledViewPool.setMaxRecycledViews(0, 10)
             setHasFixedSize(true)
-            adapter = this@FragmentMail.adapter
+            adapter = mAdapter
         }
 
         // 下拉刷新
@@ -185,8 +185,8 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
                     val mails = result.data
                     if (mails.isEmpty()) v.state.showEmpty()
                     else v.state.showContent()
-                    adapter.setSource(mails)
-                    adapter.notifySource()
+                    mAdapter.setSource(mails)
+                    mAdapter.notifySource()
                 }
                 API.Code.UNAUTHORIZED -> tip(Tip.WARNING, result.msg)
                 API.Code.FAILED -> tip(Tip.ERROR, result.msg)

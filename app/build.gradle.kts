@@ -13,8 +13,8 @@ android {
         applicationId = "com.yinlin.rachel"
         minSdk = 29
         targetSdk = 35
-        versionCode = 230
-        versionName = "2.3.0"
+        versionCode = 231
+        versionName = "2.3.1"
 
         ndk {
             abiFilters += arrayOf("arm64-v8a")

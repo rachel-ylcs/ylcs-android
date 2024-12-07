@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +15,7 @@ import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
+import com.yinlin.rachel.tool.ri
 import com.yinlin.rachel.tool.textSizePx
 import com.yinlin.rachel.tool.toDP
 
@@ -197,7 +197,7 @@ class NavigationView @JvmOverloads constructor(context: Context, attrs: Attribut
                 intArrayOf(activeColor, normalColor)
             )
             val iconId = it.ref(R.styleable.NavigationView_android_icon, -1)
-            mIcon = if (iconId == -1) null else AppCompatResources.getDrawable(context, iconId)!!
+            mIcon = if (iconId == -1) null else context.ri(iconId)
             mGap = it.dp(R.styleable.NavigationView_Gap, 5).coerceAtLeast(5.toDP(context))
             mBorderPaint.color = it.color(R.styleable.NavigationView_BorderColor, R.color.steel_blue)
             mBorderPaint.strokeWidth = it.dp(R.styleable.NavigationView_BorderWidth, 1f)

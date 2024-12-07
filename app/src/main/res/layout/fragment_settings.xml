@@ -170,7 +170,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="清理缓存"
-            android:elevation="3dp" />
+            android:elevation="3dp" >
+            <TextView
+                android:id="@+id/cache_size"
+                style="@style/RachelText.X"
+                android:gravity="end" />
+        </com.yinlin.rachel.view.SettingsItem>
         <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/crash_log"
             android:layout_width="match_parent"
@@ -196,6 +201,12 @@
             android:layout_height="wrap_content"
             android:src="@drawable/icon_feedback"
             android:text="反馈与建议"
+            android:elevation="3dp" />
+        <com.yinlin.rachel.view.SettingsItem
+            android:id="@+id/privacy_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="隐私政策"
             android:elevation="3dp" />
         <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/about"

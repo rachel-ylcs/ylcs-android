@@ -12,6 +12,7 @@ import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LrcData
 import com.yinlin.rachel.data.music.MusicInfo
+import com.yinlin.rachel.data.music.PlayingMusicPreviewList
 import com.yinlin.rachel.data.neteasecloud.CloudMusic
 import com.yinlin.rachel.databinding.FragmentImportNeteaseCloudBinding
 import com.yinlin.rachel.model.RachelFragment
@@ -72,10 +73,15 @@ class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, p
     private fun downloadMusic(music: CloudMusic) {
         lifecycleScope.launch {
             val loading = main.loading
-            // 先停止播放器
-            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
-            // 生成 Info
+
+            // 生成 musicId
             val musicId = "NEC${music.id}-${music.name}"
+
+            // 如果导入的歌曲正在播放则只能停止播放器
+            val playlist = main.sendMessageForResult<PlayingMusicPreviewList>(RachelTab.music, RachelMessage.MUSIC_GET_CURRENT_PLAYLIST_PREVIEW)!!
+            if (playlist.indexOfFirst { it.id == musicId } != -1) main.sendMessage(RachelTab.music, RachelMessage.MUSIC_STOP_PLAYER)
+
+            // 生成 Info
             val info = MusicInfo("1.0", "网易云音乐", musicId, music.name, music.singer,
                 "未知", "未知", "未知", bgd = false, video = false,
                 chorus = mutableListOf(), lyrics = mutableMapOf("line" to mutableListOf("")), lrcData)
