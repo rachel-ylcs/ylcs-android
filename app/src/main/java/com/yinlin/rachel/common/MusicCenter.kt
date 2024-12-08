@@ -362,7 +362,7 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
     }
 
     // 播放歌单
-    fun start(playlist: Playlist) {
+    fun start(playlist: Playlist, startId: String?) {
         if (playlist != currentPlaylist) {
             val mediaItems = mutableListOf<MediaItem>()
             for (id in playlist.items) musicInfos[id]?.let { mediaItems += it.buildMusicItem }
@@ -370,12 +370,17 @@ class MusicCenter(private val context: Context, private val handler: Handler, pr
                 currentPlaylist = playlist // 设置当前播放歌单
                 // 启动 Player
                 player.clearMediaItems()
-                player.setMediaItems(mediaItems, false)
+                val startIndex = mediaItems.indexOfFirst { it.mediaId == startId }
+                if (startIndex == -1) player.setMediaItems(mediaItems, false)
+                else player.setMediaItems(mediaItems, startIndex, 0L)
                 player.prepare()
                 player.play()
             }
         }
     }
+
+    fun gotoPrevious() = player.seekToPreviousMediaItem()
+    fun gotoNext() = player.seekToNextMediaItem()
 
     override fun onRepeatModeChanged(repeatMode: Int) {
         super.onRepeatModeChanged(repeatMode)

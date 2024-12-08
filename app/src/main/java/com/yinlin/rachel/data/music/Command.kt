@@ -11,8 +11,6 @@ object Command {
     val CommandPlayOrPause = SessionCommand("PlayOrPause", Bundle.EMPTY)
     val CommandPause = SessionCommand("Pause", Bundle.EMPTY)
     val CommandStop = SessionCommand("Stop", Bundle.EMPTY)
-    val CommandGotoPrevious = SessionCommand("GotoPrevious", Bundle.EMPTY)
-    val CommandGotoNext = SessionCommand("GotoNext", Bundle.EMPTY)
     val CommandGotoIndex = SessionCommand("GotoIndex", Bundle.EMPTY)
     val CommandGetMode = SessionCommand("GetMode", Bundle.EMPTY)
     val CommandNextMode = SessionCommand("NextMode", Bundle.EMPTY)

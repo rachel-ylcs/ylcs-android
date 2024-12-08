@@ -95,8 +95,7 @@ dependencies {
 
     // View
     implementation("com.haibin:calendarview:3.7.1")
-    implementation("com.github.rtugeek:colorseekbar:2.0.3")
-    implementation("io.github.sangcomz:StickyTimeLine:1.1.0")
+    implementation("com.github.rtugeek:colorseekbar:2.1.0")
     implementation("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
     implementation("io.github.scwang90:refresh-header-classics:3.0.0-alpha")
 

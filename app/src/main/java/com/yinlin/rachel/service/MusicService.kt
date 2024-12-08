@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.C
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -31,21 +32,93 @@ import kotlin.random.Random
 
 @OptIn(UnstableApi::class)
 class MusicService : MediaSessionService(), MediaSession.Callback {
+    class ForwardPlayer(private val player: ExoPlayer, mode: MusicPlayMode) : ForwardingPlayer(player) {
+        init {
+            player.updatePlayMode(mode)
+        }
+
+        override fun getAvailableCommands() = prepareNotificationPlayerCommands
+        override fun seekToPreviousMediaItem() = gotoPrevious()
+        override fun seekToPrevious() = gotoPrevious()
+        override fun seekToNextMediaItem() = gotoNext()
+        override fun seekToNext() = gotoNext()
+        private fun gotoPrevious() {
+            val index = player.previousMediaItemIndex
+            if (index != -1) {
+                player.seekTo(index, 0)
+                if (!player.isPlaying) player.play()
+            }
+            else if (player.repeatMode == Player.REPEAT_MODE_ONE && player.currentMediaItemIndex != -1) { // 单曲循环
+                player.seekTo(player.mediaItemCount - 1, 0)
+                if (!player.isPlaying) player.play()
+            }
+        }
+        private fun gotoNext() {
+            val index = player.nextMediaItemIndex
+            if (index != -1) {
+                player.seekTo(index, 0)
+                if (!player.isPlaying) player.play()
+            }
+            else if (player.repeatMode == Player.REPEAT_MODE_ONE && player.currentMediaItemIndex != -1) { // 单曲循环
+                player.seekTo(0, 0L)
+                if (!player.isPlaying) player.play()
+            }
+        }
+    }
+
+    companion object {
+        private val prepareNotificationPlayerCommands get() = MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
+            .build()
+
+        private val prepareSessionCommands get() = MediaSession.ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
+            .add(Command.CommandPlayOrPause)
+            .add(Command.CommandPause)
+            .add(Command.CommandStop)
+            .add(Command.CommandGotoIndex)
+            .add(Command.CommandGetMode)
+            .add(Command.CommandNextMode)
+            .add(Command.CommandSetProgressPercent)
+            .add(Command.CommandShuffle)
+            .build()
+
+        private fun Player.updatePlayMode(mode: MusicPlayMode) {
+            when (mode) {
+                MusicPlayMode.ORDER -> {
+                    repeatMode = Player.REPEAT_MODE_ALL
+                    shuffleModeEnabled = false
+                }
+                MusicPlayMode.LOOP -> {
+                    repeatMode = Player.REPEAT_MODE_ONE
+                    shuffleModeEnabled = false
+                }
+                MusicPlayMode.RANDOM -> {
+                    repeatMode = Player.REPEAT_MODE_ALL
+                    shuffleModeEnabled = true
+                }
+            }
+        }
+
+        private fun Player.createShuffledList(current: Int): ShuffleOrder {
+            val seed = System.currentTimeMillis()
+            val random = Random(seed)
+            val length = mediaItemCount
+            val shuffled = IntArray(length)
+            var swapIndex: Int
+            for (i in 0 ..< length) {
+                swapIndex = random.nextInt(i + 1)
+                shuffled[i] = shuffled[swapIndex]
+                shuffled[swapIndex] = i
+            }
+            swapIndex = shuffled.indexOf(current)
+            shuffled[swapIndex] = shuffled[0]
+            shuffled[0] = current
+            return DefaultShuffleOrder(shuffled, seed)
+        }
+    }
+
     private lateinit var player: ExoPlayer
     private lateinit var session: MediaSession
 
-    private val buttonGotoPrevious = CommandButton.Builder()
-        .setDisplayName("上一首")
-        .setIconResId(R.drawable.icon_player_previous)
-        .setSessionCommand(Command.CommandGotoPrevious)
-        .setSlots(CommandButton.SLOT_FORWARD)
-        .build()
-    private val buttonGotoNext = CommandButton.Builder()
-        .setDisplayName("下一首")
-        .setIconResId(R.drawable.icon_player_next)
-        .setSessionCommand(Command.CommandGotoNext)
-        .setSlots(CommandButton.SLOT_BACK)
-        .build()
     private val buttonOrderMode = CommandButton.Builder()
         .setDisplayName("顺序播放")
         .setIconResId(R.drawable.icon_play_mode_order)
@@ -74,11 +147,8 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
     override fun onCreate() {
         super.onCreate()
         player = buildFfmpegPlayer(this)
-
         val mode = Config.music_play_mode
-        updatePlayMode(mode)
-
-        session = MediaSession.Builder(this, player)
+        session = MediaSession.Builder(this, ForwardPlayer(player, mode))
             .setCallback(this)
             .setMediaButtonPreferences(prepareButtons(mode))
             .setSessionActivity(prepareSessionActivity())
@@ -95,9 +165,7 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
 
     override fun onConnect(session: MediaSession, controller: MediaSession.ControllerInfo): MediaSession.ConnectionResult {
         val builder = MediaSession.ConnectionResult.AcceptedResultBuilder(session)
-        if (session.isMediaNotificationController(controller)) {
-            builder.setAvailablePlayerCommands(prepareNotificationPlayerCommands)
-        }
+        builder.setAvailablePlayerCommands(prepareNotificationPlayerCommands)
         builder.setAvailableSessionCommands(prepareSessionCommands)
         return builder.build()
     }
@@ -117,30 +185,6 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
         Command.CommandStop -> {
             player.clearMediaItems()
             player.stop()
-            Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
-        }
-        Command.CommandGotoPrevious -> {
-            val index = player.previousMediaItemIndex
-            if (index != -1) {
-                player.seekTo(index, 0)
-                if (!player.isPlaying) player.play()
-            }
-            else if (player.repeatMode == Player.REPEAT_MODE_ONE && player.currentMediaItemIndex != -1) { // 单曲循环
-                player.seekTo(player.mediaItemCount - 1, 0)
-                if (!player.isPlaying) player.play()
-            }
-            Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
-        }
-        Command.CommandGotoNext -> {
-            val index = player.nextMediaItemIndex
-            if (index != -1) {
-                player.seekTo(index, 0)
-                if (!player.isPlaying) player.play()
-            }
-            else if (player.repeatMode == Player.REPEAT_MODE_ONE && player.currentMediaItemIndex != -1) { // 单曲循环
-                player.seekTo(0, 0L)
-                if (!player.isPlaying) player.play()
-            }
             Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
         }
         Command.CommandGotoIndex -> {
@@ -164,7 +208,7 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
                 else -> mode
             }
             session.setMediaButtonPreferences(prepareButtons(nextMode))
-            updatePlayMode(nextMode)
+            player.updatePlayMode(nextMode)
             Config.music_play_mode = nextMode
             Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
         }
@@ -191,7 +235,7 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
                         windowIndex = timeline.getNextWindowIndex(windowIndex, Player.REPEAT_MODE_OFF,true)
                         count++
                     }
-                    if (windowIndex != -1 && count == 0) player.setShuffleOrder(createShuffledList(current))
+                    if (windowIndex != -1 && count == 0) player.setShuffleOrder(player.createShuffledList(current))
                 }
             }
             Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
@@ -200,7 +244,7 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
     }
 
     private fun prepareButtons(mode: MusicPlayMode): List<CommandButton> {
-        val buttons = mutableListOf(buttonGotoPrevious, buttonGotoNext)
+        val buttons = mutableListOf<CommandButton>()
         when (mode) {
             MusicPlayMode.ORDER -> buttons += buttonOrderMode
             MusicPlayMode.LOOP -> buttons += buttonLoopMode
@@ -215,61 +259,5 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
         intent.setComponent(ComponentName(this@MusicService, MainActivity::class.java))
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_ONE_SHOT
         return PendingIntent.getActivity(this, 0, intent, flags)
-    }
-
-    private val prepareNotificationPlayerCommands: Player.Commands get() = MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
-        .remove(Player.COMMAND_SEEK_TO_NEXT)
-        .remove(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
-        .remove(Player.COMMAND_SEEK_TO_PREVIOUS)
-        .remove(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
-        .build()
-
-    private val prepareSessionCommands: SessionCommands get() = MediaSession.ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
-        .add(Command.CommandPlayOrPause)
-        .add(Command.CommandPause)
-        .add(Command.CommandStop)
-        .add(Command.CommandGotoPrevious)
-        .add(Command.CommandGotoNext)
-        .add(Command.CommandGotoIndex)
-        .add(Command.CommandGetMode)
-        .add(Command.CommandNextMode)
-        .add(Command.CommandSetProgressPercent)
-        .add(Command.CommandShuffle)
-        .build()
-
-    // 更新播放模式
-    private fun updatePlayMode(mode: MusicPlayMode) {
-        when (mode) {
-            MusicPlayMode.ORDER -> {
-                player.repeatMode = Player.REPEAT_MODE_ALL
-                player.shuffleModeEnabled = false
-            }
-            MusicPlayMode.LOOP -> {
-                player.repeatMode = Player.REPEAT_MODE_ONE
-                player.shuffleModeEnabled = false
-            }
-            MusicPlayMode.RANDOM -> {
-                player.repeatMode = Player.REPEAT_MODE_ALL
-                player.shuffleModeEnabled = true
-            }
-        }
-    }
-
-    // 生成随机列表
-    private fun createShuffledList(current: Int): ShuffleOrder {
-        val seed = System.currentTimeMillis()
-        val random = Random(seed)
-        val length = player.mediaItemCount
-        val shuffled = IntArray(length)
-        var swapIndex: Int
-        for (i in 0 ..< length) {
-            swapIndex = random.nextInt(i + 1)
-            shuffled[i] = shuffled[swapIndex]
-            shuffled[swapIndex] = i
-        }
-        swapIndex = shuffled.indexOf(current)
-        shuffled[swapIndex] = shuffled[0]
-        shuffled[0] = current
-        return DefaultShuffleOrder(shuffled, seed)
     }
 }

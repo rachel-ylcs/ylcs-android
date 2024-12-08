@@ -24,7 +24,9 @@ class RachelApplication : Application() {
         private val pw = PrintWriter(sw)
         private val crashFile = pathApp / "rachel-crash.txt"
 
-        override fun uncaughtException(t: Thread, e: Throwable) {
+        override fun uncaughtException(t: Thread, e: Throwable) = writeLog(e)
+
+        fun writeLog(e: Throwable) {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
             pw.println("${dateFormat.format(Date())}\n")
             e.printStackTrace(pw)

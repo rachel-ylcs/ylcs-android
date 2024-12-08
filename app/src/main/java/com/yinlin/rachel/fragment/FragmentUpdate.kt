@@ -1,11 +1,13 @@
 package com.yinlin.rachel.fragment
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
@@ -21,31 +23,32 @@ import com.yinlin.rachel.model.RachelAdapter
 import com.yinlin.rachel.model.RachelFragment
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
-import com.yinlin.rachel.tool.ri
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.startIO
 import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.withMain
-import xyz.sangcomz.stickytimelineview.callback.SectionCallback
-import xyz.sangcomz.stickytimelineview.model.SectionInfo
 
 
 class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>(main) {
-    class Adapter(private val main: MainActivity) : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
+    class Adapter : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
         override fun bindingClass() = ItemDevelopStateBinding::class.java
 
         override fun update(v: ItemDevelopStateBinding, item: DevelopState, position: Int) {
             v.content.text = item.content
-            v.content.textColor = main.rc(item.color)
         }
+    }
+
+    class Manager(context: Context?): LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
+        override fun canScrollVertically() = false
     }
 
     override fun bindingClass() = FragmentUpdateBinding::class.java
 
-    private val mAdapter = Adapter(main)
     private var downloadUrl: String? = null
     private var isNeedUpdate: Boolean = false
+
+    private lateinit var lists: List<RecyclerView>
 
     override fun init() {
         v.targetVersion.rachelClick {
@@ -54,12 +57,10 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
             else if (!isNeedUpdate) tip(Tip.SUCCESS, "当前已经是最新版本")
             else downloadAPK(url)
         }
-
-        v.list.apply {
-            setHasFixedSize(true)
-            recycledViewPool.setMaxRecycledViews(0, 10)
-            layoutManager = LinearLayoutManager(main, LinearLayoutManager.VERTICAL, false)
-            adapter = mAdapter
+        lists = listOf(v.listNew, v.listAdjustment, v.listRepair, v.listWorking, v.listFeature, v.listFuture)
+        for (list in lists) {
+            list.layoutManager = Manager(context)
+            list.adapter = Adapter()
         }
 
         checkUpdate()
@@ -84,12 +85,8 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
                     else if (appVersion >= info.minVersion) R.color.orange_red
                     else R.color.dark_red
                 )
-                v.list.addItemDecoration(object : SectionCallback {
-                    override fun getSectionHeader(position: Int) = SectionInfo(mAdapter[position].name, "", main.ri(mAdapter[position].icon))
-                    override fun isSection(position: Int): Boolean = mAdapter[position].type != mAdapter[position - 1].type
-                })
-                mAdapter.setSource(info.developState)
-                mAdapter.notifySource()
+                for (state in info.developState) (lists.getOrNull(state.type)?.adapter as? Adapter?)?.items?.add(state)
+                for (list in lists) (list.adapter as Adapter).notifySource()
             }
             else {
                 main.pop()

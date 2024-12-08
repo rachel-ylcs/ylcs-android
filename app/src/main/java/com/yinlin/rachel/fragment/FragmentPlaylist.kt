@@ -47,9 +47,12 @@ class FragmentPlaylist(
             RachelDialog.choice(main, callbacks = listOf(
                 "播放" to {
                     if (item.isDeleted) fragment.tip(Tip.WARNING, main.rs(R.string.no_audio_source))
-                    else {
-                        main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, Playlist(main.rs(R.string.default_playlist_name), item.id))
-                        main.pop()
+                    else fragment.v.tab.withCurrent { _, title, _ ->
+                        val playlist = main.sendMessageForResult<Playlist>(RachelTab.music, RachelMessage.MUSIC_FIND_PLAYLIST, title)
+                        if (playlist != null) {
+                            main.sendMessage(RachelTab.music, RachelMessage.MUSIC_START_PLAYER, playlist, item.id)
+                            main.pop()
+                        }
                     }
                 },
                 "删除" to {

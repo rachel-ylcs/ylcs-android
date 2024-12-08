@@ -97,9 +97,9 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
 
         v.controlContainer.listener = { pos -> when (pos) {
             GROUP_CONTROL_MODE -> musicCenter.send(Command.CommandNextMode)
-            GROUP_CONTROL_PREVIOUS -> musicCenter.send(Command.CommandGotoPrevious)
+            GROUP_CONTROL_PREVIOUS -> musicCenter.gotoPrevious()
             GROUP_CONTROL_PLAY -> musicCenter.send(Command.CommandPlayOrPause)
-            GROUP_CONTROL_NEXT -> musicCenter.send(Command.CommandGotoNext)
+            GROUP_CONTROL_NEXT -> musicCenter.gotoNext()
             GROUP_CONTROL_PLAYLIST -> musicCenter.withPlaylist {
                 val data = musicCenter.previewCurrentPlaylist
                 if (data.isNotEmpty()) SheetCurrentPlaylist(this, it.name, data).show()
@@ -164,7 +164,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     @Suppress("UNCHECKED_CAST")
     override fun message(msg: RachelMessage, vararg args: Any?) {
         when (msg) {
-            RachelMessage.MUSIC_START_PLAYER -> musicCenter.start(args[0] as Playlist)
+            RachelMessage.MUSIC_START_PLAYER -> musicCenter.start(args[0] as Playlist, if (args.size == 2) args[1] as String else null)
             RachelMessage.MUSIC_STOP_PLAYER -> musicCenter.send(Command.CommandStop)
             RachelMessage.MUSIC_DELETE_PLAYLIST -> {
                 val playlist = musicCenter.findPlaylist(args[0] as String)

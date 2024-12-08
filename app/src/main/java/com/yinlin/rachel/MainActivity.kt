@@ -71,33 +71,38 @@ class MainActivity : RachelActivity() {
         lifecycleScope.launch {
             val loadingDialog = loading
 
-            // ! 1. 处理 Intent
-            processIntent(intent)
+            try {
+                // ! 1. 处理 Intent
+                processIntent(intent)
 
-            // ! 2. 注册 MusicService
-            val fragmentMusic = fragments[RachelTab.music.index] as FragmentMusic
-            val musicCenter = MusicCenter(this@MainActivity, handler, fragmentMusic)
-            fragmentMusic.musicCenter = musicCenter
-            withIO { musicCenter.preparePlayer(this@MainActivity) }
-            // 恢复上次播放
-            musicCenter.resumeLastMusic()
+                // ! 2. 注册 MusicService
+                val fragmentMusic = fragments[RachelTab.music.index] as FragmentMusic
+                val musicCenter = MusicCenter(this@MainActivity, handler, fragmentMusic)
+                fragmentMusic.musicCenter = musicCenter
+                withIO { musicCenter.preparePlayer(this@MainActivity) }
+                // 恢复上次播放
+                musicCenter.resumeLastMusic()
 
-            // ! 3. 更新 Token
-            val token = Config.token
-            if (token.isNotEmpty()) {
-                if (Config.token_daily != currentDateInteger) {
-                    val result = withTimeoutIO(5000L) { API.UserAPI.updateToken(token) } ?: API.errResult()
-                    when (result.code) {
-                        API.Code.SUCCESS -> Config.token = result.data.token
-                        API.Code.UNAUTHORIZED -> {
-                            tip(Tip.WARNING, result.msg)
-                            Config.token = ""
-                            Config.user = null
-                            sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
-                            navigate(FragmentLogin(this@MainActivity))
+                // ! 3. 更新 Token
+                val token = Config.token
+                if (token.isNotEmpty()) {
+                    if (Config.token_daily != currentDateInteger) {
+                        val result = withTimeoutIO(5000L) { API.UserAPI.updateToken(token) } ?: API.errResult()
+                        when (result.code) {
+                            API.Code.SUCCESS -> Config.token = result.data.token
+                            API.Code.UNAUTHORIZED -> {
+                                tip(Tip.WARNING, result.msg)
+                                Config.token = ""
+                                Config.user = null
+                                sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, null)
+                                navigate(FragmentLogin(this@MainActivity))
+                            }
                         }
                     }
                 }
+            }
+            catch (e: Exception) {
+                withIO { RachelApplication.crashHandler.writeLog(e) }
             }
 
             v.btv.visible = true

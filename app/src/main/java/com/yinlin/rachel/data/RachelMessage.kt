@@ -2,7 +2,7 @@ package com.yinlin.rachel.data
 
 enum class RachelMessage {
     // FragmentMusic
-    MUSIC_START_PLAYER,  // Playlist
+    MUSIC_START_PLAYER,  // Playlist, [String]
     MUSIC_STOP_PLAYER,
     MUSIC_GET_PLAYLIST_NAMES, // -> List<String>
     MUSIC_GET_PLAYLIST_PREVIEW, // String -> PlaylistPreview
