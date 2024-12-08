@@ -66,7 +66,7 @@
                 android:textColor="@color/salmon"
                 android:textSize="@dimen/lg"
                 android:textStyle="bold"
-                app:drawableStartCompat="@drawable/icon_edit_black"
+                app:drawableStartCompat="@drawable/icon_edit"
                 android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/id"
@@ -107,7 +107,7 @@
                 android:layout_marginTop="10dp"
                 android:text="演唱: 未知"
                 android:textColor="@color/gray"
-                app:drawableStartCompat="@drawable/icon_edit_black"
+                app:drawableStartCompat="@drawable/icon_edit"
                 android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/lyricist"
@@ -118,7 +118,7 @@
                 android:layout_marginTop="10dp"
                 android:text="作词: 未知"
                 android:textColor="@color/gray"
-                app:drawableStartCompat="@drawable/icon_edit_black"
+                app:drawableStartCompat="@drawable/icon_edit"
                 android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/composer"
@@ -129,7 +129,7 @@
                 android:layout_marginTop="10dp"
                 android:text="作曲: 未知"
                 android:textColor="@color/gray"
-                app:drawableStartCompat="@drawable/icon_edit_black"
+                app:drawableStartCompat="@drawable/icon_edit"
                 android:drawablePadding="5dp" />
             <TextView
                 android:id="@+id/album"
@@ -141,7 +141,7 @@
                 android:layout_marginVertical="10dp"
                 android:text="专辑分类: 未知"
                 android:textColor="@color/gray"
-                app:drawableStartCompat="@drawable/icon_edit_black"
+                app:drawableStartCompat="@drawable/icon_edit"
                 android:drawablePadding="5dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.yinlin.rachel.view.LoadingTextView
@@ -185,9 +185,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:layout_marginBottom="5dp"
-                app:ButtonGroupIcon1="@drawable/icon_play_blue"
-                app:ButtonGroupIcon2="@drawable/icon_add_blue"
-                app:ButtonGroupIcon3="@drawable/icon_package_blue" />
+                app:ButtonGroupIcon1="@drawable/icon_play"
+                app:ButtonGroupIcon2="@drawable/icon_add"
+                app:ButtonGroupIcon3="@drawable/icon_package" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"

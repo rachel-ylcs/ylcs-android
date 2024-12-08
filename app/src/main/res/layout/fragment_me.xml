@@ -226,7 +226,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:src="@drawable/icon_refresh_blue" />
+                    android:src="@drawable/icon_refresh" />
                 <com.yinlin.rachel.view.ActivityCalendarView
                     android:id="@+id/calendar"
                     android:layout_width="match_parent"

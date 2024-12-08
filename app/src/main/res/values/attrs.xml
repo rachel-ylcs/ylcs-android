@@ -22,6 +22,7 @@
 
     <attr name="Column" format="integer" />
     <attr name="Duration" format="integer" />
+    <attr name="Limit" format="integer" />
     <attr name="MaxFileSize" format="integer" />
     <attr name="MaxNum" format="integer" />
     <attr name="Quality" format="integer" />
@@ -44,6 +45,13 @@
         <attr name="BorderWidth" />
         <attr name="BorderColor" />
         <attr name="BackgroundColor" />
+    </declare-styleable>
+    <declare-styleable name="Banner" >
+        <attr name="Limit" />
+        <attr name="Banner_TextSize" format="dimension" />
+        <attr name="Banner_TextColor" format="dimension" />
+        <attr name="Banner_TextBottom" format="dimension" />
+        <attr name="Banner_TextBold" format="boolean" />
     </declare-styleable>
     <declare-styleable name="BreadCrumbView" >
         <attr name="Home" />

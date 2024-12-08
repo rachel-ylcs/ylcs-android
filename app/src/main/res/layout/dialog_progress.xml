@@ -10,8 +10,9 @@
         android:layout_marginStart="5dp"
         android:textSize="@dimen/base"
         android:textStyle="bold" />
-    <com.google.android.material.progressindicator.LinearProgressIndicator
+    <ProgressBar
         android:id="@+id/progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"

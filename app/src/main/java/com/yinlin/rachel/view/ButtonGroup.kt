@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.yinlin.rachel.R
 import com.yinlin.rachel.model.RachelAttr
@@ -97,6 +98,13 @@ class ButtonGroup @JvmOverloads constructor(context: Context, attrs: AttributeSe
             val drawable = context.ri(res)
             if (compoundDrawablesRelative[1] != null) setCompoundDrawablesRelativeWithIntrinsicBounds(null, drawable, null, null)
             else setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, drawable)
+        }
+    }
+
+    fun setItemImageTint(index: Int, @ColorInt color: Int) {
+        items[index].apply {
+            compoundDrawablesRelative[1]?.setTint(color)
+            compoundDrawablesRelative[3]?.setTint(color)
         }
     }
 

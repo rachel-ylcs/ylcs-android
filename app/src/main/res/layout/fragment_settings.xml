@@ -148,13 +148,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/icon_upload_blue" />
+                android:src="@drawable/icon_upload" />
             <ImageView
                 android:id="@+id/button_download_playlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/icon_download_blue" />
+                android:src="@drawable/icon_download" />
         </com.yinlin.rachel.view.SettingsItem>
 
         <TextView
@@ -189,7 +189,8 @@
             android:src="@drawable/icon_update"
             android:text="检查更新"
             android:textColor="@color/orange_red"
-            android:elevation="3dp" >
+            android:elevation="3dp"
+            app:IconSize="20dp" >
             <TextView
                 android:id="@+id/version"
                 style="@style/RachelText.X"
@@ -201,7 +202,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/icon_feedback"
             android:text="反馈与建议"
-            android:elevation="3dp" />
+            android:elevation="3dp"
+            app:IconSize="20dp" />
         <com.yinlin.rachel.view.SettingsItem
             android:id="@+id/privacy_policy"
             android:layout_width="match_parent"
@@ -214,6 +216,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/icon_about"
             android:text="关于茶舍"
-            android:elevation="3dp" />
+            android:elevation="3dp"
+            app:IconSize="20dp" />
     </LinearLayout>
 </ScrollView>

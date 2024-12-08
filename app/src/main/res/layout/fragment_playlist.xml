@@ -23,10 +23,10 @@
         android:orientation="horizontal"
         android:layout_marginBottom="5dp"
         android:gravity="end"
-        app:ButtonGroupIcon1="@drawable/icon_add_blue"
-        app:ButtonGroupIcon2="@drawable/icon_play_blue"
-        app:ButtonGroupIcon3="@drawable/icon_edit_blue"
-        app:ButtonGroupIcon4="@drawable/icon_delete_blue" />
+        app:ButtonGroupIcon1="@drawable/icon_add"
+        app:ButtonGroupIcon2="@drawable/icon_play"
+        app:ButtonGroupIcon3="@drawable/icon_edit"
+        app:ButtonGroupIcon4="@drawable/icon_delete" />
     <com.yinlin.rachel.view.NavigationView
         android:id="@+id/tab"
         android:layout_width="match_parent"

@@ -22,8 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        app:ButtonGroupIcon1="@drawable/icon_search_blue"
-        app:ButtonGroupIcon2="@drawable/icon_refresh_blue" />
+        app:ButtonGroupIcon1="@drawable/icon_search"
+        app:ButtonGroupIcon2="@drawable/icon_refresh" />
     <com.yinlin.rachel.view.LineView
         android:layout_width="match_parent"
         android:layout_height="1dp"

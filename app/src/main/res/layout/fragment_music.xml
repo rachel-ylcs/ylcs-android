@@ -26,9 +26,9 @@
             android:color="@color/white"
             android:padding="5dp"
             app:ButtonGroupItemGap="2dp"
-            app:ButtonGroupText="曲库,歌单,歌词,工坊,睡眠,"
+            app:ButtonGroupText="曲库,歌单,歌词,工坊,睡眠"
             app:ButtonGroupIcon1="@drawable/icon_library"
-            app:ButtonGroupIcon2="@drawable/icon_playlist_blue"
+            app:ButtonGroupIcon2="@drawable/icon_playlist"
             app:ButtonGroupIcon3="@drawable/icon_lyrics_engine"
             app:ButtonGroupIcon4="@drawable/icon_workshop"
             app:ButtonGroupIcon5="@drawable/icon_sleep_mode" />
@@ -96,7 +96,7 @@
                 app:ButtonGroupIcon2="@drawable/icon_player_previous"
                 app:ButtonGroupIcon3="@drawable/icon_player_pause"
                 app:ButtonGroupIcon4="@drawable/icon_player_next"
-                app:ButtonGroupIcon5="@drawable/icon_playlist_white" />
+                app:ButtonGroupIcon5="@drawable/icon_player_playlist" />
             <com.yinlin.rachel.view.ButtonGroup
                 android:id="@+id/tool_container"
                 android:layout_width="match_parent"
@@ -107,8 +107,8 @@
                 android:orientation="horizontal"
                 android:layout_marginVertical="10dp"
                 app:ButtonGroupItemGravity="AVERAGE"
-                app:ButtonGroupIcon1="@drawable/icon_an_off"
-                app:ButtonGroupIcon2="@drawable/icon_mv_off"
+                app:ButtonGroupIcon1="@drawable/icon_an"
+                app:ButtonGroupIcon2="@drawable/icon_mv"
                 app:ButtonGroupIcon3="@drawable/icon_lyrics"
                 app:ButtonGroupIcon4="@drawable/icon_music_comment" />
         </androidx.constraintlayout.widget.ConstraintLayout>

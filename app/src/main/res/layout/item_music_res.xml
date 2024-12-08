@@ -42,7 +42,8 @@
         app:layout_constraintTop_toTopOf="parent"
         android:paddingStart="0dp"
         android:paddingEnd="5dp"
-        android:src="@drawable/icon_edit_white"
+        android:src="@drawable/icon_edit"
+        app:tint="@color/white"
         android:visibility="gone"
         tools:visibility="visible" />
     <ImageView
@@ -51,7 +52,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/icon_delete_white"
+        android:src="@drawable/icon_delete"
+        app:tint="@color/white"
         android:visibility="gone"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

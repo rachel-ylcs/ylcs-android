@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            app:ButtonGroupIcon1="@drawable/icon_search_blue"
-            app:ButtonGroupIcon2="@drawable/icon_refresh_blue" />
+            app:ButtonGroupIcon1="@drawable/icon_search"
+            app:ButtonGroupIcon2="@drawable/icon_refresh" />
         <TextView
             style="@style/RachelText.X"
             android:gravity="center"
@@ -35,9 +35,9 @@
             android:visibility="gone"
             tools:visibility="visible"
             android:layout_gravity="end|center_horizontal"
-            app:ButtonGroupIcon1="@drawable/icon_add_playlist_blue"
-            app:ButtonGroupIcon2="@drawable/icon_delete_blue"
-            app:ButtonGroupIcon3="@drawable/icon_select_all_blue" />
+            app:ButtonGroupIcon1="@drawable/icon_add_playlist"
+            app:ButtonGroupIcon2="@drawable/icon_delete"
+            app:ButtonGroupIcon3="@drawable/icon_select_all" />
     </FrameLayout>
     <com.yinlin.rachel.view.LineView
         android:id="@+id/line"

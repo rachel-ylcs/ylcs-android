@@ -297,8 +297,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.record.loadCD(null)
             v.bg.tag = false
             v.bg.pureColor = main.rc(R.color.black)
-            v.toolContainer.setItemImage(GROUP_TOOL_AN, R.drawable.icon_an_off)
-            v.toolContainer.setItemImage(GROUP_TOOL_MV, R.drawable.icon_mv_off)
+            v.toolContainer.setItemImageTint(GROUP_TOOL_AN, main.rc(R.color.white))
+            v.toolContainer.setItemImageTint(GROUP_TOOL_MV, main.rc(R.color.white))
         }
         else {
             v.title.text = musicInfo.name
@@ -306,8 +306,8 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             v.record.loadCD(musicInfo.recordPath)
             v.bg.tag = musicInfo.bgd
             v.bg.load(if (musicInfo.bgd) musicInfo.bgdPath else musicInfo.bgsPath)
-            v.toolContainer.setItemImage(GROUP_TOOL_AN, if (musicInfo.bgd) R.drawable.icon_an_on else R.drawable.icon_an_off)
-            v.toolContainer.setItemImage(GROUP_TOOL_MV, if (musicInfo.video) R.drawable.icon_mv_on else R.drawable.icon_mv_off)
+            v.toolContainer.setItemImageTint(GROUP_TOOL_AN, main.rc(if (musicInfo.bgd) R.color.steel_blue else R.color.white))
+            v.toolContainer.setItemImageTint(GROUP_TOOL_MV, main.rc(if (musicInfo.video) R.color.steel_blue else R.color.white))
         }
     }
 
