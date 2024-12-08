@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/RachelCard"
     app:cardCornerRadius="0dp"
     app:contentPadding="0dp"
@@ -84,21 +85,24 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:src="@drawable/icon_yes"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                     <ImageView
                         android:id="@+id/button_no"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:src="@drawable/icon_no"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                     <ImageView
                         android:id="@+id/button_delete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:src="@drawable/icon_delete_blue"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </LinearLayout>
                 <TextView
                     android:id="@+id/content_details"

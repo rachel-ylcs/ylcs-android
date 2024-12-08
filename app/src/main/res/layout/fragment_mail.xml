@@ -24,17 +24,15 @@
             android:textColor="@color/steel_blue"
             android:textSize="@dimen/xl"
             android:textStyle="bold" />
-        <com.gturedi.views.StatefulLayout
+        <com.yinlin.rachel.view.StateLayout
             android:id="@+id/state"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            app:stfInAnimation="@anim/anim_fade_in"
-            app:stfOutAnimation="@anim/anim_fade_out" >
+            android:layout_weight="1" >
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </com.gturedi.views.StatefulLayout>
+        </com.yinlin.rachel.view.StateLayout>
     </LinearLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>

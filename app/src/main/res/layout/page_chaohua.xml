@@ -14,15 +14,13 @@
     <com.scwang.smart.refresh.footer.ClassicsFooter
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <com.gturedi.views.StatefulLayout
+    <com.yinlin.rachel.view.StateLayout
         android:id="@+id/state"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:stfInAnimation="@anim/anim_fade_in"
-        app:stfOutAnimation="@anim/anim_fade_out" >
+        android:layout_height="match_parent" >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.gturedi.views.StatefulLayout>
+    </com.yinlin.rachel.view.StateLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>

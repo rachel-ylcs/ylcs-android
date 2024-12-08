@@ -32,7 +32,7 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
                 field = value
                 if (!value) mapSource { it.selected = false }
                 fragment.setManageButtonStatus(value)
-                if (isEmpty) fragment.v.state.showEmpty("曲库空荡荡的, 快去工坊下载吧")
+                if (isEmpty) fragment.v.state.showEmpty()
                 else fragment.v.state.showContent()
                 notifySource()
             }
@@ -123,7 +123,7 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
         }
 
         mAdapter.setSource(musicInfoPreviews)
-        if (mAdapter.isEmpty) v.state.showEmpty("曲库空荡荡的, 快去工坊下载吧")
+        if (mAdapter.isEmpty) v.state.showEmpty()
         else v.state.showContent()
     }
 

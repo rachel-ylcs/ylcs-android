@@ -11,12 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:AssetName="pag/refresh_header_rachel.pag" />
-    <com.gturedi.views.StatefulLayout
+    <com.yinlin.rachel.view.StateLayout
         android:id="@+id/state"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:stfInAnimation="@anim/anim_fade_in"
-        app:stfOutAnimation="@anim/anim_fade_out" >
+        android:layout_height="match_parent" >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -35,5 +33,5 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
         </LinearLayout>
-    </com.gturedi.views.StatefulLayout>
+    </com.yinlin.rachel.view.StateLayout>
 </com.scwang.smart.refresh.layout.SmartRefreshLayout>

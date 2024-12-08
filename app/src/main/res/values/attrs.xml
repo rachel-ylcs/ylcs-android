@@ -136,6 +136,15 @@
     <declare-styleable name="PAGRefreshHeader" >
         <attr name="AssetName" />
     </declare-styleable>
+    <declare-styleable name="StateLayout" >
+        <attr name="StateLayout_AnimationIn" format="reference" />
+        <attr name="StateLayout_AnimationOut" format="reference" />
+        <attr name="StateLayout_ErrorText" format="string" />
+        <attr name="StateLayout_OfflineText" format="string" />
+        <attr name="StateLayout_EmptyText" format="string" />
+        <attr name="StateLayout_LoadingText" format="string" />
+        <attr name="StateLayout_RetryText" format="string" />
+    </declare-styleable>
     <declare-styleable name="SettingsItem" >
         <attr name="android:src" />
         <attr name="android:text" />

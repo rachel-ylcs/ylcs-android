@@ -46,13 +46,6 @@
     <string name="home_nav_group">水群</string>
     <string name="home_nav_me">小银子</string>
 
-    <string name="stfErrorMessage">错误, 请重试</string>
-    <string name="stfOfflineMessage">世界上最遥远的距离是没有网络</string>
-    <string name="stfLocationOffMessage">未开启定位服务</string>
-    <string name="stfEmptyMessage">感觉空空的....</string>
-    <string name="stfLoadingMessage">加载中....</string>
-    <string name="stfButtonText">重试</string>
-
     <string name="default_playlist_name">试听列表</string>
     <string name="no_audio_source">无音源</string>
     <string name="unknown_singer">未知歌手</string>

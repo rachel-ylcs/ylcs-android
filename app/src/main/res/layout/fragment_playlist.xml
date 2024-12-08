@@ -33,16 +33,15 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/icon_star_colorful"
         android:textSize="@dimen/base" />
-    <com.gturedi.views.StatefulLayout
+    <com.yinlin.rachel.view.StateLayout
         android:id="@+id/state"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:stfInAnimation="@anim/anim_fade_in"
-        app:stfOutAnimation="@anim/anim_fade_out" >
+        app:StateLayout_EmptyText="歌单空荡荡的, 快去曲库添加吧" >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.gturedi.views.StatefulLayout>
+    </com.yinlin.rachel.view.StateLayout>
 </LinearLayout>

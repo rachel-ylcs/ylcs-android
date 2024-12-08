@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.cli.jvm.main
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -84,7 +82,6 @@ dependencies {
     implementation("com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-exo2:v10.0.0")
 
     implementation("com.github.forJrking:KLuban:1.1.0")
-    implementation("com.github.gturedi:stateful-layout:1.2.1")
     implementation("com.github.jenly1314:zxing-lite:3.2.0")
     implementation("com.github.rtugeek:colorseekbar:2.0.3")
 

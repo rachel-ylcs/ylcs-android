@@ -139,7 +139,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
     private fun requestNewData() {
         v.container.setNoMoreData(false)
         v.list.scrollToPosition(0)
-        v.state.showLoading("加载主题中...")
+        v.state.showLoading()
         val current = v.tab.current
         startIOWithResult({
             if (current == TAB_LATEST) API.UserAPI.getLatestTopic()
@@ -166,7 +166,7 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
                     mAdapter.notifySource()
                 }
                 API.Code.UNAUTHORIZED, API.Code.FAILED -> {
-                    v.state.showError(it.msg) { requestNewData() }
+                    v.state.showError { requestNewData() }
                     v.container.finishRefresh()
                 }
                 else -> {

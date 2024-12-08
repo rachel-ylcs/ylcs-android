@@ -58,7 +58,7 @@ class FragmentPlaylist(
                             main.sendMessage(RachelTab.music, RachelMessage.MUSIC_DELETE_MUSIC_FROM_PLAYLIST, title, item.id)
                             items.removeAt(position)
                             notifyItemRemoved(position)
-                            if (items.isEmpty()) fragment.v.state.showEmpty("歌单空荡荡的, 快去曲库添加吧")
+                            if (items.isEmpty()) fragment.v.state.showEmpty()
                         }
                     }
                 }
@@ -110,7 +110,7 @@ class FragmentPlaylist(
                 RachelDialog.confirm(main, content="是否删除歌单\"${title}\"") {
                     main.sendMessage(RachelTab.music, RachelMessage.MUSIC_DELETE_PLAYLIST, title)
                     v.tab.removeItem(position)
-                    if (v.tab.isEmpty) v.state.showEmpty("快去创建一个歌单吧")
+                    if (v.tab.isEmpty) v.state.showEmpty()
                 }
             }
         } }
@@ -128,7 +128,7 @@ class FragmentPlaylist(
         v.tab.listener = object : NavigationView.Listener {
             override fun onSelected(position: Int, title: String, obj: Any?) {
                 val playlistPreview = main.sendMessageForResult<PlaylistPreview>(RachelTab.music, RachelMessage.MUSIC_GET_PLAYLIST_PREVIEW, title)!!
-                if (playlistPreview.items.isEmpty()) v.state.showEmpty("歌单空荡荡的, 快去曲库添加吧")
+                if (playlistPreview.items.isEmpty()) v.state.showEmpty()
                 else {
                     mAdapter.setSource(playlistPreview.items)
                     mAdapter.notifySource()
@@ -138,7 +138,7 @@ class FragmentPlaylist(
         }
 
         v.tab.simpleItems = playlistNames
-        if (playlistNames.isEmpty()) v.state.showEmpty("快去创建一个歌单吧")
+        if (playlistNames.isEmpty()) v.state.showEmpty()
     }
 
     override fun back() = BackState.POP
