@@ -3,6 +3,7 @@ package com.yinlin.rachel.fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.tool.backgroundColor
@@ -20,7 +21,7 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.visible
 
-
+@Layout(FragmentLibraryBinding::class)
 class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicInfoPreviewList)
     : RachelFragment<FragmentLibraryBinding>(main) {
     class Adapter(private val fragment: FragmentLibrary) : RachelAdapter<ItemMusicBinding, MusicInfoPreview>() {
@@ -86,8 +87,6 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
     }
 
     private var mAdapter = Adapter(this)
-
-    override fun bindingClass() = FragmentLibraryBinding::class.java
 
     override fun init() {
         v.groupLeft.apply {

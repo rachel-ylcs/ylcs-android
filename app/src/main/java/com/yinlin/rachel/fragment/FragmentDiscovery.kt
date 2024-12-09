@@ -5,6 +5,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -21,6 +22,7 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.view.NavigationView
 
+@Layout(FragmentDiscoveryBinding::class)
 class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBinding>(main)  {
     class Adapter(fragment: FragmentDiscovery) : RachelAdapter<ItemTopicUserBinding, TopicPreview>() {
         private val main = fragment.main
@@ -58,8 +60,6 @@ class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBi
     private var topicOffset: Int = 0
 
     private val mAdapter = Adapter(this)
-
-    override fun bindingClass() = FragmentDiscoveryBinding::class.java
 
     override fun init() {
         v.tab.simpleItems = listOf("最新", "热门")

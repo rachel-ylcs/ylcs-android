@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.Layout
+import com.yinlin.rachel.annotation.Layout.Companion.inflate
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
+import com.yinlin.rachel.tool.meta
 import com.yinlin.rachel.tool.tip
 
 abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : Fragment() {
@@ -18,7 +21,6 @@ abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : F
 
     private var isFirstStart = true
 
-    protected abstract fun bindingClass(): Class<Binding>
     protected open fun init() { }
     protected open fun start() { }
     protected open fun update() { }
@@ -29,10 +31,7 @@ abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : F
     open fun messageForResult(msg: RachelMessage, vararg args: Any?): Any? = null
 
     final override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, bundle: Bundle?): View {
-        val cls: Class<Binding> = bindingClass()
-        val method = cls.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-        @Suppress("UNCHECKED_CAST")
-        _binding = method.invoke(null, inflater, parent, false) as Binding
+        _binding = this.meta<Layout>()!!.inflate(inflater, parent)
         return v.root
     }
 

@@ -6,6 +6,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.WeiboUserStorage
@@ -22,6 +23,7 @@ import com.yinlin.rachel.tool.visible
 import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
 
+@Layout(FragmentWeiboUserListBinding::class)
 class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUserListBinding>(main) {
     class Adapter(fragment: FragmentWeiboUserList) : RachelAdapter<ItemWeiboUserBinding, WeiboUserStorage>() {
         private val main = fragment.main
@@ -59,8 +61,6 @@ class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUs
         const val GROUP_SEARCH = 0
         const val GROUP_REFRESH = 1
     }
-
-    override fun bindingClass() = FragmentWeiboUserListBinding::class.java
 
     override fun init() {
         v.group.listener = { pos -> when (pos) {

@@ -9,6 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
     }
 }
 dependencyResolutionManagement {
@@ -19,6 +20,7 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
         maven("https://maven.aliyun.com/repository/central")
         maven("https://maven.aliyun.com/repository/public")
+        maven("https://maven.aliyun.com/repository/google")
     }
 }
 

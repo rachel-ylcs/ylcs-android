@@ -5,6 +5,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.topic.TopicPreview
@@ -16,9 +17,8 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIOWithResult
 
+@Layout(FragmentCreateTopicBinding::class)
 class FragmentCreateTopic(main: MainActivity) : RachelFragment<FragmentCreateTopicBinding>(main) {
-    override fun bindingClass() = FragmentCreateTopicBinding::class.java
-
     override fun init() {
         v.cancel.rachelClick { main.pop() }
 

@@ -5,6 +5,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.weibo.Weibo
@@ -25,6 +26,7 @@ import com.yinlin.rachel.view.LoadingTextView
 import com.yinlin.rachel.tool.visible
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
+@Layout(FragmentWeiboBinding::class)
 class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragment<FragmentWeiboBinding>(main) {
     class SubCommentAdapter(private val main: MainActivity) : RachelAdapter<ItemWeiboSubcommentBinding, WeiboComment>() {
         override fun bindingClass() = ItemWeiboSubcommentBinding::class.java
@@ -126,8 +128,6 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
     }
 
     private val mAdapter = Adapter(this)
-
-    override fun bindingClass() = FragmentWeiboBinding::class.java
 
     override fun init() {
         v.list.apply {

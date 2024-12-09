@@ -15,5 +15,5 @@ data class LyricsSettings(
     // 字体颜色
     @ColorInt var textColor: Int = Color.rgb(70, 130, 180),
     // 背景颜色
-    @ColorInt var backgroundColor: Int = 0,
+    @ColorInt var backgroundColor: Int = 0
 )

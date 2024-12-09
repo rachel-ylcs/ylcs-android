@@ -1,11 +1,11 @@
 package com.yinlin.rachel.fragment
 
-import com.bumptech.glide.Glide
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -26,9 +26,8 @@ import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.startIOWithResult
 
+@Layout(FragmentSettingsBinding::class)
 class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBinding>(main) {
-    override fun bindingClass() = FragmentSettingsBinding::class.java
-
     override fun init() {
         /*    ----    账号设置    ----    */
 
@@ -193,7 +192,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             if (it.success) {
                 tip(Tip.SUCCESS, it.msg)
                 val user = Config.user!!
-                Config.cache_key_avatar_meta.update()
+                Config.cache_key_avatar = Config.ignore()
                 v.avatar.load(user.avatarPath, Config.cache_key_avatar)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }
@@ -223,7 +222,7 @@ class FragmentSettings(main: MainActivity) : RachelFragment<FragmentSettingsBind
             if (it.success) {
                 tip(Tip.SUCCESS, it.msg)
                 val user = Config.user!!
-                Config.cache_key_wall_meta.update()
+                Config.cache_key_wall = Config.ignore()
                 v.wall.load(user.wallPath, Config.cache_key_wall)
                 main.sendMessage(RachelTab.me, RachelMessage.ME_UPDATE_USER_INFO, user)
             }

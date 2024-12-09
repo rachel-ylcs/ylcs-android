@@ -14,6 +14,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.activity.VideoActivity
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.common.MusicCenter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -47,6 +48,7 @@ import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.view.FloatingLyricsView
 import kotlinx.coroutines.launch
 
+@Layout(FragmentMusicBinding::class)
 class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(main), MusicCenter.UIListener {
     companion object {
         const val GROUP_HEADER_LIBRARY = 0
@@ -71,8 +73,6 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
     private val floatingLyrics = FloatingLyricsView(main)
     private var isForeground: Boolean = false
     private val sleepModeTimer = RachelTimer()
-
-    override fun bindingClass() = FragmentMusicBinding::class.java
 
     override fun quit() {
         sleepModeTimer.cancel()

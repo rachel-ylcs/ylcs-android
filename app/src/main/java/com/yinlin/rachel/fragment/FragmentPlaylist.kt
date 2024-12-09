@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
@@ -21,11 +22,8 @@ import com.yinlin.rachel.tool.strikethrough
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.view.NavigationView
 
-
-class FragmentPlaylist(
-    main: MainActivity,
-    private val playlistNames: List<String>
-) : RachelFragment<FragmentPlaylistBinding>(main) {
+@Layout(FragmentPlaylistBinding::class)
+class FragmentPlaylist(main: MainActivity, private val playlistNames: List<String>) : RachelFragment<FragmentPlaylistBinding>(main) {
     class Adapter(private val fragment: FragmentPlaylist) : RachelAdapter<ItemMusicLineBinding, PlaylistPreview.MusicItem>(),
         RachelAdapter.ListTouch<PlaylistPreview.MusicItem> {
         private val main = fragment.main
@@ -83,8 +81,6 @@ class FragmentPlaylist(
     }
 
     private var mAdapter = Adapter(this)
-
-    override fun bindingClass() = FragmentPlaylistBinding::class.java
 
     override fun init() {
         v.group.listener = { pos -> when (pos) {

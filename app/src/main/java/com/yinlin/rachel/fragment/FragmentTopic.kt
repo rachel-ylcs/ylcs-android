@@ -6,6 +6,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.compareLatestTime
@@ -27,6 +28,7 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
 
+@Layout(FragmentTopicBinding::class)
 class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<FragmentTopicBinding>(main) {
     class Adapter(private val fragment: FragmentTopic) : RachelHeaderAdapter<HeaderTopicBinding, ItemCommentBinding, Comment>() {
         private val main = fragment.main
@@ -126,8 +128,6 @@ class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<F
 
     private lateinit var topic: Topic
     private val adapter = Adapter(this)
-
-    override fun bindingClass() = FragmentTopicBinding::class.java
 
     override fun init() {
         v.list.apply {

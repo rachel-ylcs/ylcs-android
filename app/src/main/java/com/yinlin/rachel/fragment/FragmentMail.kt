@@ -8,6 +8,7 @@ import com.yinlin.rachel.model.RachelDialog
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.user.Mail
@@ -21,6 +22,7 @@ import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.visible
 
+@Layout(FragmentMailBinding::class)
 class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(main) {
     class Adapter(private val fragment: FragmentMail) : RachelAdapter<ItemMailBinding, Mail>() {
         private val main = fragment.main
@@ -148,8 +150,6 @@ class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(mai
     }
 
     private val mAdapter = Adapter(this)
-
-    override fun bindingClass() = FragmentMailBinding::class.java
 
     override fun init() {
         // 列表

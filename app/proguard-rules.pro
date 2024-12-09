@@ -1,7 +1,7 @@
-# 注解
-
+-optimizationpasses 5
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 -renamesourcefileattribute SourceFile
--keepattributes *Annotation*, Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, EnclosingMethod
+-keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, EnclosingMethod
 
 # 日志
 
@@ -13,6 +13,10 @@
       public static int d(...);
       public static int e(...);
 }
+
+# 注解
+
+-keepattributes RuntimeVisibleAnnotations, AnnotationDefault, *Annotation*
 
 # 反射
 
@@ -40,12 +44,12 @@
 
 -keepclassmembers class * extends java.lang.Enum {
     public static **[] values();
-    public static ** valueOf(java.lang.String);
+    public static ** valueOf(...);
 }
 
 # ViewBinding
 
--keep class * extends androidx.viewbinding.ViewBinding {
+-keepclassmembers class * extends androidx.viewbinding.ViewBinding {
     public static ** inflate(...);
 }
 
@@ -103,4 +107,5 @@
 
 # APP
 
--keep class com.yinlin.rachel.data.**{*;}
+-keep,allowobfuscation @com.yinlin.rachel.annotation.** class *
+-keepclassmembers class com.yinlin.rachel.data.**{*;}

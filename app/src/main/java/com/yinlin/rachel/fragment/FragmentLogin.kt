@@ -5,6 +5,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -17,9 +18,8 @@ import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
 
+@Layout(FragmentLoginBinding::class)
 class FragmentLogin(main: MainActivity) : RachelFragment<FragmentLoginBinding>(main) {
-    override fun bindingClass() = FragmentLoginBinding::class.java
-
     override fun init() {
         // 没有账号
         v.labelRegister.rachelClick { showRegister() }

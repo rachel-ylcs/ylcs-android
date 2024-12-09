@@ -7,6 +7,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.mod.Metadata
 import com.yinlin.rachel.data.music.PlayingMusicPreviewList
@@ -20,12 +21,10 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.startIOWithResult
 
-
+@Layout(FragmentImportModBinding::class)
 class FragmentImportMod(main: MainActivity, private val uri: Uri) : RachelFragment<FragmentImportModBinding>(main) {
     private var canCancel = true
     private var mReleaser: RachelMod.Releaser? = null
-
-    override fun bindingClass() = FragmentImportModBinding::class.java
 
     @IOThread
     override fun init() {

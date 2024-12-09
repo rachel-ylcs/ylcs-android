@@ -76,7 +76,7 @@ fun Activity.tip(type: Tip, text: String, anchorView: View? = null) {
         setMargins(20.toDP(this@tip), 0, 20.toDP(this@tip), 100.toDP(this@tip))
         gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
     }
-    val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, layout, false)
+    val view = LayoutInflater.from(this).inflate(R.layout.dialog_tip, layout, true)
     view.findViewById<TextView>(R.id.text).text = text
     view.findViewById<MaterialCardView>(R.id.card).setCardBackgroundColor(this.rc(color))
     bar.show()

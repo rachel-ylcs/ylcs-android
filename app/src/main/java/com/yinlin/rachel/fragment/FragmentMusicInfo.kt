@@ -11,6 +11,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.attachAlpha
 import com.yinlin.rachel.tool.backgroundColor
@@ -45,6 +46,7 @@ import com.yinlin.rachel.tool.withMain
 import kotlinx.coroutines.launch
 import java.io.File
 
+@Layout(FragmentMusicInfoBinding::class)
 class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : RachelFragment<FragmentMusicInfoBinding>(main) {
     class Adapter(private val fragment: FragmentMusicInfo) : RachelAdapter<ItemMusicResBinding, MusicRes>() {
         private val main = fragment.main
@@ -84,8 +86,6 @@ class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : 
         const val GROUP_ADD = 1
         const val GROUP_SHARE = 2
     }
-
-    override fun bindingClass() = FragmentMusicInfoBinding::class.java
 
     override fun init() {
         v.name.rachelClick {

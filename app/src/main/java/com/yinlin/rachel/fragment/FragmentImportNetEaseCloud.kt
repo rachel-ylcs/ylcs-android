@@ -6,6 +6,7 @@ import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.NetEaseCloudAPI
 import com.yinlin.rachel.common.SilentDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -26,11 +27,10 @@ import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 import java.io.OutputStream
 
+@Layout(FragmentImportNeteaseCloudBinding::class)
 class FragmentImportNetEaseCloud(main: MainActivity, private val text: String, private val isShareUrl: Boolean = false) : RachelFragment<FragmentImportNeteaseCloudBinding>(main) {
     private var musicInfo: CloudMusic? = null
     private var lrcData: LrcData? = null
-
-    override fun bindingClass() = FragmentImportNeteaseCloudBinding::class.java
 
     override fun init() {
         v.loading.rachelClick {

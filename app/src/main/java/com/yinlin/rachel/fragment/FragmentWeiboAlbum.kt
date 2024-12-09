@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentWeiboAlbumBinding
@@ -21,6 +22,7 @@ import com.yinlin.rachel.tool.withIO
 import kotlinx.coroutines.launch
 import kotlin.jvm.internal.Ref.IntRef
 
+@Layout(FragmentWeiboAlbumBinding::class)
 class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : RachelFragment<FragmentWeiboAlbumBinding>(main) {
     class ViewHolder(val view: ImageView) : RecyclerView.ViewHolder(view)
 
@@ -59,8 +61,6 @@ class FragmentWeiboAlbum(main: MainActivity, private val containerId: String) : 
     private val album = MutableList<AlbumCache?>(PIC_MAX_LIMIT) { null }
     private var maxNum: Int = -1
     private val mAdapter = Adapter(main)
-
-    override fun bindingClass() = FragmentWeiboAlbumBinding::class.java
 
     override fun init() {
         v.list.apply {

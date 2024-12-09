@@ -5,6 +5,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.common.SimpleImageDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -17,9 +18,8 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIO
 import com.yinlin.rachel.tool.startIOWithResult
 
+@Layout(FragmentPhotoPreviewBinding::class)
 class FragmentPhotoPreview(main: MainActivity, private val pic: RachelPreview) : RachelFragment<FragmentPhotoPreviewBinding>(main) {
-    override fun bindingClass() = FragmentPhotoPreviewBinding::class.java
-
     override fun init() {
         v.pic.loadBlack(pic.mImageUrl)
 

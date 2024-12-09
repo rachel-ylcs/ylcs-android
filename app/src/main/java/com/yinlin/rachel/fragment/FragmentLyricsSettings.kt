@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.backgroundColor
 import com.yinlin.rachel.data.RachelMessage
@@ -25,14 +26,13 @@ import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.textSizePx
 import com.yinlin.rachel.view.FloatingLyricsView
 
+@Layout(FragmentLyricsSettingsBinding::class)
 class FragmentLyricsSettings(main: MainActivity) : RachelFragment<FragmentLyricsSettingsBinding>(main) {
     private lateinit var registerFloatingPermission: ActivityResultLauncher<Intent>
 
     private val canShow: Boolean get() = Settings.canDrawOverlays(context)
 
     private val lyricsSettings = Config.music_lyrics_settings
-
-    override fun bindingClass() = FragmentLyricsSettingsBinding::class.java
 
     override fun init() {
         registerFloatingPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

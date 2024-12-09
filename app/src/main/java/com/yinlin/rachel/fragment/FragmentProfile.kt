@@ -6,6 +6,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.topic.TopicPreview
@@ -21,6 +22,7 @@ import com.yinlin.rachel.tool.pureColor
 import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.visible
 
+@Layout(FragmentProfileBinding::class)
 class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
     class Adapter(private val fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
         private val main = fragment.main
@@ -81,8 +83,6 @@ class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelF
     }
 
     private val adapter = Adapter(this)
-
-    override fun bindingClass() = FragmentProfileBinding::class.java
 
     override fun init() {
         v.list.apply {

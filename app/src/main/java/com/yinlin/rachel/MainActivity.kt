@@ -89,7 +89,10 @@ class MainActivity : RachelActivity() {
                     if (Config.token_daily != currentDateInteger) {
                         val result = withTimeoutIO(5000L) { API.UserAPI.updateToken(token) } ?: API.errResult()
                         when (result.code) {
-                            API.Code.SUCCESS -> Config.token = result.data.token
+                            API.Code.SUCCESS -> {
+                                Config.token = result.data.token
+                                Config.token_daily = Config.ignore()
+                            }
                             API.Code.UNAUTHORIZED -> {
                                 tip(Tip.WARNING, result.msg)
                                 Config.token = ""

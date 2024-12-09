@@ -5,6 +5,7 @@ import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.data.weibo.WeiboAlbum
@@ -19,6 +20,7 @@ import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIOWithResult
 
+@Layout(FragmentWeiboUserBinding::class)
 class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : RachelFragment<FragmentWeiboUserBinding>(main) {
     class WeiboAlbumAdapter(private val fragment: FragmentWeiboUser) : RachelAdapter<ItemWeiboAlbumBinding, WeiboAlbum>() {
         override fun bindingClass() = ItemWeiboAlbumBinding::class.java
@@ -37,8 +39,6 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
 
     private val albumAdapter = WeiboAlbumAdapter(this)
     private val weiboAdapter = WeiboAdapter(main)
-
-    override fun bindingClass() = FragmentWeiboUserBinding::class.java
 
     override fun init() {
         v.add.rachelClick {
@@ -115,7 +115,7 @@ class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : R
                 Config.weibo_users = weiboUsers
                 tip(Tip.SUCCESS, "添加成功")
             }
-            else tip(Tip.ERROR, "解析微博用户失败")
+            else tip(Tip.ERROR, "添加失败")
         }
     }
 }

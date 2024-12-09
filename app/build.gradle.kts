@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.application)
+    alias(libs.plugins.jetbrains)
 }
 
 android {
@@ -17,8 +17,6 @@ android {
         ndk {
             abiFilters += arrayOf("arm64-v8a")
         }
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -67,38 +65,25 @@ dependencies {
         "include" to listOf("*.aar", "*.jar"),
     )))
 
-    // UI
-    implementation("com.google.android.material:material:1.13.0-alpha08")
-
-    // Data
-    implementation("com.google.code.gson:gson:2.11.0")
-    implementation("com.tencent:mmkv:2.0.1")
-    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    // Tool
-    implementation("com.github.forJrking:KLuban:1.1.0")
-    implementation("com.github.jenly1314:zxing-lite:3.2.0")
-    implementation("io.github.lucksiege:pictureselector:v3.11.2")
-    implementation("io.github.lucksiege:ucrop:v3.11.2")
-
-    // Media
-    implementation("androidx.media3:media3-exoplayer:1.5.0")
-    implementation("androidx.media3:media3-exoplayer-dash:1.5.0")
-    implementation("androidx.media3:media3-ui:1.5.0")
-    implementation("androidx.media3:media3-session:1.5.0")
-
-    implementation("com.tencent.tav:libpag:4.4.15-harfbuzz")
-
-    implementation("com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-java:v10.0.0")
-    implementation("com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer-exo2:v10.0.0")
-
-    // View
-    implementation("com.haibin:calendarview:3.7.1")
-    implementation("com.github.rtugeek:colorseekbar:2.1.0")
-    implementation("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
-    implementation("io.github.scwang90:refresh-header-classics:3.0.0-alpha")
-
-    // Test
-    testImplementation("junit:junit:4.13.2")
+    implementation(libs.data.reflect)
+    implementation(libs.data.gson)
+    implementation(libs.data.mmkv)
+    implementation(libs.data.okhttp)
+    implementation(libs.image.glide)
+    implementation(libs.image.qrcode)
+    implementation(libs.image.selector)
+    implementation(libs.image.selector.crop)
+    implementation(libs.image.selector.compress)
+    implementation(libs.image.libpag)
+    implementation(libs.media.player)
+    implementation(libs.media.player.dash)
+    implementation(libs.media.player.ui)
+    implementation(libs.media.player.session)
+    implementation(libs.media.videoPlayer)
+    implementation(libs.media.videoPlayer.engine)
+    implementation(libs.ui.material)
+    implementation(libs.ui.calendar)
+    implementation(libs.ui.colorSeekbar)
+    implementation(libs.ui.refreshLayout)
+    implementation(libs.ui.refreshLayout.header)
 }

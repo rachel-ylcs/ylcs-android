@@ -7,6 +7,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.haibin.calendarview.Calendar
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
@@ -20,10 +21,9 @@ import com.yinlin.rachel.model.RachelTab
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.view.ImageSelectView
 
+@Layout(FragmentAddActivityBinding::class)
 class FragmentAddActivity(main: MainActivity, private val calendar: Calendar) : RachelFragment<FragmentAddActivityBinding>(main) {
     private val schemeAPPWebView = WebView(main)
-
-    override fun bindingClass() = FragmentAddActivityBinding::class.java
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun init() {

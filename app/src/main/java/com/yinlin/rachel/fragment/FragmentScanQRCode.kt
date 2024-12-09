@@ -13,6 +13,7 @@ import com.king.zxing.util.CodeUtils
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.databinding.FragmentScanQrcodeBinding
 import com.yinlin.rachel.model.RachelFragment
@@ -20,9 +21,8 @@ import com.yinlin.rachel.model.RachelPictureSelector
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.startIOWithResult
 
-
-class FragmentScanQRCode(main: MainActivity)
-    : RachelFragment<FragmentScanQrcodeBinding>(main), OnScanResultCallback<Result> {
+@Layout(FragmentScanQrcodeBinding::class)
+class FragmentScanQRCode(main: MainActivity) : RachelFragment<FragmentScanQrcodeBinding>(main), OnScanResultCallback<Result> {
     private lateinit var cameraScan: BaseCameraScan<Result>
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -32,8 +32,6 @@ class FragmentScanQRCode(main: MainActivity)
             main.pop()
         }
     }
-
-    override fun bindingClass() = FragmentScanQrcodeBinding::class.java
 
     override fun init() {
         cameraScan = BaseCameraScan<Result>(this, v.preview)

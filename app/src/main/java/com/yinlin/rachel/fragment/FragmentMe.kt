@@ -6,6 +6,7 @@ import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.RachelMessage
@@ -25,9 +26,8 @@ import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.view.ActivityCalendarView
 
+@Layout(FragmentMeBinding::class)
 class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  {
-    override fun bindingClass() = FragmentMeBinding::class.java
-
     override fun init() {
         v.avatar.rachelClick {
             if (!Config.isLogin) {

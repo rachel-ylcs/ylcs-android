@@ -1,6 +1,7 @@
 package com.yinlin.rachel.fragment
 
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.activity.ShowActivity
@@ -11,12 +12,11 @@ import com.yinlin.rachel.model.RachelImageLoader.load
 import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.tool.rachelClick
 
+@Layout(FragmentShowActivityBinding::class)
 class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) : RachelFragment<FragmentShowActivityBinding>(main) {
     private val showstartUrl: String? = show.showstart
     private val damaiUrl: String? = show.damai
     private val maoyanUrl: String? = show.maoyan
-
-    override fun bindingClass() = FragmentShowActivityBinding::class.java
 
     override fun init() {
         v.showstart.rachelClick {

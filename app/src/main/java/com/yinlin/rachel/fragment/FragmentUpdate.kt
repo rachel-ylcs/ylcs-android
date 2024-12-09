@@ -13,6 +13,7 @@ import com.yinlin.rachel.tool.Net
 import com.yinlin.rachel.R
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.common.DialogMediaDownloadListener
 import com.yinlin.rachel.data.BackState
@@ -29,7 +30,7 @@ import com.yinlin.rachel.tool.startIOWithResult
 import com.yinlin.rachel.tool.textColor
 import com.yinlin.rachel.tool.withMain
 
-
+@Layout(FragmentUpdateBinding::class)
 class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>(main) {
     class Adapter : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
         override fun bindingClass() = ItemDevelopStateBinding::class.java
@@ -42,8 +43,6 @@ class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>
     class Manager(context: Context?): LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
         override fun canScrollVertically() = false
     }
-
-    override fun bindingClass() = FragmentUpdateBinding::class.java
 
     private var downloadUrl: String? = null
     private var isNeedUpdate: Boolean = false
