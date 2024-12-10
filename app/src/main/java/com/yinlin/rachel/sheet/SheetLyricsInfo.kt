@@ -2,6 +2,8 @@ package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.Layout
+import com.yinlin.rachel.annotation.SheetLayout
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.LyricsInfo
@@ -17,16 +19,16 @@ import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.rs
 import com.yinlin.rachel.tool.textColor
 
+@SheetLayout(SheetLyricsInfoBinding::class, 0.6f)
 class SheetLyricsInfo(fragment: FragmentMusic, private val infos: LyricsInfoList)
-    : RachelSheet<SheetLyricsInfoBinding, FragmentMusic>(fragment, 0.6f) {
+    : RachelSheet<SheetLyricsInfoBinding, FragmentMusic>(fragment) {
+    @Layout(ItemLyricsInfoBinding::class)
     class Adapter(private val sheet: SheetLyricsInfo) : RachelAdapter<ItemLyricsInfoBinding, LyricsInfo>() {
         private val main = sheet.fragment.main
         private val unlockedString = main.rs(R.string.unlocked)
         private val lockedString = main.rs(R.string.locked)
         private val unlockedColor = main.rc(R.color.sea_green)
         private val lockedColor = main.rc(R.color.red)
-
-        override fun bindingClass() = ItemLyricsInfoBinding::class.java
 
         override fun update(v: ItemLyricsInfoBinding, item: LyricsInfo, position: Int) {
             v.engineName.text = item.engineName
@@ -48,8 +50,6 @@ class SheetLyricsInfo(fragment: FragmentMusic, private val infos: LyricsInfoList
     }
 
     private val mAdapter = Adapter(this)
-
-    override fun bindingClass() = SheetLyricsInfoBinding::class.java
 
     override fun init() {
         v.list.apply {

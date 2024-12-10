@@ -3,6 +3,7 @@ package com.yinlin.rachel.common
 import android.content.Intent
 import com.yinlin.rachel.MainActivity
 import com.yinlin.rachel.activity.VideoActivity
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.data.weibo.Weibo
 import com.yinlin.rachel.databinding.ItemWeiboBinding
 import com.yinlin.rachel.fragment.FragmentImagePreview
@@ -13,9 +14,8 @@ import com.yinlin.rachel.model.RachelImageLoader.loadDaily
 import com.yinlin.rachel.tool.rachelClick
 import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
+@Layout(ItemWeiboBinding::class)
 class WeiboAdapter(private val main: MainActivity) : RachelAdapter<ItemWeiboBinding, Weibo>() {
-    override fun bindingClass() = ItemWeiboBinding::class.java
-
     override fun init(holder: RachelViewHolder<ItemWeiboBinding>, v: ItemWeiboBinding) {
         v.avatar.rachelClick {
             main.navigate(FragmentWeiboUser(main, this[holder.bindingAdapterPosition].user.userId))

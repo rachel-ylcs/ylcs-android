@@ -24,10 +24,9 @@ import com.yinlin.rachel.view.NavigationView
 
 @Layout(FragmentDiscoveryBinding::class)
 class FragmentDiscovery(main: MainActivity) : RachelFragment<FragmentDiscoveryBinding>(main)  {
+    @Layout(ItemTopicUserBinding::class)
     class Adapter(fragment: FragmentDiscovery) : RachelAdapter<ItemTopicUserBinding, TopicPreview>() {
         private val main = fragment.main
-
-        override fun bindingClass() = ItemTopicUserBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemTopicUserBinding>, v: ItemTopicUserBinding) {
             v.avatar.rachelClick {

@@ -17,7 +17,6 @@ import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
-import androidx.media3.session.SessionCommands
 import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
@@ -38,10 +37,12 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
         }
 
         override fun getAvailableCommands() = prepareNotificationPlayerCommands
+
         override fun seekToPreviousMediaItem() = gotoPrevious()
         override fun seekToPrevious() = gotoPrevious()
         override fun seekToNextMediaItem() = gotoNext()
         override fun seekToNext() = gotoNext()
+
         private fun gotoPrevious() {
             val index = player.previousMediaItemIndex
             if (index != -1) {
@@ -53,6 +54,7 @@ class MusicService : MediaSessionService(), MediaSession.Callback {
                 if (!player.isPlaying) player.play()
             }
         }
+
         private fun gotoNext() {
             val index = player.nextMediaItemIndex
             if (index != -1) {

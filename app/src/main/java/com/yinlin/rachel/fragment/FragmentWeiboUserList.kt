@@ -25,11 +25,10 @@ import kotlinx.coroutines.launch
 
 @Layout(FragmentWeiboUserListBinding::class)
 class FragmentWeiboUserList(main: MainActivity) : RachelFragment<FragmentWeiboUserListBinding>(main) {
+    @Layout(ItemWeiboUserBinding::class)
     class Adapter(fragment: FragmentWeiboUserList) : RachelAdapter<ItemWeiboUserBinding, WeiboUserStorage>() {
         private val main = fragment.main
         var isManagerMode = true
-
-        override fun bindingClass() = ItemWeiboUserBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemWeiboUserBinding>, v: ItemWeiboUserBinding) {
             v.delete.rachelClick {

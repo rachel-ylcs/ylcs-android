@@ -24,13 +24,12 @@ import com.yinlin.rachel.view.NavigationView
 
 @Layout(FragmentPlaylistBinding::class)
 class FragmentPlaylist(main: MainActivity, private val playlistNames: List<String>) : RachelFragment<FragmentPlaylistBinding>(main) {
+    @Layout(ItemMusicLineBinding::class)
     class Adapter(private val fragment: FragmentPlaylist) : RachelAdapter<ItemMusicLineBinding, PlaylistPreview.MusicItem>(),
         RachelAdapter.ListTouch<PlaylistPreview.MusicItem> {
         private val main = fragment.main
         private val deletedColor = main.rc(R.color.red)
         private val normalColor = main.rc(R.color.black)
-
-        override fun bindingClass() = ItemMusicLineBinding::class.java
 
         override fun update(v: ItemMusicLineBinding, item: PlaylistPreview.MusicItem, position: Int) {
             v.name.apply {

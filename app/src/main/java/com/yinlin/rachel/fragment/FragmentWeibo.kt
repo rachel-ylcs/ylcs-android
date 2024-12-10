@@ -4,6 +4,7 @@ import android.view.Gravity
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.HeaderLayout
 import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
@@ -28,9 +29,8 @@ import org.sufficientlysecure.htmltextview.HtmlHttpImageGetter
 
 @Layout(FragmentWeiboBinding::class)
 class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragment<FragmentWeiboBinding>(main) {
+    @Layout(ItemWeiboSubcommentBinding::class)
     class SubCommentAdapter(private val main: MainActivity) : RachelAdapter<ItemWeiboSubcommentBinding, WeiboComment>() {
-        override fun bindingClass() = ItemWeiboSubcommentBinding::class.java
-
         override fun init(holder: RachelViewHolder<ItemWeiboSubcommentBinding>, v: ItemWeiboSubcommentBinding) {
             v.avatar.rachelClick {
                 val item = this[holder.bindingAdapterPosition]
@@ -48,12 +48,10 @@ class FragmentWeibo(main: MainActivity, private val weibo: Weibo) : RachelFragme
         }
     }
 
+    @HeaderLayout(ItemWeiboBinding::class, ItemWeiboCommentBinding::class)
     class Adapter(private val fragment: FragmentWeibo) : RachelHeaderAdapter<ItemWeiboBinding, ItemWeiboCommentBinding, WeiboComment>() {
         private val main = fragment.main
         private val weibo = fragment.weibo
-
-        override fun bindingHeaderClass() = ItemWeiboBinding::class.java
-        override fun bindingItemClass() = ItemWeiboCommentBinding::class.java
 
         override fun initHeader(v: ItemWeiboBinding) {
             val loading = LoadingTextView(v.contentContainer.context).apply {

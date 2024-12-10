@@ -2,6 +2,8 @@ package com.yinlin.rachel.sheet
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.Layout
+import com.yinlin.rachel.annotation.SheetLayout
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.data.music.PlayingMusicPreview
 import com.yinlin.rachel.data.music.PlayingMusicPreviewList
@@ -16,18 +18,18 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.rc
 import com.yinlin.rachel.tool.textColor
 
+@SheetLayout(SheetCurrentPlaylistBinding::class, 0.6f)
 class SheetCurrentPlaylist(
     fragment: FragmentMusic,
     private val playlistName: String,
     private val data: PlayingMusicPreviewList
-) : RachelSheet<SheetCurrentPlaylistBinding, FragmentMusic>(fragment, 0.6f) {
+) : RachelSheet<SheetCurrentPlaylistBinding, FragmentMusic>(fragment) {
+    @Layout(ItemMusicLineBinding::class)
     class Adapter(private val sheet: SheetCurrentPlaylist) : RachelAdapter<ItemMusicLineBinding, PlayingMusicPreview>() {
         private val main = sheet.fragment.main
         private val normalColor = main.rc(R.color.black)
         private val playingColor = main.rc(R.color.steel_blue)
         private val normalSingerColor = main.rc(R.color.gray)
-
-        override fun bindingClass() = ItemMusicLineBinding::class.java
 
         override fun update(v: ItemMusicLineBinding, item: PlayingMusicPreview, position: Int) {
             v.name.apply {
@@ -49,8 +51,6 @@ class SheetCurrentPlaylist(
     }
 
     private val mAdapter = Adapter(this)
-
-    override fun bindingClass() = SheetCurrentPlaylistBinding::class.java
 
     override fun init() {
         v.buttonStop.rachelClick {

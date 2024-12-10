@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
+import com.yinlin.rachel.annotation.Layout
+import com.yinlin.rachel.annotation.Layout.Companion.inflate
 import com.yinlin.rachel.data.BackState
+import com.yinlin.rachel.tool.meta
 import com.yinlin.rachel.tool.startIO
 import com.yinlin.rachel.tool.startIOWithResult
 import kotlinx.coroutines.CoroutineScope
@@ -21,12 +24,9 @@ abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val 
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val page = pages[viewType]
-            val cls = page.bindingClass()
-            val method = cls.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-            val binding = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as ViewBinding
-            page._binding = binding
+            page._binding = page.meta<Layout>()!!.inflate(LayoutInflater.from(parent.context), parent)
             page.init()
-            return ViewHolder(binding.root)
+            return ViewHolder(page.v.root)
         }
 
         override fun getItemViewType(position: Int) = position
@@ -34,11 +34,8 @@ abstract class RachelViewPage<Binding : ViewBinding, F : RachelFragment<*>>(val 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) { }
     }
 
-    private var _binding: ViewBinding? = null
-    @Suppress("UNCHECKED_CAST")
-    val v: Binding get() = _binding!! as Binding
-
-    protected abstract fun bindingClass(): Class<Binding>
+    private var _binding: Binding? = null
+    val v: Binding get() = _binding!!
 
     protected open fun init() { }
     open fun back(): BackState = BackState.CANCEL

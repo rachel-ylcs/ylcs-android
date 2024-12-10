@@ -46,7 +46,7 @@ object RachelPopMenu {
     @SuppressLint("InflateParams")
     fun showDown(view: View, items: List<Item>) {
         val context = view.context
-        val card = LayoutInflater.from(context).inflate(R.layout.dialog_menu, null)
+        val card = LayoutInflater.from(context).inflate(R.layout.menu, null)
         val list = card.findViewById<RecyclerView>(R.id.list)
         val popupWindow = PopupWindow(card, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         list.layoutManager = LinearLayoutManager(context)

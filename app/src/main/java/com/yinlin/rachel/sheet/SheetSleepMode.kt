@@ -1,6 +1,7 @@
 package com.yinlin.rachel.sheet
 
 import com.yinlin.rachel.R
+import com.yinlin.rachel.annotation.SheetLayout
 import com.yinlin.rachel.databinding.SheetSleepModeBinding
 import com.yinlin.rachel.fragment.FragmentMusic
 import com.yinlin.rachel.model.RachelDialog
@@ -10,15 +11,14 @@ import com.yinlin.rachel.model.RachelTimer
 import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.timeStringWithHour
 
+@SheetLayout(SheetSleepModeBinding::class, 0.6f)
 class SheetSleepMode(fragment: FragmentMusic, private val timer: RachelTimer)
-    : RachelSheet<SheetSleepModeBinding, FragmentMusic>(fragment, 0.6f) {
+    : RachelSheet<SheetSleepModeBinding, FragmentMusic>(fragment) {
     private val listener = object : RachelTimer.Listener {
         override fun onTick(remain: Long) { v.time.text = remain.timeStringWithHour }
         override fun onStop() { dismiss() }
         override fun onFinish() { }
     }
-
-    override fun bindingClass() = SheetSleepModeBinding::class.java
 
     override fun init() {
         timer.addListener(listener)

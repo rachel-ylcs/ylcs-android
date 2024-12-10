@@ -2,6 +2,7 @@ package com.yinlin.rachel.page
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.WeiboAPI
 import com.yinlin.rachel.databinding.PageChaohuaBinding
 import com.yinlin.rachel.fragment.FragmentMsg
@@ -10,11 +11,10 @@ import com.yinlin.rachel.common.WeiboAdapter
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.tool.isTop
 
+@Layout(PageChaohuaBinding::class)
 class PageChaohua(fragment: FragmentMsg) : RachelViewPage<PageChaohuaBinding, FragmentMsg>(fragment) {
     private val mAdapter = WeiboAdapter(fragment.main)
     private var sinceId: Long = 0L
-
-    override fun bindingClass(): Class<PageChaohuaBinding> = PageChaohuaBinding::class.java
 
     override fun init() {
         // 刷新与加载

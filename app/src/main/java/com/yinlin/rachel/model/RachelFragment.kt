@@ -15,6 +15,7 @@ import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.tool.meta
 import com.yinlin.rachel.tool.tip
 
+
 abstract class RachelFragment<Binding : ViewBinding>(val main: MainActivity) : Fragment() {
     private var _binding: Binding? = null
     val v: Binding get() = _binding!!

@@ -3,6 +3,7 @@ package com.yinlin.rachel.page
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.R
 import com.yinlin.rachel.annotation.IOThread
+import com.yinlin.rachel.annotation.Layout
 import com.yinlin.rachel.api.API
 import com.yinlin.rachel.data.BackState
 import com.yinlin.rachel.data.res.ResFile
@@ -18,10 +19,10 @@ import com.yinlin.rachel.model.RachelPreview
 import com.yinlin.rachel.model.RachelViewPage
 import com.yinlin.rachel.tool.visible
 
+@Layout(PagePhotoBinding::class)
 class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, FragmentMsg>(fragment) {
+    @Layout(ItemPhotoBinding::class)
     class Adapter(private val page: PagePhoto, var currentRes: ResFolder) : RachelAdapter<ItemPhotoBinding, ResFile>() {
-        override fun bindingClass() = ItemPhotoBinding::class.java
-
         override fun update(v: ItemPhotoBinding, item: ResFile, position: Int) {
             v.name.text = item.name
             if (item is ResFolder) {
@@ -46,8 +47,6 @@ class PagePhoto(fragment: FragmentMsg) : RachelViewPage<PagePhotoBinding, Fragme
 
     private var rootRes = ResFolder.emptyRes
     private val mAdapter = Adapter(this, rootRes)
-
-    override fun bindingClass(): Class<PagePhotoBinding> = PagePhotoBinding::class.java
 
     override fun init() {
         // 列表

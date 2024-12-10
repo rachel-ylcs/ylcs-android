@@ -54,7 +54,7 @@ class FragmentMe(main: MainActivity) : RachelFragment<FragmentMeBinding>(main)  
 
         // 店铺
         v.buttonShop.rachelClick {
-            val intent = RachelAppIntent.Taobao("280201975")
+            val intent = RachelAppIntent.taobao("280201975")
             if (!intent.start(main)) tip(Tip.WARNING, "未安装\"${intent.name}\"")
         }
 

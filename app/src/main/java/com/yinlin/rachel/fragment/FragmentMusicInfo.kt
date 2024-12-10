@@ -48,10 +48,9 @@ import java.io.File
 
 @Layout(FragmentMusicInfoBinding::class)
 class FragmentMusicInfo(main: MainActivity, private val musicInfo: MusicInfo) : RachelFragment<FragmentMusicInfoBinding>(main) {
+    @Layout(ItemMusicResBinding::class)
     class Adapter(private val fragment: FragmentMusicInfo) : RachelAdapter<ItemMusicResBinding, MusicRes>() {
         private val main = fragment.main
-
-        override fun bindingClass() = ItemMusicResBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemMusicResBinding>, v: ItemMusicResBinding) {
             v.edit.rachelClick {

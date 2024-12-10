@@ -25,10 +25,11 @@ import com.yinlin.rachel.tool.rachelClick
 import com.yinlin.rachel.tool.toDP
 import com.yinlin.rachel.tool.visible
 import com.yinlin.rachel.view.InputView
+import kotlin.reflect.KClass
 
 abstract class RachelDialog<T : ViewBinding> (
     private val context: Context,
-    private val layout: Class<T>,
+    private val layout: KClass<T>,
     private val cancelable: Boolean = true,
     private val fixedWidth: Boolean = true,
     private val padding: Int = 10.toDP(context),
@@ -52,7 +53,6 @@ abstract class RachelDialog<T : ViewBinding> (
             attr.height = (display.heightPixels * 0.75f).toInt()
             attributes = attr
         }
-        val method = layout.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
         val container = findViewById<LinearLayout>(R.id.container)
         val card = findViewById<MaterialCardView>(R.id.card)
         card.setContentPadding(padding, padding, padding, padding)
@@ -65,6 +65,7 @@ abstract class RachelDialog<T : ViewBinding> (
             params.width = ViewGroup.LayoutParams.MATCH_PARENT
             card.layoutParams = params
         }
+        val method = layout.java.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
         _binding = method.invoke(null, LayoutInflater.from(context), card, true) as T
         setCanceledOnTouchOutside(false)
         setCancelable(cancelable)
@@ -74,7 +75,7 @@ abstract class RachelDialog<T : ViewBinding> (
 
     companion object {
         fun info(context: Context, title: String = "提示", content: String) {
-            object : RachelDialog<DialogInfoBinding>(context, DialogInfoBinding::class.java) {
+            object : RachelDialog<DialogInfoBinding>(context, DialogInfoBinding::class) {
                 override fun init(v: DialogInfoBinding) {
                     v.title.text = title
                     v.content.text = content
@@ -84,7 +85,7 @@ abstract class RachelDialog<T : ViewBinding> (
         }
 
         fun confirm(context: Context, title: String = "二次确认", content: String, callback: () -> Unit) {
-            object : RachelDialog<DialogConfirmBinding>(context, DialogConfirmBinding::class.java) {
+            object : RachelDialog<DialogConfirmBinding>(context, DialogConfirmBinding::class) {
                 override fun init(v: DialogConfirmBinding) {
                     v.title.text = title
                     v.content.text = content
@@ -98,7 +99,7 @@ abstract class RachelDialog<T : ViewBinding> (
         }
 
         fun input(context: Context, content: String, maxLength: Int = 0, maxLine: Int = 1, inputType: Int = InputType.TYPE_CLASS_TEXT, callback: (String) -> Unit) {
-            object : RachelDialog<DialogInputBinding>(context, DialogInputBinding::class.java, false) {
+            object : RachelDialog<DialogInputBinding>(context, DialogInputBinding::class, false) {
                 override fun init(v: DialogInputBinding) {
                     v.input.hint = content
                     v.input.inputType = inputType
@@ -115,7 +116,7 @@ abstract class RachelDialog<T : ViewBinding> (
         }
 
         fun choice(context: Context, title: String = "", items: List<String>, callback: (Int) -> Unit) {
-            object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class.java) {
+            object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class) {
                 override fun init(v: DialogChoiceBinding) {
                     if (title.isEmpty()) v.title.visible = false
                     else v.title.text = title
@@ -131,7 +132,7 @@ abstract class RachelDialog<T : ViewBinding> (
         }
 
         fun choice(context: Context, title: String = "", callbacks: List<Pair<String, () -> Unit>>) {
-            object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class.java) {
+            object : RachelDialog<DialogChoiceBinding>(context, DialogChoiceBinding::class) {
                 override fun init(v: DialogChoiceBinding) {
                     if (title.isEmpty()) v.title.visible = false
                     else v.title.text = title
@@ -146,7 +147,7 @@ abstract class RachelDialog<T : ViewBinding> (
             }.show()
         }
 
-        class DialogProgress(context: Context, private val t: String) : RachelDialog<DialogProgressBinding>(context, DialogProgressBinding::class.java, false) {
+        class DialogProgress(context: Context, private val t: String) : RachelDialog<DialogProgressBinding>(context, DialogProgressBinding::class, false) {
             var title: String
                 get() = v.title.text.toString()
                 set(value) { v.title.text = value }
@@ -181,7 +182,7 @@ abstract class RachelDialog<T : ViewBinding> (
             return dialog
         }
 
-        class DialogLoading(context: Context, private val handler: Handler, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class.java, false, false) {
+        class DialogLoading(context: Context, private val handler: Handler, private val title: String) : RachelDialog<DialogLoadingBinding>(context, DialogLoadingBinding::class, false, false) {
             // 加载等待框 防抖设计
             // 延迟时间与显示时间默认为 500毫秒
             companion object {

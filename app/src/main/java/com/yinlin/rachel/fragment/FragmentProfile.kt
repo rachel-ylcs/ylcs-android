@@ -3,6 +3,7 @@ package com.yinlin.rachel.fragment
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.HeaderLayout
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.data.RachelMessage
 import com.yinlin.rachel.annotation.IOThread
@@ -24,11 +25,9 @@ import com.yinlin.rachel.tool.visible
 
 @Layout(FragmentProfileBinding::class)
 class FragmentProfile(main: MainActivity, private val profileUid: Int) : RachelFragment<FragmentProfileBinding>(main) {
+    @HeaderLayout(HeaderProfileBinding::class, ItemTopicBinding::class)
     class Adapter(private val fragment: FragmentProfile) : RachelHeaderAdapter<HeaderProfileBinding, ItemTopicBinding, TopicPreview>() {
         private val main = fragment.main
-
-        override fun bindingHeaderClass() = HeaderProfileBinding::class.java
-        override fun bindingItemClass() = ItemTopicBinding::class.java
 
         override fun initHeader(v: HeaderProfileBinding) {
             requestUserProfile()

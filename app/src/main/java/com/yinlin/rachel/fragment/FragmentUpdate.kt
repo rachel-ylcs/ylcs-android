@@ -32,9 +32,8 @@ import com.yinlin.rachel.tool.withMain
 
 @Layout(FragmentUpdateBinding::class)
 class FragmentUpdate(main: MainActivity) : RachelFragment<FragmentUpdateBinding>(main) {
+    @Layout(ItemDevelopStateBinding::class)
     class Adapter : RachelAdapter<ItemDevelopStateBinding, DevelopState>() {
-        override fun bindingClass() = ItemDevelopStateBinding::class.java
-
         override fun update(v: ItemDevelopStateBinding, item: DevelopState, position: Int) {
             v.content.text = item.content
         }

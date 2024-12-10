@@ -6,11 +6,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.viewbinding.ViewBinding
+import com.yinlin.rachel.annotation.HeaderLayout
+import com.yinlin.rachel.annotation.HeaderLayout.Companion.inflateHeader
+import com.yinlin.rachel.annotation.HeaderLayout.Companion.inflateItem
 import com.yinlin.rachel.tool.clearAddAll
+import com.yinlin.rachel.tool.meta
 import com.yinlin.rachel.tool.rachelClick
 import java.util.Collections
 
-@Suppress("UNCHECKED_CAST")
 abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : ViewBinding, Item> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val ITEM = 0
@@ -26,8 +29,6 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
         val positionEx: Int get() = bindingAdapterPosition - 1
     }
 
-    protected abstract fun bindingHeaderClass(): Class<HeaderBinding>
-    protected abstract fun bindingItemClass(): Class<ItemBinding>
     protected open fun init(holder: RachelItemViewHolder<ItemBinding>, v: ItemBinding) { }
     protected open fun update(v: ItemBinding, item: Item, position: Int) { }
     protected open fun onItemClicked(v: ItemBinding, item: Item, position: Int) { }
@@ -37,17 +38,13 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == HEADER) {
             if (vHeader == null) {
-                val cls: Class<HeaderBinding> = bindingHeaderClass()
-                val method = cls.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-                vHeader = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as HeaderBinding
+                vHeader = this.meta<HeaderLayout>()!!.inflateHeader(LayoutInflater.from(parent.context), parent)
                 initHeader(header)
             }
             RachelHeaderViewHolder(header)
         }
         else {
-            val cls: Class<ItemBinding> = bindingItemClass()
-            val method = cls.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-            val v = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as ItemBinding
+            val v: ItemBinding = this.meta<HeaderLayout>()!!.inflateItem(LayoutInflater.from(parent.context), parent)
             val holder = RachelItemViewHolder(v)
             val root = v.root
             root.rachelClick {
@@ -64,6 +61,7 @@ abstract class RachelHeaderAdapter<HeaderBinding : ViewBinding, ItemBinding : Vi
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is RachelItemViewHolder<*>) update(holder.v as ItemBinding, items[position - 1], position - 1)
     }

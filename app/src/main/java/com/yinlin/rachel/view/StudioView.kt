@@ -61,7 +61,7 @@ class StudioView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             val y = (event.y * ratio).toInt()
             for (item in items) {
                 if (isActive(x, y, item)) {
-                    val intent = if (item.qq) RachelAppIntent.QQ(item.id) else RachelAppIntent.QQGroup(item.id)
+                    val intent = if (item.qq) RachelAppIntent.qq(item.id) else RachelAppIntent.qqGroup(item.id)
                     intent.start(context)
                     break
                 }

@@ -21,7 +21,7 @@ class FragmentShowActivity(main: MainActivity, private val show: ShowActivity) :
     override fun init() {
         v.showstart.rachelClick {
             if (showstartUrl != null && showstartUrl.startsWith("mlink://com.showstartfans.activity")) {
-                val intent = RachelAppIntent.Showstart(showstartUrl)
+                val intent = RachelAppIntent.showstart(showstartUrl)
                 if (!intent.start(main)) tip(Tip.WARNING, "未安装${intent.name}")
             }
             else tip(Tip.WARNING, "此平台未售票，请稍后再试")

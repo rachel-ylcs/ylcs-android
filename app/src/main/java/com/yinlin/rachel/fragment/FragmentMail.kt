@@ -24,10 +24,9 @@ import com.yinlin.rachel.tool.visible
 
 @Layout(FragmentMailBinding::class)
 class FragmentMail(main: MainActivity) : RachelFragment<FragmentMailBinding>(main) {
+    @Layout(ItemMailBinding::class)
     class Adapter(private val fragment: FragmentMail) : RachelAdapter<ItemMailBinding, Mail>() {
         private val main = fragment.main
-
-        override fun bindingClass() = ItemMailBinding::class.java
 
         override fun init(holder: RachelViewHolder<ItemMailBinding>, v: ItemMailBinding) {
             v.buttonYes.rachelClick {

@@ -85,7 +85,7 @@ class FragmentMusic(main: MainActivity) : RachelFragment<FragmentMusicBinding>(m
             GROUP_HEADER_PLAYLIST -> main.navigate(FragmentPlaylist(main, musicCenter.playlistNames))
             GROUP_HEADER_LYRICS -> SheetLyricsEngine(this).show()
             GROUP_HEADER_MOD -> RachelDialog.choice(main, "跳转工坊资源QQ群", listOf("专辑EP合集", "专辑EP", "单曲集")) {
-                RachelAppIntent.QQGroup(main.rs(when (it) {
+                RachelAppIntent.qqGroup(main.rs(when (it) {
                     0 -> R.string.qqgroup_mod0
                     1 -> R.string.qqgroup_mod1
                     2 -> R.string.qqgroup_mod2

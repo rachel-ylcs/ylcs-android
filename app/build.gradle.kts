@@ -15,6 +15,7 @@ android {
         versionName = "2.3.2"
 
         ndk {
+            //noinspection ChromeOsAbiSupport
             abiFilters += arrayOf("arm64-v8a")
         }
     }
@@ -42,6 +43,12 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 

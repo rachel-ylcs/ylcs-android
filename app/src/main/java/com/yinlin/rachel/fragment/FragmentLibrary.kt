@@ -24,6 +24,7 @@ import com.yinlin.rachel.tool.visible
 @Layout(FragmentLibraryBinding::class)
 class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicInfoPreviewList)
     : RachelFragment<FragmentLibraryBinding>(main) {
+    @Layout(ItemMusicBinding::class)
     class Adapter(private val fragment: FragmentLibrary) : RachelAdapter<ItemMusicBinding, MusicInfoPreview>() {
         private val main = fragment.main
         private val selectedColor = main.rc(R.color.steel_blue_alpha)
@@ -37,8 +38,6 @@ class FragmentLibrary(main: MainActivity, private val musicInfoPreviews: MusicIn
                 else fragment.v.state.showContent()
                 notifySource()
             }
-
-        override fun bindingClass() = ItemMusicBinding::class.java
 
         override fun update(v: ItemMusicBinding, item: MusicInfoPreview, position: Int) {
             v.name.text = item.name // 歌名

@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.yinlin.rachel.annotation.Layout
+import com.yinlin.rachel.annotation.Layout.Companion.inflate
 import com.yinlin.rachel.tool.clearAddAll
+import com.yinlin.rachel.tool.meta
 import com.yinlin.rachel.tool.rachelClick
 import java.util.Collections
 
@@ -14,7 +17,6 @@ import java.util.Collections
 abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter<RachelAdapter.RachelViewHolder<Binding>>() {
     class RachelViewHolder<Binding : ViewBinding>(val v: Binding) : RecyclerView.ViewHolder(v.root)
 
-    protected abstract fun bindingClass(): Class<Binding>
     protected open fun init(holder: RachelViewHolder<Binding>, v: Binding) { }
     protected open fun update(v: Binding, item: Item, position: Int) { }
     protected open fun onItemClicked(v: Binding, item: Item, position: Int) { }
@@ -23,10 +25,7 @@ abstract class RachelAdapter<Binding : ViewBinding, Item> : RecyclerView.Adapter
     val items = mutableListOf<Item>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RachelViewHolder<Binding> {
-        val cls: Class<Binding> = bindingClass()
-        val method = cls.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-        @Suppress("UNCHECKED_CAST")
-        val v = method.invoke(null, LayoutInflater.from(parent.context), parent, false) as Binding
+        val v: Binding = this.meta<Layout>()!!.inflate(LayoutInflater.from(parent.context), parent)
         val holder = RachelViewHolder(v)
         val root = v.root
         root.rachelClick {

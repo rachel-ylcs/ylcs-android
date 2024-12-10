@@ -22,9 +22,8 @@ import com.yinlin.rachel.tool.startIOWithResult
 
 @Layout(FragmentWeiboUserBinding::class)
 class FragmentWeiboUser(main: MainActivity, private val weiboUserId: String) : RachelFragment<FragmentWeiboUserBinding>(main) {
+    @Layout(ItemWeiboAlbumBinding::class)
     class WeiboAlbumAdapter(private val fragment: FragmentWeiboUser) : RachelAdapter<ItemWeiboAlbumBinding, WeiboAlbum>() {
-        override fun bindingClass() = ItemWeiboAlbumBinding::class.java
-
         override fun update(v: ItemWeiboAlbumBinding, item: WeiboAlbum, position: Int) {
             v.title.text = item.title
             v.num.text = item.num

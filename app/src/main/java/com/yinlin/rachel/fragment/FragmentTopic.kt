@@ -4,6 +4,7 @@ import android.text.InputType
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yinlin.rachel.tool.Config
 import com.yinlin.rachel.MainActivity
+import com.yinlin.rachel.annotation.HeaderLayout
 import com.yinlin.rachel.tool.Tip
 import com.yinlin.rachel.annotation.IOThread
 import com.yinlin.rachel.annotation.Layout
@@ -30,11 +31,9 @@ import com.yinlin.rachel.tool.visible
 
 @Layout(FragmentTopicBinding::class)
 class FragmentTopic(main: MainActivity, private val tid: Int) : RachelFragment<FragmentTopicBinding>(main) {
+    @HeaderLayout(HeaderTopicBinding::class, ItemCommentBinding::class)
     class Adapter(private val fragment: FragmentTopic) : RachelHeaderAdapter<HeaderTopicBinding, ItemCommentBinding, Comment>() {
         private val main = fragment.main
-
-        override fun bindingHeaderClass() = HeaderTopicBinding::class.java
-        override fun bindingItemClass() = ItemCommentBinding::class.java
 
         override fun initHeader(v: HeaderTopicBinding) {
             v.avatar.rachelClick { main.navigate(FragmentProfile(main, fragment.topic.uid)) }
